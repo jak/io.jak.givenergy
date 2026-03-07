@@ -1,0 +1,20 @@
+{
+  "title": { "en": "Set charge rate" },
+  "titleFormatted": { "en": "Set charge rate to [[watts]] W" },
+  "hint": { "en": "Sets the battery charge rate in watts." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "number",
+      "name": "watts",
+      "title": { "en": "Watts" },
+      "min": 0,
+      "max": 10000,
+      "step": 100
+    }
+  ]
+}

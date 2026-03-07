@@ -1,0 +1,21 @@
+{
+  "title": { "en": "Enable or disable discharge schedule" },
+  "titleFormatted": { "en": "[[action]] discharge schedule" },
+  "hint": { "en": "Enables or disables the battery discharge schedule." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "action",
+      "title": { "en": "Action" },
+      "values": [
+        { "id": "enable", "title": { "en": "Enable" } },
+        { "id": "disable", "title": { "en": "Disable" } }
+      ]
+    }
+  ]
+}

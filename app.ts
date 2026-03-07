@@ -41,6 +41,42 @@ module.exports = class GivEnergyApp extends Homey.App {
         const snapshot = args.device.getInverterSnapshot();
         return snapshot ? snapshot.gridPower > 0 : false;
       });
+
+    // Action cards
+    this.homey.flow.getActionCard('set_inverter_mode')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setMode(args.mode);
+      });
+
+    this.homey.flow.getActionCard('enable_charge_schedule')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setChargeScheduleEnabled(args.action === 'enable');
+      });
+
+    this.homey.flow.getActionCard('enable_discharge_schedule')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setDischargeScheduleEnabled(args.action === 'enable');
+      });
+
+    this.homey.flow.getActionCard('set_charge_rate')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setChargeRate(args.watts);
+      });
+
+    this.homey.flow.getActionCard('set_discharge_rate')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setDischargeRate(args.watts);
+      });
   }
 
   async getConnection(serialNumber: string, host: string): Promise<GivEnergyInverter> {

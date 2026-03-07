@@ -1,0 +1,22 @@
+{
+  "title": { "en": "Set inverter mode" },
+  "titleFormatted": { "en": "Set inverter mode to [[mode]]" },
+  "hint": { "en": "Changes the inverter operating mode." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": { "en": "Mode" },
+      "values": [
+        { "id": "eco", "title": { "en": "Eco" } },
+        { "id": "timed_demand", "title": { "en": "Timed Demand" } },
+        { "id": "timed_export", "title": { "en": "Timed Export" } }
+      ]
+    }
+  ]
+}

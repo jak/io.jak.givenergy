@@ -1,0 +1,21 @@
+{
+  "title": { "en": "Enable or disable charge schedule" },
+  "titleFormatted": { "en": "[[action]] charge schedule" },
+  "hint": { "en": "Enables or disables the battery charge schedule." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "action",
+      "title": { "en": "Action" },
+      "values": [
+        { "id": "enable", "title": { "en": "Enable" } },
+        { "id": "disable", "title": { "en": "Disable" } }
+      ]
+    }
+  ]
+}
