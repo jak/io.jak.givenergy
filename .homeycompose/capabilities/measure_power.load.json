@@ -1,0 +1,12 @@
+{
+  "type": "number",
+  "title": { "en": "House Load" },
+  "units": { "en": "W" },
+  "insights": true,
+  "desc": { "en": "House power consumption in watts." },
+  "chartType": "spline",
+  "decimals": 0,
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/capabilities/house.svg"
+}

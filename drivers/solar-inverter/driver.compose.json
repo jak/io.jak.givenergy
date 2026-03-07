@@ -1,0 +1,141 @@
+{
+  "name": { "en": "Solar Inverter" },
+  "class": "solarpanel",
+  "capabilities": [
+    "measure_power",
+    "meter_power",
+    "measure_power.grid",
+    "measure_power.load",
+    "meter_power.grid_import",
+    "meter_power.grid_export"
+  ],
+  "capabilitiesOptions": {
+    "measure_power": {
+      "title": { "en": "Solar Power" }
+    },
+    "meter_power": {
+      "title": { "en": "Solar Energy" }
+    }
+  },
+  "energy": {
+    "meterPowerExportedCapability": "meter_power"
+  },
+  "platforms": ["local"],
+  "connectivity": ["lan"],
+  "images": {
+    "small": "/drivers/solar-inverter/assets/images/small.png",
+    "large": "/drivers/solar-inverter/assets/images/large.png",
+    "xlarge": "/drivers/solar-inverter/assets/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": { "next": "add_devices" },
+      "options": { "singular": false }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "settings": [
+    {
+      "type": "group",
+      "label": { "en": "Inverter Mode" },
+      "children": [
+        {
+          "id": "inverter_mode",
+          "type": "dropdown",
+          "label": { "en": "Mode" },
+          "value": "eco",
+          "values": [
+            { "id": "eco", "label": { "en": "Eco" } },
+            { "id": "timed_demand", "label": { "en": "Timed Demand" } },
+            { "id": "timed_export", "label": { "en": "Timed Export" } }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": { "en": "Charge Schedule" },
+      "children": [
+        {
+          "id": "charge_schedule_enabled",
+          "type": "checkbox",
+          "label": { "en": "Enable Charge Schedule" },
+          "value": false
+        },
+        {
+          "id": "charge_slot1_start",
+          "type": "text",
+          "label": { "en": "Charge Slot 1 Start (HH:MM)" },
+          "value": "00:30"
+        },
+        {
+          "id": "charge_slot1_end",
+          "type": "text",
+          "label": { "en": "Charge Slot 1 End (HH:MM)" },
+          "value": "04:30"
+        },
+        {
+          "id": "charge_slot1_target_soc",
+          "type": "number",
+          "label": { "en": "Charge Slot 1 Target SOC (%)" },
+          "value": 100,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "id": "charge_rate",
+          "type": "number",
+          "label": { "en": "Charge Rate (W)" },
+          "value": 2600,
+          "min": 0,
+          "max": 10000
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "label": { "en": "Discharge Schedule" },
+      "children": [
+        {
+          "id": "discharge_schedule_enabled",
+          "type": "checkbox",
+          "label": { "en": "Enable Discharge Schedule" },
+          "value": false
+        },
+        {
+          "id": "discharge_slot1_start",
+          "type": "text",
+          "label": { "en": "Discharge Slot 1 Start (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "discharge_slot1_end",
+          "type": "text",
+          "label": { "en": "Discharge Slot 1 End (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "discharge_slot1_target_soc",
+          "type": "number",
+          "label": { "en": "Discharge Slot 1 Target SOC (%)" },
+          "value": 0,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "id": "discharge_rate",
+          "type": "number",
+          "label": { "en": "Discharge Rate (W)" },
+          "value": 2600,
+          "min": 0,
+          "max": 10000
+        }
+      ]
+    }
+  ]
+}

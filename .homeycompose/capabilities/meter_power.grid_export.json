@@ -1,0 +1,11 @@
+{
+  "type": "number",
+  "title": { "en": "Grid Export Energy" },
+  "units": { "en": "kWh" },
+  "insights": true,
+  "desc": { "en": "Cumulative grid export energy." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false
+}

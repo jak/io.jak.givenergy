@@ -1,0 +1,11 @@
+{
+  "type": "number",
+  "title": { "en": "Grid Import Energy" },
+  "units": { "en": "kWh" },
+  "insights": true,
+  "desc": { "en": "Cumulative grid import energy." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false
+}

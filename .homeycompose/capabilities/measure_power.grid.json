@@ -1,0 +1,12 @@
+{
+  "type": "number",
+  "title": { "en": "Grid Power" },
+  "units": { "en": "W" },
+  "insights": true,
+  "desc": { "en": "Grid power in watts. Positive = exporting, negative = importing." },
+  "chartType": "spline",
+  "decimals": 0,
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/capabilities/grid.svg"
+}
