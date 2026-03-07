@@ -1,0 +1,28 @@
+{
+  "id": "io.jak.givenergy",
+  "version": "1.0.0",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "GivEnergy"
+  },
+  "description": {
+    "en": "Adds support for GivEnergy inverters and batteries."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Jak Spalding",
+    "email": "jak.spalding@gmail.com"
+  }
+}
