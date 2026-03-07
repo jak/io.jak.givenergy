@@ -1,0 +1,11 @@
+{
+  "title": { "en": "Grid is importing" },
+  "hint": { "en": "True when importing power from the grid." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    }
+  ]
+}

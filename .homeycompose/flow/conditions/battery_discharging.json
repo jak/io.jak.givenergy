@@ -1,0 +1,11 @@
+{
+  "title": { "en": "Battery is discharging" },
+  "hint": { "en": "True when the battery is being discharged." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=battery"
+    }
+  ]
+}

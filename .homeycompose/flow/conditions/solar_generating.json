@@ -1,0 +1,11 @@
+{
+  "title": { "en": "Solar is generating" },
+  "hint": { "en": "True when solar panels are producing power." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    }
+  ]
+}

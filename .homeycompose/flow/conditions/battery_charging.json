@@ -1,0 +1,11 @@
+{
+  "title": { "en": "Battery is charging" },
+  "hint": { "en": "True when the battery is being charged." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=battery"
+    }
+  ]
+}

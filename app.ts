@@ -10,6 +10,37 @@ module.exports = class GivEnergyApp extends Homey.App {
 
   async onInit() {
     this.log('GivEnergy app initialized');
+
+    // Condition cards
+    this.homey.flow.getConditionCard('solar_generating')
+      .registerRunListener(async (args: any) => {
+        const snapshot = args.device.getInverterSnapshot();
+        return snapshot ? snapshot.solarPower > 0 : false;
+      });
+
+    this.homey.flow.getConditionCard('battery_charging')
+      .registerRunListener(async (args: any) => {
+        const snapshot = args.device.getInverterSnapshot();
+        return snapshot ? snapshot.batteryPower < 0 : false;
+      });
+
+    this.homey.flow.getConditionCard('battery_discharging')
+      .registerRunListener(async (args: any) => {
+        const snapshot = args.device.getInverterSnapshot();
+        return snapshot ? snapshot.batteryPower > 0 : false;
+      });
+
+    this.homey.flow.getConditionCard('grid_importing')
+      .registerRunListener(async (args: any) => {
+        const snapshot = args.device.getInverterSnapshot();
+        return snapshot ? snapshot.gridPower < 0 : false;
+      });
+
+    this.homey.flow.getConditionCard('grid_exporting')
+      .registerRunListener(async (args: any) => {
+        const snapshot = args.device.getInverterSnapshot();
+        return snapshot ? snapshot.gridPower > 0 : false;
+      });
   }
 
   async getConnection(serialNumber: string, host: string): Promise<GivEnergyInverter> {
