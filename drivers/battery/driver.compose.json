@@ -1,0 +1,46 @@
+{
+  "name": { "en": "Battery" },
+  "class": "battery",
+  "capabilities": [
+    "measure_power",
+    "measure_battery",
+    "meter_power.charged",
+    "meter_power.discharged",
+    "measure_temperature"
+  ],
+  "capabilitiesOptions": {
+    "measure_power": {
+      "title": { "en": "Battery Power" }
+    },
+    "meter_power.charged": {
+      "title": { "en": "Charged Energy" }
+    },
+    "meter_power.discharged": {
+      "title": { "en": "Discharged Energy" }
+    }
+  },
+  "energy": {
+    "homeBattery": true,
+    "meterPowerImportedCapability": "meter_power.charged",
+    "meterPowerExportedCapability": "meter_power.discharged"
+  },
+  "platforms": ["local"],
+  "connectivity": ["lan"],
+  "images": {
+    "small": "/drivers/battery/assets/images/small.png",
+    "large": "/drivers/battery/assets/images/large.png",
+    "xlarge": "/drivers/battery/assets/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": { "next": "add_devices" },
+      "options": { "singular": false }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}
