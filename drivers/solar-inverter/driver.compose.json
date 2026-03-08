@@ -136,6 +136,34 @@
           "max": 10000
         }
       ]
+    },
+    {
+      "type": "group",
+      "label": { "en": "Gen3 Features" },
+      "children": [
+        {
+          "id": "export_limit",
+          "type": "number",
+          "label": { "en": "Export Limit (W)" },
+          "hint": { "en": "Grid export limit in watts. Gen3 inverters only." },
+          "value": 10000,
+          "min": 0,
+          "max": 10000
+        },
+        {
+          "id": "battery_pause_mode",
+          "type": "dropdown",
+          "label": { "en": "Battery Pause Mode" },
+          "hint": { "en": "Pause battery charge/discharge. Gen3 inverters only." },
+          "value": "disabled",
+          "values": [
+            { "id": "disabled", "label": { "en": "Disabled (normal)" } },
+            { "id": "pause_charge", "label": { "en": "Pause Charge" } },
+            { "id": "pause_discharge", "label": { "en": "Pause Discharge" } },
+            { "id": "pause_both", "label": { "en": "Pause Both" } }
+          ]
+        }
+      ]
     }
   ]
 }

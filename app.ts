@@ -77,6 +77,25 @@ module.exports = class GivEnergyApp extends Homey.App {
         if (!inverter) throw new Error('Inverter not connected');
         await inverter.setDischargeRate(args.watts);
       });
+
+    // Gen3-specific action cards
+    this.homey.flow.getActionCard('set_export_limit')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const { Gen3Inverter } = await import('givenergy-modbus');
+        if (!(inverter instanceof Gen3Inverter)) throw new Error('Export limit is only supported on Gen3 inverters');
+        await inverter.setExportLimit(args.watts);
+      });
+
+    this.homey.flow.getActionCard('set_battery_pause_mode')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const { Gen3Inverter } = await import('givenergy-modbus');
+        if (!(inverter instanceof Gen3Inverter)) throw new Error('Battery pause mode is only supported on Gen3 inverters');
+        await inverter.setBatteryPauseMode(args.mode);
+      });
   }
 
   async getConnection(serialNumber: string, host: string): Promise<GivEnergyInverter> {

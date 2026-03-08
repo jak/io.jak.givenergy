@@ -1,0 +1,23 @@
+{
+  "title": { "en": "Set battery pause mode" },
+  "titleFormatted": { "en": "Set battery pause mode to [[mode]]" },
+  "hint": { "en": "Pauses battery charge, discharge, or both. Gen3 inverters only." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": { "en": "Mode" },
+      "values": [
+        { "id": "disabled", "title": { "en": "Disabled (normal)" } },
+        { "id": "pause_charge", "title": { "en": "Pause Charge" } },
+        { "id": "pause_discharge", "title": { "en": "Pause Discharge" } },
+        { "id": "pause_both", "title": { "en": "Pause Both" } }
+      ]
+    }
+  ]
+}

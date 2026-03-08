@@ -1,0 +1,20 @@
+{
+  "title": { "en": "Set export limit" },
+  "titleFormatted": { "en": "Set export limit to [[watts]] W" },
+  "hint": { "en": "Sets the grid export limit in watts. Gen3 inverters only." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "number",
+      "name": "watts",
+      "title": { "en": "Watts" },
+      "min": 0,
+      "max": 10000,
+      "step": 100
+    }
+  ]
+}

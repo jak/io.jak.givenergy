@@ -105,6 +105,18 @@ module.exports = class SolarInverterDevice extends Homey.Device {
           await this.inverter.setDischargeSlot(0, config);
           break;
         }
+        case 'export_limit': {
+          const { Gen3Inverter } = await import('givenergy-modbus');
+          if (!(this.inverter instanceof Gen3Inverter)) throw new Error('Export limit is only supported on Gen3 inverters');
+          await this.inverter.setExportLimit(newSettings.export_limit);
+          break;
+        }
+        case 'battery_pause_mode': {
+          const { Gen3Inverter } = await import('givenergy-modbus');
+          if (!(this.inverter instanceof Gen3Inverter)) throw new Error('Battery pause mode is only supported on Gen3 inverters');
+          await this.inverter.setBatteryPauseMode(newSettings.battery_pause_mode);
+          break;
+        }
       }
     }
   }

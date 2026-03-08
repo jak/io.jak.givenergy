@@ -17,11 +17,12 @@ module.exports = class SolarInverterDriver extends Homey.Driver {
         try {
           const inverter = await GivEnergyInverter.connect({ host: d.host });
           const snapshot = inverter.getData();
-          const name = `GivEnergy ${snapshot.serialNumber}`;
+          const gen = snapshot.generation;
+          const name = `GivEnergy ${snapshot.serialNumber} (${gen})`;
           const device = {
             name,
             data: { id: snapshot.serialNumber },
-            store: { host: d.host },
+            store: { host: d.host, generation: gen },
           };
           await inverter.stop();
           return device;
@@ -40,10 +41,11 @@ module.exports = class SolarInverterDriver extends Homey.Driver {
       const { host } = data;
       const inverter = await GivEnergyInverter.connect({ host });
       const snapshot = inverter.getData();
+      const gen = snapshot.generation;
       const device = {
-        name: `GivEnergy ${snapshot.serialNumber}`,
+        name: `GivEnergy ${snapshot.serialNumber} (${gen})`,
         data: { id: snapshot.serialNumber },
-        store: { host },
+        store: { host, generation: gen },
       };
       await inverter.stop();
       return device;
