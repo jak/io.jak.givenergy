@@ -4,10 +4,10 @@
   "capabilities": [
     "measure_power",
     "meter_power",
-    "measure_power.grid",
-    "measure_power.load",
-    "meter_power.grid_import",
-    "meter_power.grid_export"
+    "grid_power",
+    "load_power",
+    "grid_import_energy",
+    "grid_export_energy"
   ],
   "capabilitiesOptions": {
     "measure_power": {

@@ -57,10 +57,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.setCapabilityValue('measure_power', -snapshot.solarPower).catch(this.error);
     this.setCapabilityValue('meter_power', snapshot.pvEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('measure_power.grid', snapshot.gridPower).catch(this.error);
-    this.setCapabilityValue('measure_power.load', snapshot.loadPower).catch(this.error);
-    this.setCapabilityValue('meter_power.grid_import', snapshot.gridImportEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('meter_power.grid_export', snapshot.gridExportEnergyTotalKwh).catch(this.error);
+    this.setCapabilityValue('grid_power', snapshot.gridPower).catch(this.error);
+    this.setCapabilityValue('load_power', snapshot.loadPower).catch(this.error);
+    this.setCapabilityValue('grid_import_energy', snapshot.gridImportEnergyTotalKwh).catch(this.error);
+    this.setCapabilityValue('grid_export_energy', snapshot.gridExportEnergyTotalKwh).catch(this.error);
   }
 
   async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {
