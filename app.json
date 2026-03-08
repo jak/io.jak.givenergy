@@ -1,3 +1,775 @@
 {
-  "_comment": "This file is generated. Please edit .homeycompose/app.json instead."
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "io.jak.givenergy",
+  "version": "1.0.0",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "brandColor": "#003DA5",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "GivEnergy"
+  },
+  "description": {
+    "en": "Adds support for GivEnergy inverters and batteries."
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Jak Spalding",
+    "email": "jak.spalding@gmail.com"
+  },
+  "flow": {
+    "conditions": [
+      {
+        "title": {
+          "en": "Battery is charging"
+        },
+        "hint": {
+          "en": "True when the battery is being charged."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ],
+        "id": "battery_charging"
+      },
+      {
+        "title": {
+          "en": "Battery is discharging"
+        },
+        "hint": {
+          "en": "True when the battery is being discharged."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ],
+        "id": "battery_discharging"
+      },
+      {
+        "title": {
+          "en": "Grid is exporting"
+        },
+        "hint": {
+          "en": "True when exporting power to the grid."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "grid_exporting"
+      },
+      {
+        "title": {
+          "en": "Grid is importing"
+        },
+        "hint": {
+          "en": "True when importing power from the grid."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "grid_importing"
+      },
+      {
+        "title": {
+          "en": "Solar is generating"
+        },
+        "hint": {
+          "en": "True when solar panels are producing power."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "solar_generating"
+      }
+    ],
+    "actions": [
+      {
+        "title": {
+          "en": "Enable or disable charge schedule"
+        },
+        "titleFormatted": {
+          "en": "[[action]] charge schedule"
+        },
+        "hint": {
+          "en": "Enables or disables the battery charge schedule."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "enable_charge_schedule"
+      },
+      {
+        "title": {
+          "en": "Enable or disable discharge schedule"
+        },
+        "titleFormatted": {
+          "en": "[[action]] discharge schedule"
+        },
+        "hint": {
+          "en": "Enables or disables the battery discharge schedule."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "enable_discharge_schedule"
+      },
+      {
+        "title": {
+          "en": "Set battery pause mode"
+        },
+        "titleFormatted": {
+          "en": "Set battery pause mode to [[mode]]"
+        },
+        "hint": {
+          "en": "Pauses battery charge, discharge, or both. Gen3 inverters only."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Mode"
+            },
+            "values": [
+              {
+                "id": "disabled",
+                "title": {
+                  "en": "Disabled (normal)"
+                }
+              },
+              {
+                "id": "pause_charge",
+                "title": {
+                  "en": "Pause Charge"
+                }
+              },
+              {
+                "id": "pause_discharge",
+                "title": {
+                  "en": "Pause Discharge"
+                }
+              },
+              {
+                "id": "pause_both",
+                "title": {
+                  "en": "Pause Both"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set_battery_pause_mode"
+      },
+      {
+        "title": {
+          "en": "Set charge rate"
+        },
+        "titleFormatted": {
+          "en": "Set charge rate to [[watts]] W"
+        },
+        "hint": {
+          "en": "Sets the battery charge rate in watts."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_charge_rate"
+      },
+      {
+        "title": {
+          "en": "Set discharge rate"
+        },
+        "titleFormatted": {
+          "en": "Set discharge rate to [[watts]] W"
+        },
+        "hint": {
+          "en": "Sets the battery discharge rate in watts."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_discharge_rate"
+      },
+      {
+        "title": {
+          "en": "Set export limit"
+        },
+        "titleFormatted": {
+          "en": "Set export limit to [[watts]] W"
+        },
+        "hint": {
+          "en": "Sets the grid export limit in watts. Gen3 inverters only."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_export_limit"
+      },
+      {
+        "title": {
+          "en": "Set inverter mode"
+        },
+        "titleFormatted": {
+          "en": "Set inverter mode to [[mode]]"
+        },
+        "hint": {
+          "en": "Changes the inverter operating mode."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Mode"
+            },
+            "values": [
+              {
+                "id": "eco",
+                "title": {
+                  "en": "Eco"
+                }
+              },
+              {
+                "id": "timed_demand",
+                "title": {
+                  "en": "Timed Demand"
+                }
+              },
+              {
+                "id": "timed_export",
+                "title": {
+                  "en": "Timed Export"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set_inverter_mode"
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Battery"
+      },
+      "class": "battery",
+      "capabilities": [
+        "measure_power",
+        "measure_battery",
+        "meter_power.charged",
+        "meter_power.discharged",
+        "measure_temperature"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Battery Power"
+          }
+        },
+        "meter_power.charged": {
+          "title": {
+            "en": "Charged Energy"
+          }
+        },
+        "meter_power.discharged": {
+          "title": {
+            "en": "Discharged Energy"
+          }
+        }
+      },
+      "energy": {
+        "homeBattery": true,
+        "meterPowerImportedCapability": "meter_power.charged",
+        "meterPowerExportedCapability": "meter_power.discharged"
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/battery/assets/images/small.png",
+        "large": "/drivers/battery/assets/images/large.png",
+        "xlarge": "/drivers/battery/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "battery"
+    },
+    {
+      "name": {
+        "en": "Solar Inverter"
+      },
+      "class": "solarpanel",
+      "capabilities": [
+        "measure_power",
+        "meter_power",
+        "grid_power",
+        "load_power",
+        "grid_import_energy",
+        "grid_export_energy"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Solar Power"
+          }
+        },
+        "meter_power": {
+          "title": {
+            "en": "Solar Energy"
+          }
+        }
+      },
+      "energy": {
+        "meterPowerExportedCapability": "meter_power"
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/solar-inverter/assets/images/small.png",
+        "large": "/drivers/solar-inverter/assets/images/large.png",
+        "xlarge": "/drivers/solar-inverter/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Inverter Mode"
+          },
+          "children": [
+            {
+              "id": "inverter_mode",
+              "type": "dropdown",
+              "label": {
+                "en": "Mode"
+              },
+              "value": "eco",
+              "values": [
+                {
+                  "id": "eco",
+                  "label": {
+                    "en": "Eco"
+                  }
+                },
+                {
+                  "id": "timed_demand",
+                  "label": {
+                    "en": "Timed Demand"
+                  }
+                },
+                {
+                  "id": "timed_export",
+                  "label": {
+                    "en": "Timed Export"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Charge Schedule"
+          },
+          "children": [
+            {
+              "id": "charge_schedule_enabled",
+              "type": "checkbox",
+              "label": {
+                "en": "Enable Charge Schedule"
+              },
+              "value": false
+            },
+            {
+              "id": "charge_slot1_start",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 1 Start (HH:MM)"
+              },
+              "value": "00:30"
+            },
+            {
+              "id": "charge_slot1_end",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 1 End (HH:MM)"
+              },
+              "value": "04:30"
+            },
+            {
+              "id": "charge_slot1_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Charge Slot 1 Target SOC (%)"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "charge_rate",
+              "type": "number",
+              "label": {
+                "en": "Charge Rate (W)"
+              },
+              "value": 2600,
+              "min": 0,
+              "max": 10000
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Discharge Schedule"
+          },
+          "children": [
+            {
+              "id": "discharge_schedule_enabled",
+              "type": "checkbox",
+              "label": {
+                "en": "Enable Discharge Schedule"
+              },
+              "value": false
+            },
+            {
+              "id": "discharge_slot1_start",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 1 Start (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot1_end",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 1 End (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot1_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Discharge Slot 1 Target SOC (%)"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "discharge_rate",
+              "type": "number",
+              "label": {
+                "en": "Discharge Rate (W)"
+              },
+              "value": 2600,
+              "min": 0,
+              "max": 10000
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Gen3 Features"
+          },
+          "children": [
+            {
+              "id": "export_limit",
+              "type": "number",
+              "label": {
+                "en": "Export Limit (W)"
+              },
+              "hint": {
+                "en": "Grid export limit in watts. Gen3 inverters only."
+              },
+              "value": 10000,
+              "min": 0,
+              "max": 10000
+            },
+            {
+              "id": "battery_pause_mode",
+              "type": "dropdown",
+              "label": {
+                "en": "Battery Pause Mode"
+              },
+              "hint": {
+                "en": "Pause battery charge/discharge. Gen3 inverters only."
+              },
+              "value": "disabled",
+              "values": [
+                {
+                  "id": "disabled",
+                  "label": {
+                    "en": "Disabled (normal)"
+                  }
+                },
+                {
+                  "id": "pause_charge",
+                  "label": {
+                    "en": "Pause Charge"
+                  }
+                },
+                {
+                  "id": "pause_discharge",
+                  "label": {
+                    "en": "Pause Discharge"
+                  }
+                },
+                {
+                  "id": "pause_both",
+                  "label": {
+                    "en": "Pause Both"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "solar-inverter"
+    }
+  ],
+  "capabilities": {
+    "grid_export_energy": {
+      "type": "number",
+      "title": {
+        "en": "Grid Export Energy"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Cumulative grid export energy."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_import_energy": {
+      "type": "number",
+      "title": {
+        "en": "Grid Import Energy"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Cumulative grid import energy."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_power": {
+      "type": "number",
+      "title": {
+        "en": "Grid Power"
+      },
+      "units": {
+        "en": "W"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Grid power in watts. Positive = exporting, negative = importing."
+      },
+      "chartType": "spline",
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/grid.svg"
+    },
+    "load_power": {
+      "type": "number",
+      "title": {
+        "en": "House Load"
+      },
+      "units": {
+        "en": "W"
+      },
+      "insights": true,
+      "desc": {
+        "en": "House power consumption in watts."
+      },
+      "chartType": "spline",
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/house.svg"
+    }
+  }
 }
