@@ -51,8 +51,9 @@ module.exports = class GridMeterDevice extends Homey.Device {
   private updateCapabilities(snapshot: InverterSnapshot) {
     this.setAvailable().catch(this.error);
 
-    // gridPower: positive = exporting, negative = importing
-    this.setCapabilityValue('measure_power', snapshot.gridPower).catch(this.error);
+    // Library: positive = exporting, negative = importing
+    // Homey cumulative sensor: positive = consuming (importing)
+    this.setCapabilityValue('measure_power', -snapshot.gridPower).catch(this.error);
     this.setCapabilityValue('meter_power.imported', snapshot.gridImportEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('meter_power.exported', snapshot.gridExportEnergyTotalKwh).catch(this.error);
   }
