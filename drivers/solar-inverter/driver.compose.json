@@ -29,6 +29,17 @@
   },
   "pair": [
     {
+      "id": "login_credentials",
+      "template": "login_credentials",
+      "options": {
+        "title": { "en": "Connect to Inverter" },
+        "usernameLabel": { "en": "Inverter IP Address" },
+        "usernamePlaceholder": { "en": "e.g. 192.168.1.100" },
+        "passwordLabel": { "en": "Network Subnet (optional, for auto-discovery)" },
+        "passwordPlaceholder": { "en": "e.g. 10.0.0.0/24" }
+      }
+    },
+    {
       "id": "list_devices",
       "template": "list_devices",
       "navigation": { "next": "add_devices" },

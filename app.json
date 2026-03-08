@@ -444,6 +444,67 @@
     },
     {
       "name": {
+        "en": "Grid Meter"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "measure_power",
+        "meter_power.imported",
+        "meter_power.exported"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Grid Power"
+          }
+        },
+        "meter_power.imported": {
+          "title": {
+            "en": "Grid Import"
+          }
+        },
+        "meter_power.exported": {
+          "title": {
+            "en": "Grid Export"
+          }
+        }
+      },
+      "energy": {
+        "cumulative": true,
+        "cumulativeImportedCapability": "meter_power.imported",
+        "cumulativeExportedCapability": "meter_power.exported"
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/grid-meter/assets/images/small.png",
+        "large": "/drivers/grid-meter/assets/images/large.png",
+        "xlarge": "/drivers/grid-meter/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "grid-meter"
+    },
+    {
+      "name": {
         "en": "Solar Inverter"
       },
       "class": "solarpanel",
@@ -482,6 +543,27 @@
         "xlarge": "/drivers/solar-inverter/assets/images/xlarge.png"
       },
       "pair": [
+        {
+          "id": "login_credentials",
+          "template": "login_credentials",
+          "options": {
+            "title": {
+              "en": "Connect to Inverter"
+            },
+            "usernameLabel": {
+              "en": "Inverter IP Address"
+            },
+            "usernamePlaceholder": {
+              "en": "e.g. 192.168.1.100"
+            },
+            "passwordLabel": {
+              "en": "Network Subnet (optional, for auto-discovery)"
+            },
+            "passwordPlaceholder": {
+              "en": "e.g. 10.0.0.0/24"
+            }
+          }
+        },
         {
           "id": "list_devices",
           "template": "list_devices",

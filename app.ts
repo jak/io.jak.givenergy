@@ -7,6 +7,7 @@ type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode':
 
 module.exports = class GivEnergyApp extends Homey.App {
   private connections = new Map<string, { inverter: GivEnergyInverter; refCount: number }>();
+  private pending = new Map<string, Promise<GivEnergyInverter>>();
 
   async onInit() {
     this.log('GivEnergy app initialized');
@@ -105,10 +106,28 @@ module.exports = class GivEnergyApp extends Homey.App {
       return existing.inverter;
     }
 
-    const { GivEnergyInverter: Inverter } = await import('givenergy-modbus');
-    const inverter = await Inverter.connect({ host });
-    this.connections.set(serialNumber, { inverter, refCount: 1 });
-    return inverter;
+    // Deduplicate concurrent connect calls for the same serial
+    const inflight = this.pending.get(serialNumber);
+    if (inflight) {
+      const inverter = await inflight;
+      const entry = this.connections.get(serialNumber);
+      if (entry) entry.refCount++;
+      return inverter;
+    }
+
+    const connectPromise = (async () => {
+      const { GivEnergyInverter: Inverter } = await import('givenergy-modbus');
+      return Inverter.connect({ host });
+    })();
+
+    this.pending.set(serialNumber, connectPromise);
+    try {
+      const inverter = await connectPromise;
+      this.connections.set(serialNumber, { inverter, refCount: 1 });
+      return inverter;
+    } finally {
+      this.pending.delete(serialNumber);
+    }
   }
 
   async releaseConnection(serialNumber: string): Promise<void> {

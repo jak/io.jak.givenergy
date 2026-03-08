@@ -5,14 +5,14 @@ import Homey from 'homey';
 type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
 type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
 
-module.exports = class BatteryDevice extends Homey.Device {
+module.exports = class GridMeterDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
 
   async onInit() {
     const { host } = this.getStore();
     const { id: serialNumber } = this.getData();
-    this.log(`Initializing battery device ${serialNumber} at ${host}`);
+    this.log(`Initializing grid meter device ${serialNumber} at ${host}`);
 
     try {
       this.log('Requesting connection...');
@@ -29,7 +29,6 @@ module.exports = class BatteryDevice extends Homey.Device {
     const inverter = this.inverter!;
 
     this.dataHandler = (snapshot: InverterSnapshot) => {
-      this.log(`Data received: battery=${snapshot.batteryPower}W soc=${snapshot.stateOfCharge}%`);
       this.updateCapabilities(snapshot);
     };
 
@@ -49,22 +48,13 @@ module.exports = class BatteryDevice extends Homey.Device {
     }
   }
 
-  getInverterSnapshot(): InverterSnapshot | null {
-    try {
-      return this.inverter?.getData() ?? null;
-    } catch {
-      return null;
-    }
-  }
-
   private updateCapabilities(snapshot: InverterSnapshot) {
     this.setAvailable().catch(this.error);
 
-    this.setCapabilityValue('measure_power', -snapshot.batteryPower).catch(this.error);
-    this.setCapabilityValue('measure_battery', snapshot.stateOfCharge).catch(this.error);
-    this.setCapabilityValue('meter_power.charged', snapshot.batteryChargeEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('meter_power.discharged', snapshot.batteryDischargeEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('measure_temperature', snapshot.batteryTemperature).catch(this.error);
+    // gridPower: positive = exporting, negative = importing
+    this.setCapabilityValue('measure_power', snapshot.gridPower).catch(this.error);
+    this.setCapabilityValue('meter_power.imported', snapshot.gridImportEnergyTotalKwh).catch(this.error);
+    this.setCapabilityValue('meter_power.exported', snapshot.gridExportEnergyTotalKwh).catch(this.error);
   }
 
   async onUninit() {
