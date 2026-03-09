@@ -25,9 +25,9 @@
   "platforms": ["local"],
   "connectivity": ["lan"],
   "images": {
-    "small": "/drivers/grid-meter/assets/images/small.png",
-    "large": "/drivers/grid-meter/assets/images/large.png",
-    "xlarge": "/drivers/grid-meter/assets/images/xlarge.png"
+    "small": "/drivers/grid-meter/assets/images/small.jpg",
+    "large": "/drivers/grid-meter/assets/images/large.jpg",
+    "xlarge": "/drivers/grid-meter/assets/images/xlarge.jpg"
   },
   "pair": [
     {

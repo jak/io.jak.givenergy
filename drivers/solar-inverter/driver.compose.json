@@ -23,9 +23,9 @@
   "platforms": ["local"],
   "connectivity": ["lan"],
   "images": {
-    "small": "/drivers/solar-inverter/assets/images/small.png",
-    "large": "/drivers/solar-inverter/assets/images/large.png",
-    "xlarge": "/drivers/solar-inverter/assets/images/xlarge.png"
+    "small": "/drivers/solar-inverter/assets/images/small.jpg",
+    "large": "/drivers/solar-inverter/assets/images/large.jpg",
+    "xlarge": "/drivers/solar-inverter/assets/images/xlarge.jpg"
   },
   "pair": [
     {

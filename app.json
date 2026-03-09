@@ -19,9 +19,9 @@
   ],
   "permissions": [],
   "images": {
-    "small": "/assets/images/small.png",
-    "large": "/assets/images/large.png",
-    "xlarge": "/assets/images/xlarge.png"
+    "small": "/assets/images/small.jpg",
+    "large": "/assets/images/large.jpg",
+    "xlarge": "/assets/images/xlarge.jpg"
   },
   "support": "https://community.homey.app/t/app-pro-givenergy/152231",
   "bugs": {
@@ -444,9 +444,9 @@
         "lan"
       ],
       "images": {
-        "small": "/drivers/battery/assets/images/small.png",
-        "large": "/drivers/battery/assets/images/large.png",
-        "xlarge": "/drivers/battery/assets/images/xlarge.png"
+        "small": "/drivers/battery/assets/images/small.jpg",
+        "large": "/drivers/battery/assets/images/large.jpg",
+        "xlarge": "/drivers/battery/assets/images/xlarge.jpg"
       },
       "pair": [
         {
@@ -505,9 +505,9 @@
         "lan"
       ],
       "images": {
-        "small": "/drivers/grid-meter/assets/images/small.png",
-        "large": "/drivers/grid-meter/assets/images/large.png",
-        "xlarge": "/drivers/grid-meter/assets/images/xlarge.png"
+        "small": "/drivers/grid-meter/assets/images/small.jpg",
+        "large": "/drivers/grid-meter/assets/images/large.jpg",
+        "xlarge": "/drivers/grid-meter/assets/images/xlarge.jpg"
       },
       "pair": [
         {
@@ -562,9 +562,9 @@
         "lan"
       ],
       "images": {
-        "small": "/drivers/solar-inverter/assets/images/small.png",
-        "large": "/drivers/solar-inverter/assets/images/large.png",
-        "xlarge": "/drivers/solar-inverter/assets/images/xlarge.png"
+        "small": "/drivers/solar-inverter/assets/images/small.jpg",
+        "large": "/drivers/solar-inverter/assets/images/large.jpg",
+        "xlarge": "/drivers/solar-inverter/assets/images/xlarge.jpg"
       },
       "pair": [
         {

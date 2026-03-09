@@ -27,9 +27,9 @@
   "platforms": ["local"],
   "connectivity": ["lan"],
   "images": {
-    "small": "/drivers/battery/assets/images/small.png",
-    "large": "/drivers/battery/assets/images/large.png",
-    "xlarge": "/drivers/battery/assets/images/xlarge.png"
+    "small": "/drivers/battery/assets/images/small.jpg",
+    "large": "/drivers/battery/assets/images/large.jpg",
+    "xlarge": "/drivers/battery/assets/images/xlarge.jpg"
   },
   "pair": [
     {
