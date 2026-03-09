@@ -63,7 +63,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private updateCapabilities(snapshot: InverterSnapshot) {
     this.setAvailable().catch(this.error);
 
-    this.setCapabilityValue('measure_power', -snapshot.solarPower).catch(this.error);
+    this.setCapabilityValue('measure_power', snapshot.solarPower).catch(this.error);
     this.setCapabilityValue('meter_power', snapshot.pvEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('grid_power', snapshot.gridPower).catch(this.error);
     this.setCapabilityValue('load_power', snapshot.loadPower).catch(this.error);
