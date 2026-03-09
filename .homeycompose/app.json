@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "compatibility": ">=12.4.0",
   "sdk": 3,
-  "brandColor": "#003DA5",
+  "brandColor": "#003A34",
   "platforms": [
     "local"
   ],
@@ -11,7 +11,7 @@
     "en": "GivEnergy"
   },
   "description": {
-    "en": "Adds support for GivEnergy inverters and batteries."
+    "en": "Monitor and control your solar energy system locally"
   },
   "category": [
     "energy"
@@ -21,6 +21,23 @@
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",
     "xlarge": "/assets/images/xlarge.png"
+  },
+  "support": "https://community.homey.app/t/app-pro-givenergy/152231",
+  "bugs": {
+    "url": "https://github.com/jak/io.jak.givenergy/issues"
+  },
+  "source": "https://github.com/jak/io.jak.givenergy",
+  "homepage": "https://community.homey.app/t/app-pro-givenergy/152231",
+  "homeyCommunityTopicId": 152231,
+  "tags": {
+    "en": ["givenergy", "solar", "inverter", "battery", "modbus", "energy"]
+  },
+  "contributing": {
+    "donate": {
+      "githubSponsors": {
+        "username": "jak"
+      }
+    }
   },
   "author": {
     "name": "Jak Spalding",
