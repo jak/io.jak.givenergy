@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      color: #333;
+    }
+
+    .phase { display: none; }
+    .phase.active { display: block; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #2196F3;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status {
+      text-align: center;
+      margin: 16px 0;
+      color: #666;
+    }
+
+    .manual-form {
+      margin-top: 16px;
+    }
+
+    .manual-form p {
+      margin: 8px 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .manual-form input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin: 8px 0;
+    }
+
+    .manual-form button {
+      width: 100%;
+      padding: 12px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .manual-form button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .error {
+      color: #d32f2f;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Discovery phase -->
+  <div id="phase-discover" class="phase active">
+    <div class="spinner"></div>
+    <div class="status" id="discover-status">Scanning network...</div>
+  </div>
+
+  <!-- Manual IP phase -->
+  <div id="phase-manual" class="phase">
+    <div class="manual-form">
+      <p><strong>Could not automatically find your inverter on the network.</strong></p>
+      <p>You can find the IP address in your router's connected devices list, or in the GivEnergy portal/app.</p>
+      <input type="text" id="ip-input" placeholder="e.g. 192.168.1.100" />
+      <button id="connect-btn">Connect</button>
+      <div id="error-msg" class="error"></div>
+    </div>
+  </div>
+
+  <!-- Connecting phase -->
+  <div id="phase-connecting" class="phase">
+    <div class="spinner"></div>
+    <div class="status">Connecting to inverter...</div>
+  </div>
+
+  <script>
+    function showPhase(id) {
+      document.querySelectorAll('.phase').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.getElementById('phase-' + id).classList.add('active');
+    }
+
+    // Start discovery immediately
+    Homey.emit('start_discover');
+
+    Homey.on('discover_progress', function(data) {
+      var status = document.getElementById('discover-status');
+      var msg = 'Scanning network... ' + data.probeCount + ' hosts checked';
+      if (data.foundCount > 0) {
+        msg += ', ' + data.foundCount + ' found';
+      }
+      status.textContent = msg;
+    });
+
+    Homey.on('discover_complete', function(data) {
+      if (!data.found) {
+        showPhase('manual');
+      }
+    });
+
+    document.getElementById('connect-btn').addEventListener('click', function() {
+      var host = document.getElementById('ip-input').value.trim();
+      if (!host) return;
+
+      document.getElementById('error-msg').textContent = '';
+      showPhase('connecting');
+
+      Homey.emit('manual_connect', { host: host }, function(err) {
+        if (err) {
+          showPhase('manual');
+          document.getElementById('error-msg').textContent = err.message || 'Connection failed';
+        }
+      });
+    });
+
+    document.getElementById('ip-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('connect-btn').click();
+      }
+    });
+  </script>
+</body>
+</html>

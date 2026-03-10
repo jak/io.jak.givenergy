@@ -1,6 +1,7 @@
 'use strict';
 
 import Homey from 'homey';
+import { setupPairSession } from '../../lib/pairing';
 
 module.exports = class GridMeterDriver extends Homey.Driver {
 
@@ -8,18 +9,32 @@ module.exports = class GridMeterDriver extends Homey.Driver {
     this.log('GridMeterDriver initialized');
   }
 
-  async onPairListDevices() {
+  async onPair(session: any) {
+    // If solar inverters are already paired, use them directly
     const solarDriver = this.homey.drivers.getDriver('solar-inverter');
     const solarDevices = solarDriver.getDevices();
 
-    return solarDevices.map((device) => {
-      const { id: serialNumber } = device.getData();
-      const { host } = device.getStore();
-      return {
-        name: `GivEnergy Grid Meter (${serialNumber})`,
-        data: { id: serialNumber },
-        store: { host },
-      };
-    });
+    if (solarDevices.length > 0) {
+      const devices = solarDevices.map((device) => {
+        const { id: serialNumber } = device.getData();
+        const { host, generation } = device.getStore();
+        return {
+          name: `GivEnergy Grid Meter (${serialNumber})`,
+          data: { id: serialNumber },
+          store: { host, generation },
+        };
+      });
+
+      session.setHandler('list_devices', async () => devices);
+
+      session.setHandler('start_discover', async () => {
+        await session.showView('list_devices');
+      });
+    } else {
+      // No solar inverters paired — run full discovery
+      setupPairSession(session, this, (serialNumber) => {
+        return `GivEnergy Grid Meter (${serialNumber})`;
+      });
+    }
   }
 };

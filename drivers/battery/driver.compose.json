@@ -33,6 +33,10 @@
   },
   "pair": [
     {
+      "id": "discover",
+      "options": { "title": { "en": "Find Inverter" } }
+    },
+    {
       "id": "list_devices",
       "template": "list_devices",
       "navigation": { "next": "add_devices" },

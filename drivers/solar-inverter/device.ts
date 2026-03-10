@@ -28,11 +28,22 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.setAvailable().catch(this.error);
 
+    await this.setSettings({
+      label_serial_number: serialNumber,
+      label_generation: this.getStore().generation ?? '-',
+      label_ip_address: host,
+    }).catch(this.error);
+
     const inverter = this.inverter!;
+    let modelCodeSet = false;
 
     this.dataHandler = (snapshot: InverterSnapshot) => {
       this.log(`Data received: solar=${snapshot.solarPower}W grid=${snapshot.gridPower}W`);
       this.updateCapabilities(snapshot);
+      if (!modelCodeSet) {
+        modelCodeSet = true;
+        this.setSettings({ label_model_code: String(snapshot.modelCode) }).catch(this.error);
+      }
     };
 
     inverter.on('data', this.dataHandler);

@@ -450,6 +450,14 @@
       },
       "pair": [
         {
+          "id": "discover",
+          "options": {
+            "title": {
+              "en": "Find Inverter"
+            }
+          }
+        },
+        {
           "id": "list_devices",
           "template": "list_devices",
           "navigation": {
@@ -511,6 +519,14 @@
       },
       "pair": [
         {
+          "id": "discover",
+          "options": {
+            "title": {
+              "en": "Find Inverter"
+            }
+          }
+        },
+        {
           "id": "list_devices",
           "template": "list_devices",
           "navigation": {
@@ -568,23 +584,10 @@
       },
       "pair": [
         {
-          "id": "login_credentials",
-          "template": "login_credentials",
+          "id": "discover",
           "options": {
             "title": {
-              "en": "Connect to Inverter"
-            },
-            "usernameLabel": {
-              "en": "Inverter IP Address"
-            },
-            "usernamePlaceholder": {
-              "en": "e.g. 192.168.1.100"
-            },
-            "passwordLabel": {
-              "en": "Network Subnet (optional, for auto-discovery)"
-            },
-            "passwordPlaceholder": {
-              "en": "e.g. 10.0.0.0/24"
+              "en": "Find Inverter"
             }
           }
         },
@@ -604,6 +607,46 @@
         }
       ],
       "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device Info"
+          },
+          "children": [
+            {
+              "id": "label_serial_number",
+              "type": "label",
+              "label": {
+                "en": "Serial Number"
+              },
+              "value": "-"
+            },
+            {
+              "id": "label_generation",
+              "type": "label",
+              "label": {
+                "en": "Generation"
+              },
+              "value": "-"
+            },
+            {
+              "id": "label_ip_address",
+              "type": "label",
+              "label": {
+                "en": "IP Address"
+              },
+              "value": "-"
+            },
+            {
+              "id": "label_model_code",
+              "type": "label",
+              "label": {
+                "en": "Model Code"
+              },
+              "value": "-"
+            }
+          ]
+        },
         {
           "type": "group",
           "label": {
