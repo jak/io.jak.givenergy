@@ -123,11 +123,6 @@ async function connectAndBuildDevices(
         logger.log(`Connecting to inverter at ${host}...`);
         const inverter = await withTimeout(Inverter.connect({ host }), CONNECT_TIMEOUT_MS, host);
         const snapshot = inverter.getData();
-        if (!snapshot.serialNumber || snapshot.serialNumber.trim() === '') {
-          await inverter.stop();
-          logger.log(`Skipping ${host}: no valid serial number (not a GivEnergy inverter?)`);
-          return null;
-        }
         const gen = snapshot.generation;
         const device: DiscoveredDeviceEntry = {
           name: buildDeviceName(snapshot.serialNumber, gen),

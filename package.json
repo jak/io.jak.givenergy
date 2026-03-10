@@ -14,6 +14,6 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "givenergy-modbus": "^1.1.1"
+    "givenergy-modbus": "^1.1.2"
   }
 }
