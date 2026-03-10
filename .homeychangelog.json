@@ -1,5 +1,8 @@
 {
   "1.0.0": {
     "en": "First version!"
+  },
+  "1.1.0": {
+    "en": "New autodiscover flow for connecting devices"
   }
 }

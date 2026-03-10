@@ -1,6 +1,6 @@
 {
   "id": "io.jak.givenergy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "brandColor": "#003A34",
@@ -30,7 +30,14 @@
   "homepage": "https://community.homey.app/t/app-pro-givenergy/152231",
   "homeyCommunityTopicId": 152231,
   "tags": {
-    "en": ["givenergy", "solar", "inverter", "battery", "modbus", "energy"]
+    "en": [
+      "givenergy",
+      "solar",
+      "inverter",
+      "battery",
+      "modbus",
+      "energy"
+    ]
   },
   "contributing": {
     "donate": {
