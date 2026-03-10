@@ -27,6 +27,21 @@ export function setupPairSession(
   buildDeviceName: (serialNumber: string, generation: string) => string,
 ) {
   let discoveredDevices: DiscoveredDeviceEntry[] = [];
+  let sessionExpired = false;
+
+  async function safeShowView(view: string) {
+    if (sessionExpired) return;
+    try {
+      await session.showView(view);
+    } catch {
+      sessionExpired = true;
+    }
+  }
+
+  function safeEmit(event: string, data: any) {
+    if (sessionExpired) return;
+    session.emit(event, data).catch(() => { sessionExpired = true; });
+  }
 
   session.setHandler('start_discover', async () => {
     logger.log('Starting auto-discovery...');
@@ -39,7 +54,7 @@ export function setupPairSession(
         logger.log(`Detected local subnet: ${subnet}`);
       } catch (err: any) {
         logger.error('Could not detect local subnet:', err?.message ?? err);
-        session.emit('discover_complete', { found: false });
+        safeEmit('discover_complete', { found: false });
         return;
       }
 
@@ -51,27 +66,27 @@ export function setupPairSession(
         onProbe: (host: string, found: boolean) => {
           probeCount++;
           if (found) foundCount++;
-          session.emit('discover_progress', { probeCount, foundCount }).catch(() => {});
+          safeEmit('discover_progress', { probeCount, foundCount });
         },
       });
 
       logger.log(`Discovery complete: probed ${probeCount} hosts, ${discovered.length} inverter(s)`);
 
       if (discovered.length === 0) {
-        session.emit('discover_complete', { found: false });
+        safeEmit('discover_complete', { found: false });
         return;
       }
 
       discoveredDevices = await connectAndBuildDevices(discovered.map(d => d.host), Inverter, logger, buildDeviceName);
 
       if (discoveredDevices.length > 0) {
-        await session.showView('list_devices');
+        await safeShowView('list_devices');
       } else {
-        session.emit('discover_complete', { found: false });
+        safeEmit('discover_complete', { found: false });
       }
     } catch (err: any) {
       logger.error('Discovery failed:', err?.message ?? err);
-      session.emit('discover_complete', { found: false });
+      safeEmit('discover_complete', { found: false });
     }
   });
 
@@ -88,7 +103,7 @@ export function setupPairSession(
       throw new Error(`Could not connect to inverter at ${host}`);
     }
 
-    await session.showView('list_devices');
+    await safeShowView('list_devices');
   });
 
   session.setHandler('list_devices', async () => {
