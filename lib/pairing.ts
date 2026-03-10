@@ -3,6 +3,18 @@
 type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
 type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
 
+const CONNECT_TIMEOUT_MS = 30_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`Timed out connecting to ${label}`)), ms);
+    promise.then(
+      (val) => { clearTimeout(timer); resolve(val); },
+      (err) => { clearTimeout(timer); reject(err); },
+    );
+  });
+}
+
 export interface DiscoveredDeviceEntry {
   name: string;
   data: { id: string };
@@ -94,8 +106,13 @@ async function connectAndBuildDevices(
     hosts.map(async (host) => {
       try {
         logger.log(`Connecting to inverter at ${host}...`);
-        const inverter = await Inverter.connect({ host });
+        const inverter = await withTimeout(Inverter.connect({ host }), CONNECT_TIMEOUT_MS, host);
         const snapshot = inverter.getData();
+        if (!snapshot.serialNumber || snapshot.serialNumber.trim() === '') {
+          await inverter.stop();
+          logger.log(`Skipping ${host}: no valid serial number (not a GivEnergy inverter?)`);
+          return null;
+        }
         const gen = snapshot.generation;
         const device: DiscoveredDeviceEntry = {
           name: buildDeviceName(snapshot.serialNumber, gen),
