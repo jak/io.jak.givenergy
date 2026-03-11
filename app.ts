@@ -123,6 +123,7 @@ module.exports = class GivEnergyApp extends Homey.App {
     this.pending.set(serialNumber, connectPromise);
     try {
       const inverter = await connectPromise;
+      inverter.on('lost', () => this.handleConnectionLost(serialNumber, host));
       this.connections.set(serialNumber, { inverter, refCount: 1 });
       return inverter;
     } finally {
@@ -137,6 +138,14 @@ module.exports = class GivEnergyApp extends Homey.App {
     entry.refCount--;
     if (entry.refCount <= 0) {
       await entry.inverter.stop();
+      this.connections.delete(serialNumber);
+    }
+  }
+
+  private handleConnectionLost(serialNumber: string, host: string) {
+    this.error(`[connection-lost] inverter=${serialNumber} host=${host} timestamp=${new Date().toISOString()}`);
+    const entry = this.connections.get(serialNumber);
+    if (entry) {
       this.connections.delete(serialNumber);
     }
   }
