@@ -59,14 +59,12 @@ export function setupPairSession(
       }
 
       let probeCount = 0;
-      let foundCount = 0;
 
       const discovered = await discover({
         subnet,
-        onProbe: (host: string, found: boolean) => {
+        onProbe: () => {
           probeCount++;
-          if (found) foundCount++;
-          safeEmit('discover_progress', { probeCount, foundCount });
+          safeEmit('discover_progress', { probeCount });
         },
       });
 

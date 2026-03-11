@@ -112,11 +112,7 @@
 
     Homey.on('discover_progress', function(data) {
       var status = document.getElementById('discover-status');
-      var msg = 'Scanning network... ' + data.probeCount + ' hosts checked';
-      if (data.foundCount > 0) {
-        msg += ', ' + data.foundCount + ' found';
-      }
-      status.textContent = msg;
+      status.textContent = 'Scanning network... ' + data.probeCount + ' hosts checked';
     });
 
     Homey.on('discover_complete', function(data) {
