@@ -8,6 +8,7 @@ type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 
 module.exports = class GridMeterDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
+  private lostHandler?: (err: any) => void;
 
   async onInit() {
     const { host } = this.getStore();
@@ -32,12 +33,13 @@ module.exports = class GridMeterDevice extends Homey.Device {
       this.updateCapabilities(snapshot);
     };
 
-    inverter.on('data', this.dataHandler);
-
-    inverter.on('lost', (err: any) => {
+    this.lostHandler = (err: any) => {
       this.error('Connection lost:', err?.message ?? err);
       this.setUnavailable('Connection to inverter lost').catch(this.error);
-    });
+    };
+
+    inverter.on('data', this.dataHandler);
+    inverter.on('lost', this.lostHandler);
 
     try {
       const snapshot = inverter.getData();
@@ -59,8 +61,9 @@ module.exports = class GridMeterDevice extends Homey.Device {
   }
 
   async onUninit() {
-    if (this.inverter && this.dataHandler) {
-      this.inverter.removeListener('data', this.dataHandler);
+    if (this.inverter) {
+      if (this.dataHandler) this.inverter.removeListener('data', this.dataHandler);
+      if (this.lostHandler) this.inverter.removeListener('lost', this.lostHandler);
     }
     const { id: serialNumber } = this.getData();
     await (this.homey.app as any).releaseConnection(serialNumber);
