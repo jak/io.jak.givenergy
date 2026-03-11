@@ -89,7 +89,13 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {
     if (!this.inverter) throw new Error('Not connected to inverter');
 
+    const chargeSlotKeys = ['charge_slot1_start', 'charge_slot1_end', 'charge_slot1_target_soc'];
+    const dischargeSlotKeys = ['discharge_slot1_start', 'discharge_slot1_end', 'discharge_slot1_target_soc'];
+    const handled = new Set<string>();
+
     for (const key of changedKeys) {
+      if (handled.has(key)) continue;
+
       switch (key) {
         case 'inverter_mode':
           await this.inverter.setMode(newSettings.inverter_mode as InverterMode);
@@ -109,6 +115,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         case 'charge_slot1_start':
         case 'charge_slot1_end':
         case 'charge_slot1_target_soc': {
+          chargeSlotKeys.forEach((k) => handled.add(k));
           const config: TimeSlotInput = {
             start: newSettings.charge_slot1_start,
             end: newSettings.charge_slot1_end,
@@ -120,6 +127,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         case 'discharge_slot1_start':
         case 'discharge_slot1_end':
         case 'discharge_slot1_target_soc': {
+          dischargeSlotKeys.forEach((k) => handled.add(k));
           const config: TimeSlotInput = {
             start: newSettings.discharge_slot1_start,
             end: newSettings.discharge_slot1_end,
