@@ -4,5 +4,8 @@
   },
   "1.1.0": {
     "en": "New autodiscover flow for connecting devices"
+  },
+  "1.2.0": {
+    "en": "Fixed an autodiscovery issue where the app got stuck when it found something that looked like an Inverter but wasn't an Inverter"
   }
 }
