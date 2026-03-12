@@ -81,7 +81,7 @@
     <div class="manual-form">
       <p><strong>Enter the new IP address for your inverter.</strong></p>
       <p>You can find the IP address in your router's connected devices list, or in the GivEnergy portal/app.</p>
-      <input type="text" id="ip-input" placeholder="" />
+      <input type="text" id="ip-input" placeholder="e.g. 192.168.1.100" />
       <button id="connect-btn">Update</button>
       <div id="error-msg" class="error"></div>
     </div>
@@ -91,6 +91,14 @@
   <div id="phase-connecting" class="phase">
     <div class="spinner"></div>
     <div class="status">Connecting to inverter...</div>
+  </div>
+
+  <!-- Success phase -->
+  <div id="phase-success" class="phase">
+    <div class="manual-form">
+      <p><strong>IP address updated successfully.</strong></p>
+      <p>Restart the GivEnergy app from the Homey app settings to reconnect your devices.</p>
+    </div>
   </div>
 
   <script>
@@ -109,7 +117,10 @@
 
     document.getElementById('connect-btn').addEventListener('click', function() {
       var host = document.getElementById('ip-input').value.trim();
-      if (!host) return;
+      if (!host) {
+        document.getElementById('error-msg').textContent = 'Please enter an IP address';
+        return;
+      }
 
       document.getElementById('error-msg').textContent = '';
       showPhase('connecting');
@@ -119,7 +130,7 @@
           showPhase('form');
           document.getElementById('error-msg').textContent = err.message || 'Connection failed';
         } else {
-          Homey.done();
+          showPhase('success');
         }
       });
     });
