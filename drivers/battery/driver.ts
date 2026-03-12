@@ -2,6 +2,7 @@
 
 import Homey from 'homey';
 import { setupPairSession } from '../../lib/pairing';
+import { setupRepairSession } from '../../lib/repair';
 
 module.exports = class BatteryDriver extends Homey.Driver {
 
@@ -36,5 +37,9 @@ module.exports = class BatteryDriver extends Homey.Driver {
         return `GivEnergy Battery (${serialNumber})`;
       });
     }
+  }
+
+  async onRepair(session: any) {
+    setupRepairSession(session, this);
   }
 };
