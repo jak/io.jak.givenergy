@@ -472,6 +472,11 @@
           "template": "add_devices"
         }
       ],
+      "repair": [
+        {
+          "id": "repair"
+        }
+      ],
       "id": "battery"
     },
     {
@@ -541,6 +546,11 @@
           "template": "add_devices"
         }
       ],
+      "repair": [
+        {
+          "id": "repair"
+        }
+      ],
       "id": "grid-meter"
     },
     {
@@ -604,6 +614,11 @@
         {
           "id": "add_devices",
           "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "repair"
         }
       ],
       "settings": [
