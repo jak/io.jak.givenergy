@@ -1,7 +1,6 @@
 'use strict';
 
-type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
-type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
+type InverterIdentity = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterIdentity;
 
 const CONNECT_TIMEOUT_MS = 30_000;
 
@@ -111,7 +110,7 @@ export function setupPairSession(
 
 async function connectAndBuildDevices(
   hosts: string[],
-  Inverter: { connect(options: { host: string }): Promise<GivEnergyInverter> },
+  Inverter: { identify(options: { host: string }): Promise<InverterIdentity> },
   logger: { log: (...args: any[]) => void; error: (...args: any[]) => void },
   buildDeviceName: (serialNumber: string, generation: string) => string,
 ): Promise<DiscoveredDeviceEntry[]> {
@@ -119,15 +118,12 @@ async function connectAndBuildDevices(
     hosts.map(async (host) => {
       try {
         logger.log(`Connecting to inverter at ${host}...`);
-        const inverter = await withTimeout(Inverter.connect({ host }), CONNECT_TIMEOUT_MS, host);
-        const snapshot = inverter.getData();
-        const gen = snapshot.generation;
+        const identity = await withTimeout(Inverter.identify({ host }), CONNECT_TIMEOUT_MS, host);
         const device: DiscoveredDeviceEntry = {
-          name: buildDeviceName(snapshot.serialNumber, gen),
-          data: { id: snapshot.serialNumber },
-          store: { host, generation: gen },
+          name: buildDeviceName(identity.serialNumber, identity.generation),
+          data: { id: identity.serialNumber },
+          store: { host, generation: identity.generation },
         };
-        await inverter.stop();
         logger.log(`Found inverter: ${device.name} at ${host}`);
         return device;
       } catch (err: any) {
