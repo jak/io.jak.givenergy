@@ -6,7 +6,9 @@
     "measure_battery",
     "meter_power.charged",
     "meter_power.discharged",
-    "measure_temperature"
+    "measure_temperature",
+    "battery_charge_energy_today",
+    "battery_discharge_energy_today"
   ],
   "capabilitiesOptions": {
     "measure_power": {

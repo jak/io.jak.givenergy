@@ -69,6 +69,8 @@ module.exports = class GridMeterDevice extends Homey.Device {
     this.setCapabilityValue('meter_power.exported', snapshot.gridExportEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('grid_voltage', snapshot.gridVoltage).catch(this.error);
     this.setCapabilityValue('grid_frequency', snapshot.gridFrequency).catch(this.error);
+    this.setCapabilityValue('grid_import_energy_today', snapshot.gridImportEnergyTodayKwh).catch(this.error);
+    this.setCapabilityValue('grid_export_energy_today', snapshot.gridExportEnergyTodayKwh).catch(this.error);
 
     this.fireGridQualityTriggers(snapshot.gridVoltage, snapshot.gridFrequency);
     this.lastGridVoltage = snapshot.gridVoltage;

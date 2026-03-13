@@ -67,6 +67,8 @@ module.exports = class BatteryDevice extends Homey.Device {
     this.setCapabilityValue('meter_power.charged', snapshot.batteryChargeEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('meter_power.discharged', snapshot.batteryDischargeEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('measure_temperature', snapshot.batteryTemperature).catch(this.error);
+    this.setCapabilityValue('battery_charge_energy_today', snapshot.batteryChargeEnergyTodayKwh).catch(this.error);
+    this.setCapabilityValue('battery_discharge_energy_today', snapshot.batteryDischargeEnergyTodayKwh).catch(this.error);
   }
 
   async onUninit() {
