@@ -185,6 +185,22 @@
       },
       {
         "title": {
+          "en": "Eco mode is enabled"
+        },
+        "hint": {
+          "en": "True when the inverter is operating in eco mode."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "eco_mode_enabled"
+      },
+      {
+        "title": {
           "en": "Grid is exporting"
         },
         "hint": {
@@ -497,6 +513,46 @@
           }
         ],
         "id": "set_inverter_mode"
+      },
+      {
+        "title": {
+          "en": "Toggle eco mode"
+        },
+        "titleFormatted": {
+          "en": "[[action]] eco mode"
+        },
+        "hint": {
+          "en": "Enables or disables eco mode. Disabling switches to timed demand mode."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "toggle_eco_mode"
       }
     ]
   },
