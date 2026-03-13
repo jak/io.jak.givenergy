@@ -1,0 +1,11 @@
+{
+  "title": { "en": "Eco mode is enabled" },
+  "hint": { "en": "True when the inverter is operating in eco mode." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    }
+  ]
+}
