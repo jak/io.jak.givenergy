@@ -1,0 +1,11 @@
+{
+  "type": "number",
+  "title": { "en": "Battery Charged Today" },
+  "units": { "en": "kWh" },
+  "insights": true,
+  "desc": { "en": "Energy charged into battery today." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false
+}

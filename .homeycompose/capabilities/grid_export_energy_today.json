@@ -1,0 +1,11 @@
+{
+  "type": "number",
+  "title": { "en": "Grid Export Today" },
+  "units": { "en": "kWh" },
+  "insights": true,
+  "desc": { "en": "Energy exported to grid today." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false
+}

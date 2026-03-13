@@ -1,0 +1,11 @@
+{
+  "type": "number",
+  "title": { "en": "Solar Energy Today" },
+  "units": { "en": "kWh" },
+  "insights": true,
+  "desc": { "en": "Solar energy generated today." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false
+}

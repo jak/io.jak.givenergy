@@ -58,6 +58,8 @@ module.exports = class GridMeterDevice extends Homey.Device {
     this.setCapabilityValue('measure_power', -snapshot.gridPower).catch(this.error);
     this.setCapabilityValue('meter_power.imported', snapshot.gridImportEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('meter_power.exported', snapshot.gridExportEnergyTotalKwh).catch(this.error);
+    this.setCapabilityValue('grid_import_energy_today', snapshot.gridImportEnergyTodayKwh).catch(this.error);
+    this.setCapabilityValue('grid_export_energy_today', snapshot.gridExportEnergyTodayKwh).catch(this.error);
   }
 
   async onUninit() {
