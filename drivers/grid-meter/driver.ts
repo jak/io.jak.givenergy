@@ -2,6 +2,7 @@
 
 import Homey from 'homey';
 import { setupPairSession } from '../../lib/pairing';
+import { setupRepairSession } from '../../lib/repair';
 
 module.exports = class GridMeterDriver extends Homey.Driver {
 
@@ -36,5 +37,9 @@ module.exports = class GridMeterDriver extends Homey.Driver {
         return `GivEnergy Grid Meter (${serialNumber})`;
       });
     }
+  }
+
+  async onRepair(session: any) {
+    setupRepairSession(session, this);
   }
 };
