@@ -43,12 +43,25 @@ module.exports = class GivEnergyApp extends Homey.App {
         return snapshot ? snapshot.gridPower > 0 : false;
       });
 
+    this.homey.flow.getConditionCard('eco_mode_enabled')
+      .registerRunListener(async (args: any) => {
+        const snapshot = args.device.getInverterSnapshot();
+        return snapshot ? snapshot.mode === 'eco' : false;
+      });
+
     // Action cards
     this.homey.flow.getActionCard('set_inverter_mode')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
         await inverter.setMode(args.mode);
+      });
+
+    this.homey.flow.getActionCard('toggle_eco_mode')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setMode(args.action === 'enable' ? 'eco' : 'timed_demand');
       });
 
     this.homey.flow.getActionCard('enable_charge_schedule')
