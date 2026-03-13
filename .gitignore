@@ -3,3 +3,4 @@
 /.homeybuild/
 /.claude/settings.local.json
 /.worktrees/
+/memory/
