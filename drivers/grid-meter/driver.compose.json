@@ -4,7 +4,9 @@
   "capabilities": [
     "measure_power",
     "meter_power.imported",
-    "meter_power.exported"
+    "meter_power.exported",
+    "grid_import_energy_today",
+    "grid_export_energy_today"
   ],
   "capabilitiesOptions": {
     "measure_power": {

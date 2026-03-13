@@ -7,7 +7,11 @@
     "grid_power",
     "load_power",
     "grid_import_energy",
-    "grid_export_energy"
+    "grid_export_energy",
+    "pv_energy_today",
+    "grid_import_energy_today",
+    "grid_export_energy_today",
+    "consumption_energy_today"
   ],
   "capabilitiesOptions": {
     "measure_power": {

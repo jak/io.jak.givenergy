@@ -1,0 +1,11 @@
+{
+  "type": "number",
+  "title": { "en": "Battery Discharged Today" },
+  "units": { "en": "kWh" },
+  "insights": true,
+  "desc": { "en": "Energy discharged from battery today." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false
+}
