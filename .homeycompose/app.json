@@ -1,6 +1,6 @@
 {
   "id": "io.jak.givenergy",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "brandColor": "#003A34",
