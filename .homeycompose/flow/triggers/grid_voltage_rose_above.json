@@ -1,0 +1,15 @@
+{
+  "title": { "en": "Grid voltage rose above a value" },
+  "titleFormatted": { "en": "Grid voltage rose above [[voltage]]V" },
+  "args": [
+    {
+      "name": "voltage",
+      "type": "number",
+      "title": { "en": "Voltage (V)" },
+      "placeholder": { "en": "e.g. 250" },
+      "min": 100,
+      "max": 260,
+      "step": 1
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "title": { "en": "Grid voltage dropped below a value" },
+  "titleFormatted": { "en": "Grid voltage dropped below [[voltage]]V" },
+  "args": [
+    {
+      "name": "voltage",
+      "type": "number",
+      "title": { "en": "Voltage (V)" },
+      "placeholder": { "en": "e.g. 220" },
+      "min": 100,
+      "max": 260,
+      "step": 1
+    }
+  ]
+}

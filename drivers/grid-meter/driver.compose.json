@@ -4,7 +4,9 @@
   "capabilities": [
     "measure_power",
     "meter_power.imported",
-    "meter_power.exported"
+    "meter_power.exported",
+    "grid_voltage",
+    "grid_frequency"
   ],
   "capabilitiesOptions": {
     "measure_power": {
