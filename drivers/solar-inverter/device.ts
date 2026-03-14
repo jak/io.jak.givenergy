@@ -12,6 +12,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private dataHandler?: (snapshot: InverterSnapshot) => void;
   private lostHandler?: (err: any) => void;
   private debugHandler?: (msg: string) => void;
+  private lastGridVoltage?: number;
+  private lastGridFrequency?: number;
 
   async onInit() {
     const { host } = this.getStore();
@@ -84,6 +86,37 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.setCapabilityValue('load_power', snapshot.loadPower).catch(this.error);
     this.setCapabilityValue('grid_import_energy', snapshot.gridImportEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('grid_export_energy', snapshot.gridExportEnergyTotalKwh).catch(this.error);
+    this.setCapabilityValue('grid_voltage', snapshot.gridVoltage).catch(this.error);
+    this.setCapabilityValue('grid_frequency', snapshot.gridFrequency).catch(this.error);
+
+    this.fireGridQualityTriggers(snapshot.gridVoltage, snapshot.gridFrequency);
+    this.lastGridVoltage = snapshot.gridVoltage;
+    this.lastGridFrequency = snapshot.gridFrequency;
+  }
+
+  private fireGridQualityTriggers(voltage: number, frequency: number) {
+    const prev = { voltage: this.lastGridVoltage, frequency: this.lastGridFrequency };
+
+    if (prev.voltage !== undefined && prev.voltage >= voltage) {
+      (this.homey.flow.getDeviceTriggerCard('grid_voltage_dropped_below') as any)
+        .trigger(this, {}, { voltage })
+        .catch(this.error);
+    }
+    if (prev.voltage !== undefined && prev.voltage <= voltage) {
+      (this.homey.flow.getDeviceTriggerCard('grid_voltage_rose_above') as any)
+        .trigger(this, {}, { voltage })
+        .catch(this.error);
+    }
+    if (prev.frequency !== undefined && prev.frequency >= frequency) {
+      (this.homey.flow.getDeviceTriggerCard('grid_frequency_dropped_below') as any)
+        .trigger(this, {}, { frequency })
+        .catch(this.error);
+    }
+    if (prev.frequency !== undefined && prev.frequency <= frequency) {
+      (this.homey.flow.getDeviceTriggerCard('grid_frequency_rose_above') as any)
+        .trigger(this, {}, { frequency })
+        .catch(this.error);
+    }
   }
 
   async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {

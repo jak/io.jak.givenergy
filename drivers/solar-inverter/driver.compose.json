@@ -7,7 +7,9 @@
     "grid_power",
     "load_power",
     "grid_import_energy",
-    "grid_export_energy"
+    "grid_export_energy",
+    "grid_voltage",
+    "grid_frequency"
   ],
   "capabilitiesOptions": {
     "measure_power": {

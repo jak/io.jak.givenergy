@@ -1,0 +1,12 @@
+{
+  "type": "number",
+  "title": { "en": "Grid Voltage" },
+  "units": { "en": "V" },
+  "insights": true,
+  "desc": { "en": "Grid AC voltage in volts." },
+  "chartType": "spline",
+  "decimals": 1,
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/capabilities/grid.svg"
+}
