@@ -52,6 +52,104 @@
     "email": "jak.spalding@gmail.com"
   },
   "flow": {
+    "triggers": [
+      {
+        "title": {
+          "en": "Grid frequency dropped below a value"
+        },
+        "titleFormatted": {
+          "en": "Grid frequency dropped below [[frequency]]Hz"
+        },
+        "args": [
+          {
+            "name": "frequency",
+            "type": "number",
+            "title": {
+              "en": "Frequency (Hz)"
+            },
+            "placeholder": {
+              "en": "e.g. 49.5"
+            },
+            "min": 45,
+            "max": 55,
+            "step": 0.1
+          }
+        ],
+        "id": "grid_frequency_dropped_below"
+      },
+      {
+        "title": {
+          "en": "Grid frequency rose above a value"
+        },
+        "titleFormatted": {
+          "en": "Grid frequency rose above [[frequency]]Hz"
+        },
+        "args": [
+          {
+            "name": "frequency",
+            "type": "number",
+            "title": {
+              "en": "Frequency (Hz)"
+            },
+            "placeholder": {
+              "en": "e.g. 50.5"
+            },
+            "min": 45,
+            "max": 55,
+            "step": 0.1
+          }
+        ],
+        "id": "grid_frequency_rose_above"
+      },
+      {
+        "title": {
+          "en": "Grid voltage dropped below a value"
+        },
+        "titleFormatted": {
+          "en": "Grid voltage dropped below [[voltage]]V"
+        },
+        "args": [
+          {
+            "name": "voltage",
+            "type": "number",
+            "title": {
+              "en": "Voltage (V)"
+            },
+            "placeholder": {
+              "en": "e.g. 220"
+            },
+            "min": 100,
+            "max": 260,
+            "step": 1
+          }
+        ],
+        "id": "grid_voltage_dropped_below"
+      },
+      {
+        "title": {
+          "en": "Grid voltage rose above a value"
+        },
+        "titleFormatted": {
+          "en": "Grid voltage rose above [[voltage]]V"
+        },
+        "args": [
+          {
+            "name": "voltage",
+            "type": "number",
+            "title": {
+              "en": "Voltage (V)"
+            },
+            "placeholder": {
+              "en": "e.g. 250"
+            },
+            "min": 100,
+            "max": 260,
+            "step": 1
+          }
+        ],
+        "id": "grid_voltage_rose_above"
+      }
+    ],
     "conditions": [
       {
         "title": {
@@ -487,7 +585,9 @@
       "capabilities": [
         "measure_power",
         "meter_power.imported",
-        "meter_power.exported"
+        "meter_power.exported",
+        "grid_voltage",
+        "grid_frequency"
       ],
       "capabilitiesOptions": {
         "measure_power": {
@@ -564,7 +664,9 @@
         "grid_power",
         "load_power",
         "grid_import_energy",
-        "grid_export_energy"
+        "grid_export_energy",
+        "grid_voltage",
+        "grid_frequency"
       ],
       "capabilitiesOptions": {
         "measure_power": {
@@ -882,6 +984,24 @@
       "getable": true,
       "setable": false
     },
+    "grid_frequency": {
+      "type": "number",
+      "title": {
+        "en": "Grid Frequency"
+      },
+      "units": {
+        "en": "Hz"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Grid AC frequency in hertz."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/grid.svg"
+    },
     "grid_import_energy": {
       "type": "number",
       "title": {
@@ -913,6 +1033,24 @@
       },
       "chartType": "spline",
       "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/grid.svg"
+    },
+    "grid_voltage": {
+      "type": "number",
+      "title": {
+        "en": "Grid Voltage"
+      },
+      "units": {
+        "en": "V"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Grid AC voltage in volts."
+      },
+      "chartType": "spline",
+      "decimals": 1,
       "getable": true,
       "setable": false,
       "icon": "/assets/capabilities/grid.svg"

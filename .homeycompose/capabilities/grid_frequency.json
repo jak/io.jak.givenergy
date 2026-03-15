@@ -1,0 +1,12 @@
+{
+  "type": "number",
+  "title": { "en": "Grid Frequency" },
+  "units": { "en": "Hz" },
+  "insights": true,
+  "desc": { "en": "Grid AC frequency in hertz." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/capabilities/grid.svg"
+}
