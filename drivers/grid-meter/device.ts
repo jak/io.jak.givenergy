@@ -29,6 +29,13 @@ module.exports = class GridMeterDevice extends Homey.Device {
 
     this.setAvailable().catch(this.error);
 
+    // Add capabilities that may not exist on devices paired before this version
+    for (const cap of ['grid_voltage', 'grid_frequency']) {
+      if (!this.hasCapability(cap)) {
+        await this.addCapability(cap).catch(this.error);
+      }
+    }
+
     const inverter = this.inverter!;
 
     this.dataHandler = (snapshot: InverterSnapshot) => {

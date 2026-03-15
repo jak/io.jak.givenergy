@@ -32,6 +32,13 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.setAvailable().catch(this.error);
 
+    // Add capabilities that may not exist on devices paired before this version
+    for (const cap of ['grid_voltage', 'grid_frequency']) {
+      if (!this.hasCapability(cap)) {
+        await this.addCapability(cap).catch(this.error);
+      }
+    }
+
     await this.setSettings({
       label_serial_number: serialNumber,
       label_generation: this.getStore().generation ?? '-',
