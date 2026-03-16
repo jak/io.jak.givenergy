@@ -46,36 +46,29 @@ module.exports = class GivEnergyApp extends Homey.App {
     this.homey.flow.getConditionCard('eco_mode_enabled')
       .registerRunListener(async (args: any) => {
         const snapshot = args.device.getInverterSnapshot();
-        return snapshot ? snapshot.mode === 'eco' : false;
+        return snapshot ? snapshot.ecoMode : false;
       });
 
     // Action cards
-    this.homey.flow.getActionCard('set_inverter_mode')
-      .registerRunListener(async (args: any) => {
-        const inverter = this.getInverter(args.device.getData().id);
-        if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setMode(args.mode);
-      });
-
     this.homey.flow.getActionCard('toggle_eco_mode')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setMode(args.action === 'enable' ? 'eco' : 'timed_demand');
+        await inverter.setEcoMode(args.action === 'enable');
+      });
+
+    this.homey.flow.getActionCard('toggle_timed_export')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setTimedExport(args.action === 'enable');
       });
 
     this.homey.flow.getActionCard('enable_charge_schedule')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setChargeScheduleEnabled(args.action === 'enable');
-      });
-
-    this.homey.flow.getActionCard('enable_discharge_schedule')
-      .registerRunListener(async (args: any) => {
-        const inverter = this.getInverter(args.device.getData().id);
-        if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setDischargeScheduleEnabled(args.action === 'enable');
+        await inverter.setTimedCharge(args.action === 'enable');
       });
 
     this.homey.flow.getActionCard('set_charge_rate')
@@ -93,6 +86,15 @@ module.exports = class GivEnergyApp extends Homey.App {
       });
 
     // Gen3-specific action cards
+    this.homey.flow.getActionCard('enable_discharge_schedule')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const { Gen3Inverter } = await import('givenergy-modbus');
+        if (!(inverter instanceof Gen3Inverter)) throw new Error('Discharge schedule is only supported on Gen3 inverters');
+        await inverter.setTimedDischarge(args.action === 'enable');
+      });
+
     this.homey.flow.getActionCard('set_export_limit')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);

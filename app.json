@@ -470,59 +470,13 @@
       },
       {
         "title": {
-          "en": "Set inverter mode"
-        },
-        "titleFormatted": {
-          "en": "Set inverter mode to [[mode]]"
-        },
-        "hint": {
-          "en": "Changes the inverter operating mode."
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=solar-inverter"
-          },
-          {
-            "type": "dropdown",
-            "name": "mode",
-            "title": {
-              "en": "Mode"
-            },
-            "values": [
-              {
-                "id": "eco",
-                "title": {
-                  "en": "Eco"
-                }
-              },
-              {
-                "id": "timed_demand",
-                "title": {
-                  "en": "Timed Demand"
-                }
-              },
-              {
-                "id": "timed_export",
-                "title": {
-                  "en": "Timed Export"
-                }
-              }
-            ]
-          }
-        ],
-        "id": "set_inverter_mode"
-      },
-      {
-        "title": {
           "en": "Toggle eco mode"
         },
         "titleFormatted": {
           "en": "[[action]] eco mode"
         },
         "hint": {
-          "en": "Enables or disables eco mode. Disabling switches to timed demand mode."
+          "en": "Enables or disables eco mode (HR27). Independent of timed export."
         },
         "args": [
           {
@@ -553,6 +507,46 @@
           }
         ],
         "id": "toggle_eco_mode"
+      },
+      {
+        "title": {
+          "en": "Toggle timed export"
+        },
+        "titleFormatted": {
+          "en": "[[action]] timed export"
+        },
+        "hint": {
+          "en": "Enables or disables timed export (HR59). Independent of eco mode."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "toggle_timed_export"
       }
     ]
   },
@@ -823,36 +817,30 @@
         {
           "type": "group",
           "label": {
-            "en": "Inverter Mode"
+            "en": "Inverter Toggles"
           },
           "children": [
             {
-              "id": "inverter_mode",
-              "type": "dropdown",
+              "id": "eco_mode",
+              "type": "checkbox",
               "label": {
-                "en": "Mode"
+                "en": "Eco Mode"
               },
-              "value": "eco",
-              "values": [
-                {
-                  "id": "eco",
-                  "label": {
-                    "en": "Eco"
-                  }
-                },
-                {
-                  "id": "timed_demand",
-                  "label": {
-                    "en": "Timed Demand"
-                  }
-                },
-                {
-                  "id": "timed_export",
-                  "label": {
-                    "en": "Timed Export"
-                  }
-                }
-              ]
+              "hint": {
+                "en": "Battery charges from solar only and discharges to meet load (HR27)."
+              },
+              "value": true
+            },
+            {
+              "id": "timed_export",
+              "type": "checkbox",
+              "label": {
+                "en": "Timed Export"
+              },
+              "hint": {
+                "en": "Battery discharges to grid on schedule (HR59). Independent of eco mode."
+              },
+              "value": false
             }
           ]
         },

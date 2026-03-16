@@ -1,7 +1,7 @@
 {
-  "title": { "en": "Toggle eco mode" },
-  "titleFormatted": { "en": "[[action]] eco mode" },
-  "hint": { "en": "Enables or disables eco mode (HR27). Independent of timed export." },
+  "title": { "en": "Toggle timed export" },
+  "titleFormatted": { "en": "[[action]] timed export" },
+  "hint": { "en": "Enables or disables timed export (HR59). Independent of eco mode." },
   "args": [
     {
       "type": "device",
