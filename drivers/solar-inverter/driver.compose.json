@@ -63,18 +63,21 @@
     },
     {
       "type": "group",
-      "label": { "en": "Inverter Mode" },
+      "label": { "en": "Inverter Toggles" },
       "children": [
         {
-          "id": "inverter_mode",
-          "type": "dropdown",
-          "label": { "en": "Mode" },
-          "value": "eco",
-          "values": [
-            { "id": "eco", "label": { "en": "Eco" } },
-            { "id": "timed_demand", "label": { "en": "Timed Demand" } },
-            { "id": "timed_export", "label": { "en": "Timed Export" } }
-          ]
+          "id": "eco_mode",
+          "type": "checkbox",
+          "label": { "en": "Eco Mode" },
+          "hint": { "en": "Battery charges from solar only and discharges to meet load (HR27)." },
+          "value": true
+        },
+        {
+          "id": "timed_export",
+          "type": "checkbox",
+          "label": { "en": "Timed Export" },
+          "hint": { "en": "Battery discharges to grid on schedule (HR59). Independent of eco mode." },
+          "value": false
         }
       ]
     },

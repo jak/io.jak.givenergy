@@ -4,7 +4,6 @@ import Homey from 'homey';
 
 type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
 type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
-type InverterMode = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterMode;
 type TimeSlotInput = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).TimeSlotInput;
 
 module.exports = class SolarInverterDevice extends Homey.Device {
@@ -137,15 +136,21 @@ module.exports = class SolarInverterDevice extends Homey.Device {
       if (handled.has(key)) continue;
 
       switch (key) {
-        case 'inverter_mode':
-          await this.inverter.setMode(newSettings.inverter_mode as InverterMode);
+        case 'eco_mode':
+          await this.inverter.setEcoMode(newSettings.eco_mode);
+          break;
+        case 'timed_export':
+          await this.inverter.setTimedExport(newSettings.timed_export);
           break;
         case 'charge_schedule_enabled':
-          await this.inverter.setChargeScheduleEnabled(newSettings.charge_schedule_enabled);
+          await this.inverter.setTimedCharge(newSettings.charge_schedule_enabled);
           break;
-        case 'discharge_schedule_enabled':
-          await this.inverter.setDischargeScheduleEnabled(newSettings.discharge_schedule_enabled);
+        case 'discharge_schedule_enabled': {
+          const { Gen3Inverter } = await import('givenergy-modbus');
+          if (!(this.inverter instanceof Gen3Inverter)) throw new Error('Discharge schedule is only supported on Gen3 inverters');
+          await this.inverter.setTimedDischarge(newSettings.discharge_schedule_enabled);
           break;
+        }
         case 'charge_rate':
           await this.inverter.setChargeRate(newSettings.charge_rate);
           break;

@@ -1,0 +1,21 @@
+{
+  "title": { "en": "Toggle timed export" },
+  "titleFormatted": { "en": "[[action]] timed export" },
+  "hint": { "en": "Enables or disables timed export (HR59). Independent of eco mode." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "action",
+      "title": { "en": "Action" },
+      "values": [
+        { "id": "enable", "title": { "en": "Enable" } },
+        { "id": "disable", "title": { "en": "Disable" } }
+      ]
+    }
+  ]
+}
