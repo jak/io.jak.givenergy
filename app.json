@@ -561,7 +561,9 @@
         "measure_battery",
         "meter_power.charged",
         "meter_power.discharged",
-        "measure_temperature"
+        "measure_temperature",
+        "battery_charge_energy_today",
+        "battery_discharge_energy_today"
       ],
       "capabilitiesOptions": {
         "measure_power": {
@@ -637,7 +639,9 @@
         "meter_power.imported",
         "meter_power.exported",
         "grid_voltage",
-        "grid_frequency"
+        "grid_frequency",
+        "grid_import_energy_today",
+        "grid_export_energy_today"
       ],
       "capabilitiesOptions": {
         "measure_power": {
@@ -716,7 +720,11 @@
         "grid_import_energy",
         "grid_export_energy",
         "grid_voltage",
-        "grid_frequency"
+        "grid_frequency",
+        "pv_energy_today",
+        "grid_import_energy_today",
+        "grid_export_energy_today",
+        "consumption_energy_today"
       ],
       "capabilitiesOptions": {
         "measure_power": {
@@ -1011,6 +1019,57 @@
     }
   ],
   "capabilities": {
+    "battery_charge_energy_today": {
+      "type": "number",
+      "title": {
+        "en": "Battery Charged Today"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy charged into battery today."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "battery_discharge_energy_today": {
+      "type": "number",
+      "title": {
+        "en": "Battery Discharged Today"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy discharged from battery today."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "consumption_energy_today": {
+      "type": "number",
+      "title": {
+        "en": "Consumption Today"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "House energy consumption today."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
     "grid_export_energy": {
       "type": "number",
       "title": {
@@ -1022,6 +1081,23 @@
       "insights": true,
       "desc": {
         "en": "Cumulative grid export energy."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_export_energy_today": {
+      "type": "number",
+      "title": {
+        "en": "Grid Export Today"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy exported to grid today."
       },
       "chartType": "spline",
       "decimals": 2,
@@ -1057,6 +1133,23 @@
       "insights": true,
       "desc": {
         "en": "Cumulative grid import energy."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_import_energy_today": {
+      "type": "number",
+      "title": {
+        "en": "Grid Import Today"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy imported from grid today."
       },
       "chartType": "spline",
       "decimals": 2,
@@ -1116,6 +1209,23 @@
       "getable": true,
       "setable": false,
       "icon": "/assets/capabilities/house.svg"
+    },
+    "pv_energy_today": {
+      "type": "number",
+      "title": {
+        "en": "Solar Energy Today"
+      },
+      "units": {
+        "en": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Solar energy generated today."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
     }
   }
 }

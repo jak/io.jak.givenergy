@@ -27,6 +27,13 @@ module.exports = class BatteryDevice extends Homey.Device {
 
     this.setAvailable().catch(this.error);
 
+    // Add capabilities that may not exist on devices paired before this version
+    for (const cap of ['battery_charge_energy_today', 'battery_discharge_energy_today']) {
+      if (!this.hasCapability(cap)) {
+        await this.addCapability(cap).catch(this.error);
+      }
+    }
+
     const inverter = this.inverter!;
 
     this.dataHandler = (snapshot: InverterSnapshot) => {
