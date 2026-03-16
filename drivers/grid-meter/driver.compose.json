@@ -6,7 +6,9 @@
     "meter_power.imported",
     "meter_power.exported",
     "grid_voltage",
-    "grid_frequency"
+    "grid_frequency",
+    "grid_import_energy_today",
+    "grid_export_energy_today"
   ],
   "capabilitiesOptions": {
     "measure_power": {

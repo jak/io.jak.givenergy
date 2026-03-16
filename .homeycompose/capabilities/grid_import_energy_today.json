@@ -1,0 +1,11 @@
+{
+  "type": "number",
+  "title": { "en": "Grid Import Today" },
+  "units": { "en": "kWh" },
+  "insights": true,
+  "desc": { "en": "Energy imported from grid today." },
+  "chartType": "spline",
+  "decimals": 2,
+  "getable": true,
+  "setable": false
+}

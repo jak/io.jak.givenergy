@@ -32,7 +32,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.setAvailable().catch(this.error);
 
     // Add capabilities that may not exist on devices paired before this version
-    for (const cap of ['grid_voltage', 'grid_frequency']) {
+    for (const cap of ['grid_voltage', 'grid_frequency', 'pv_energy_today', 'grid_import_energy_today', 'grid_export_energy_today', 'consumption_energy_today']) {
       if (!this.hasCapability(cap)) {
         await this.addCapability(cap).catch(this.error);
       }
@@ -94,6 +94,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.setCapabilityValue('grid_export_energy', snapshot.gridExportEnergyTotalKwh).catch(this.error);
     this.setCapabilityValue('grid_voltage', snapshot.gridVoltage).catch(this.error);
     this.setCapabilityValue('grid_frequency', snapshot.gridFrequency).catch(this.error);
+    this.setCapabilityValue('pv_energy_today', snapshot.pvEnergyTodayKwh).catch(this.error);
+    this.setCapabilityValue('grid_import_energy_today', snapshot.gridImportEnergyTodayKwh).catch(this.error);
+    this.setCapabilityValue('grid_export_energy_today', snapshot.gridExportEnergyTodayKwh).catch(this.error);
+    this.setCapabilityValue('consumption_energy_today', snapshot.consumptionEnergyTodayKwh).catch(this.error);
 
     this.fireGridQualityTriggers(snapshot.gridVoltage, snapshot.gridFrequency);
     this.lastGridVoltage = snapshot.gridVoltage;
