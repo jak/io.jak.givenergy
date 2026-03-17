@@ -1,8 +1,0 @@
-{
-  "title": { "en": "Solar stopped generating" },
-  "titleFormatted": { "en": "Solar generation dropped below [[threshold]]W" },
-  "args": [
-    { "type": "device", "name": "device", "filter": "driver_id=solar-inverter" },
-    { "type": "number", "name": "threshold", "title": { "en": "Threshold (W)" }, "min": 0, "max": 1000, "step": 10, "value": 10 }
-  ]
-}

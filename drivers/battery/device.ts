@@ -9,7 +9,6 @@ module.exports = class BatteryDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
   private lostHandler?: (err: any) => void;
-  private lastBatteryPower?: number;
   private lastSoc?: number;
 
   async onInit() {
@@ -79,31 +78,14 @@ module.exports = class BatteryDevice extends Homey.Device {
     this.setCapabilityValue('battery_charge_energy_today', snapshot.batteryChargeEnergyTodayKwh).catch(this.error);
     this.setCapabilityValue('battery_discharge_energy_today', snapshot.batteryDischargeEnergyTodayKwh).catch(this.error);
 
-    this.fireEnergyTriggers(snapshot);
-    this.lastBatteryPower = snapshot.batteryPower;
+    this.fireSocTrigger(snapshot);
     this.lastSoc = snapshot.stateOfCharge;
   }
 
-  private fireEnergyTriggers(snapshot: InverterSnapshot) {
-    const prevPower = this.lastBatteryPower;
-    const prevSoc = this.lastSoc;
-
-    // SOC changed
-    if (prevSoc !== undefined && prevSoc !== snapshot.stateOfCharge) {
+  private fireSocTrigger(snapshot: InverterSnapshot) {
+    if (this.lastSoc !== undefined && this.lastSoc !== snapshot.stateOfCharge) {
       (this.homey.flow.getDeviceTriggerCard('battery_soc_changed') as any)
         .trigger(this, { soc: snapshot.stateOfCharge })
-        .catch(this.error);
-    }
-    // Battery: power decreased (toward charging, batteryPower < 0 = charging)
-    if (prevPower !== undefined && prevPower >= snapshot.batteryPower && snapshot.batteryPower < 0) {
-      (this.homey.flow.getDeviceTriggerCard('battery_started_charging') as any)
-        .trigger(this, {}, { power: Math.abs(snapshot.batteryPower) })
-        .catch(this.error);
-    }
-    // Battery: power increased (toward discharging, batteryPower > 0 = discharging)
-    if (prevPower !== undefined && prevPower <= snapshot.batteryPower && snapshot.batteryPower > 0) {
-      (this.homey.flow.getDeviceTriggerCard('battery_started_discharging') as any)
-        .trigger(this, {}, { power: snapshot.batteryPower })
         .catch(this.error);
     }
   }

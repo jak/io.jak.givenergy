@@ -13,8 +13,6 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private debugHandler?: (msg: string) => void;
   private lastGridVoltage?: number;
   private lastGridFrequency?: number;
-  private lastSolarPower?: number;
-  private lastGridPower?: number;
   private lastSettingsSyncMs = 0;
   private chargeSnapshot?: { timedCharge: boolean; chargeSlot: any; chargeRatePercent: number };
   private dischargeSnapshot?: { timedExport: boolean; dischargeSlot: any; dischargeRatePercent: number; batteryReservePercent: number };
@@ -105,11 +103,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.setCapabilityValue('consumption_energy_today', snapshot.consumptionEnergyTodayKwh).catch(this.error);
 
     this.fireGridQualityTriggers(snapshot.gridVoltage, snapshot.gridFrequency);
-    this.fireEnergyTriggers(snapshot);
     this.lastGridVoltage = snapshot.gridVoltage;
     this.lastGridFrequency = snapshot.gridFrequency;
-    this.lastSolarPower = snapshot.solarPower;
-    this.lastGridPower = snapshot.gridPower;
 
     this.syncSettings(snapshot);
   }
@@ -167,36 +162,6 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (prev.frequency !== undefined && prev.frequency <= frequency) {
       (this.homey.flow.getDeviceTriggerCard('grid_frequency_rose_above') as any)
         .trigger(this, {}, { frequency })
-        .catch(this.error);
-    }
-  }
-
-  private fireEnergyTriggers(snapshot: InverterSnapshot) {
-    const prevSolar = this.lastSolarPower;
-    const prevGrid = this.lastGridPower;
-
-    // Solar: was below threshold → now above (run listener checks threshold)
-    if (prevSolar !== undefined && prevSolar <= snapshot.solarPower && snapshot.solarPower > 0) {
-      (this.homey.flow.getDeviceTriggerCard('solar_started_generating') as any)
-        .trigger(this, {}, { power: snapshot.solarPower })
-        .catch(this.error);
-    }
-    // Solar: was above threshold → now below
-    if (prevSolar !== undefined && prevSolar >= snapshot.solarPower && snapshot.solarPower >= 0) {
-      (this.homey.flow.getDeviceTriggerCard('solar_stopped_generating') as any)
-        .trigger(this, {}, { power: snapshot.solarPower })
-        .catch(this.error);
-    }
-    // Grid: power decreased (toward importing, gridPower < 0 = importing)
-    if (prevGrid !== undefined && prevGrid >= snapshot.gridPower && snapshot.gridPower < 0) {
-      (this.homey.flow.getDeviceTriggerCard('grid_switched_to_importing') as any)
-        .trigger(this, {}, { power: Math.abs(snapshot.gridPower) })
-        .catch(this.error);
-    }
-    // Grid: power increased (toward exporting, gridPower > 0 = exporting)
-    if (prevGrid !== undefined && prevGrid <= snapshot.gridPower && snapshot.gridPower > 0) {
-      (this.homey.flow.getDeviceTriggerCard('grid_switched_to_exporting') as any)
-        .trigger(this, {}, { power: snapshot.gridPower })
         .catch(this.error);
     }
   }
