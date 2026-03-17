@@ -122,6 +122,46 @@
           "value": 100,
           "min": 0,
           "max": 100
+        },
+        {
+          "id": "charge_slot2_start",
+          "type": "text",
+          "label": { "en": "Charge Slot 2 Start (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "charge_slot2_end",
+          "type": "text",
+          "label": { "en": "Charge Slot 2 End (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "charge_slot2_target_soc",
+          "type": "number",
+          "label": { "en": "Charge Slot 2 Target SOC (%)" },
+          "value": 100,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "id": "charge_slot3_start",
+          "type": "text",
+          "label": { "en": "Charge Slot 3 Start (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "charge_slot3_end",
+          "type": "text",
+          "label": { "en": "Charge Slot 3 End (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "charge_slot3_target_soc",
+          "type": "number",
+          "label": { "en": "Charge Slot 3 Target SOC (%)" },
+          "value": 100,
+          "min": 0,
+          "max": 100
         }
       ]
     },
@@ -160,6 +200,46 @@
           "type": "number",
           "label": { "en": "Discharge Rate (%)" },
           "value": 100,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "id": "discharge_slot2_start",
+          "type": "text",
+          "label": { "en": "Discharge Slot 2 Start (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "discharge_slot2_end",
+          "type": "text",
+          "label": { "en": "Discharge Slot 2 End (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "discharge_slot2_target_soc",
+          "type": "number",
+          "label": { "en": "Discharge Slot 2 Target SOC (%)" },
+          "value": 0,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "id": "discharge_slot3_start",
+          "type": "text",
+          "label": { "en": "Discharge Slot 3 Start (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "discharge_slot3_end",
+          "type": "text",
+          "label": { "en": "Discharge Slot 3 End (HH:MM)" },
+          "value": "00:00"
+        },
+        {
+          "id": "discharge_slot3_target_soc",
+          "type": "number",
+          "label": { "en": "Discharge Slot 3 Target SOC (%)" },
+          "value": 0,
           "min": 0,
           "max": 100
         }

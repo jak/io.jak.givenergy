@@ -1,0 +1,8 @@
+{
+  "type": "boolean",
+  "title": { "en": "Gen3 Inverter" },
+  "getable": true,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false
+}

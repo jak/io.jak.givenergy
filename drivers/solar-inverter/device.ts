@@ -41,6 +41,18 @@ module.exports = class SolarInverterDevice extends Homey.Device {
       }
     }
 
+    // Add Gen3 capability for flow card filtering
+    const generation = this.getStore().generation;
+    if (generation === 'gen3') {
+      if (!this.hasCapability('inverter_gen3')) {
+        await this.addCapability('inverter_gen3').catch(this.error);
+      }
+    } else {
+      if (this.hasCapability('inverter_gen3')) {
+        await this.removeCapability('inverter_gen3').catch(this.error);
+      }
+    }
+
     await this.setSettings({
       label_serial_number: serialNumber,
       label_generation: this.getStore().generation ?? '-',
