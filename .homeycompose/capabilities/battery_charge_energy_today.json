@@ -1,5 +1,6 @@
 {
   "type": "number",
+  "icon": "/assets/capabilities/battery.svg",
   "title": { "en": "Battery Charged Today" },
   "units": { "en": "kWh" },
   "insights": true,

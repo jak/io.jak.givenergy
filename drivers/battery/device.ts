@@ -9,6 +9,8 @@ module.exports = class BatteryDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
   private lostHandler?: (err: any) => void;
+  private lastBatteryPower?: number;
+  private lastSoc?: number;
 
   async onInit() {
     const { host } = this.getStore();
@@ -76,6 +78,34 @@ module.exports = class BatteryDevice extends Homey.Device {
     this.setCapabilityValue('measure_temperature', snapshot.batteryTemperature).catch(this.error);
     this.setCapabilityValue('battery_charge_energy_today', snapshot.batteryChargeEnergyTodayKwh).catch(this.error);
     this.setCapabilityValue('battery_discharge_energy_today', snapshot.batteryDischargeEnergyTodayKwh).catch(this.error);
+
+    this.fireEnergyTriggers(snapshot);
+    this.lastBatteryPower = snapshot.batteryPower;
+    this.lastSoc = snapshot.stateOfCharge;
+  }
+
+  private fireEnergyTriggers(snapshot: InverterSnapshot) {
+    const prevPower = this.lastBatteryPower;
+    const prevSoc = this.lastSoc;
+
+    // SOC changed
+    if (prevSoc !== undefined && prevSoc !== snapshot.stateOfCharge) {
+      (this.homey.flow.getDeviceTriggerCard('battery_soc_changed') as any)
+        .trigger(this, { soc: snapshot.stateOfCharge })
+        .catch(this.error);
+    }
+    // Battery: was not charging → now charging (batteryPower < 0)
+    if (prevPower !== undefined && prevPower >= 0 && snapshot.batteryPower < 0) {
+      (this.homey.flow.getDeviceTriggerCard('battery_started_charging') as any)
+        .trigger(this)
+        .catch(this.error);
+    }
+    // Battery: was not discharging → now discharging (batteryPower > 0)
+    if (prevPower !== undefined && prevPower <= 0 && snapshot.batteryPower > 0) {
+      (this.homey.flow.getDeviceTriggerCard('battery_started_discharging') as any)
+        .trigger(this)
+        .catch(this.error);
+    }
   }
 
   async onUninit() {

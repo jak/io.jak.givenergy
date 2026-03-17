@@ -13,6 +13,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private debugHandler?: (msg: string) => void;
   private lastGridVoltage?: number;
   private lastGridFrequency?: number;
+  private lastSolarPower?: number;
+  private lastGridPower?: number;
   private lastSettingsSyncMs = 0;
 
   async onInit() {
@@ -101,8 +103,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.setCapabilityValue('consumption_energy_today', snapshot.consumptionEnergyTodayKwh).catch(this.error);
 
     this.fireGridQualityTriggers(snapshot.gridVoltage, snapshot.gridFrequency);
+    this.fireEnergyTriggers(snapshot);
     this.lastGridVoltage = snapshot.gridVoltage;
     this.lastGridFrequency = snapshot.gridFrequency;
+    this.lastSolarPower = snapshot.solarPower;
+    this.lastGridPower = snapshot.gridPower;
 
     this.syncSettings(snapshot);
   }
@@ -160,6 +165,36 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (prev.frequency !== undefined && prev.frequency <= frequency) {
       (this.homey.flow.getDeviceTriggerCard('grid_frequency_rose_above') as any)
         .trigger(this, {}, { frequency })
+        .catch(this.error);
+    }
+  }
+
+  private fireEnergyTriggers(snapshot: InverterSnapshot) {
+    const prevSolar = this.lastSolarPower;
+    const prevGrid = this.lastGridPower;
+
+    // Solar: 0 → >0
+    if (prevSolar !== undefined && prevSolar === 0 && snapshot.solarPower > 0) {
+      (this.homey.flow.getDeviceTriggerCard('solar_started_generating') as any)
+        .trigger(this)
+        .catch(this.error);
+    }
+    // Solar: >0 → 0
+    if (prevSolar !== undefined && prevSolar > 0 && snapshot.solarPower === 0) {
+      (this.homey.flow.getDeviceTriggerCard('solar_stopped_generating') as any)
+        .trigger(this)
+        .catch(this.error);
+    }
+    // Grid: was not importing → now importing (gridPower < 0)
+    if (prevGrid !== undefined && prevGrid >= 0 && snapshot.gridPower < 0) {
+      (this.homey.flow.getDeviceTriggerCard('grid_switched_to_importing') as any)
+        .trigger(this)
+        .catch(this.error);
+    }
+    // Grid: was not exporting → now exporting (gridPower > 0)
+    if (prevGrid !== undefined && prevGrid <= 0 && snapshot.gridPower > 0) {
+      (this.homey.flow.getDeviceTriggerCard('grid_switched_to_exporting') as any)
+        .trigger(this)
         .catch(this.error);
     }
   }

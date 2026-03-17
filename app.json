@@ -55,6 +55,57 @@
     "triggers": [
       {
         "title": {
+          "en": "Battery SOC changed"
+        },
+        "titleFormatted": {
+          "en": "Battery SOC changed to [[soc]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ],
+        "tokens": [
+          {
+            "name": "soc",
+            "type": "number",
+            "title": {
+              "en": "SOC (%)"
+            }
+          }
+        ],
+        "id": "battery_soc_changed"
+      },
+      {
+        "title": {
+          "en": "Battery started charging"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ],
+        "id": "battery_started_charging"
+      },
+      {
+        "title": {
+          "en": "Battery started discharging"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ],
+        "id": "battery_started_discharging"
+      },
+      {
+        "title": {
           "en": "Grid frequency dropped below a value"
         },
         "titleFormatted": {
@@ -103,6 +154,32 @@
       },
       {
         "title": {
+          "en": "Grid switched to exporting"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "grid_switched_to_exporting"
+      },
+      {
+        "title": {
+          "en": "Grid switched to importing"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "grid_switched_to_importing"
+      },
+      {
+        "title": {
           "en": "Grid voltage dropped below a value"
         },
         "titleFormatted": {
@@ -148,6 +225,32 @@
           }
         ],
         "id": "grid_voltage_rose_above"
+      },
+      {
+        "title": {
+          "en": "Solar started generating"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "solar_started_generating"
+      },
+      {
+        "title": {
+          "en": "Solar stopped generating"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "solar_stopped_generating"
       }
     ],
     "conditions": [

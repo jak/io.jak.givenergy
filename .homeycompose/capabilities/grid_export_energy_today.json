@@ -1,5 +1,6 @@
 {
   "type": "number",
+  "icon": "/assets/capabilities/energy.svg",
   "title": { "en": "Grid Export Today" },
   "units": { "en": "kWh" },
   "insights": true,

@@ -1,0 +1,6 @@
+{
+  "title": { "en": "Battery started discharging" },
+  "args": [
+    { "type": "device", "name": "device", "filter": "driver_id=battery" }
+  ]
+}

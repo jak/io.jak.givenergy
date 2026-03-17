@@ -1,5 +1,6 @@
 {
   "type": "number",
+  "icon": "/assets/capabilities/solar.svg",
   "title": { "en": "Solar Energy Today" },
   "units": { "en": "kWh" },
   "insights": true,

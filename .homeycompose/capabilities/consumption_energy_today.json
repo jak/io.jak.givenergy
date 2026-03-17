@@ -1,5 +1,6 @@
 {
   "type": "number",
+  "icon": "/assets/capabilities/house.svg",
   "title": { "en": "Consumption Today" },
   "units": { "en": "kWh" },
   "insights": true,

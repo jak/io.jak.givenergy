@@ -1,0 +1,6 @@
+{
+  "title": { "en": "Solar started generating" },
+  "args": [
+    { "type": "device", "name": "device", "filter": "driver_id=solar-inverter" }
+  ]
+}

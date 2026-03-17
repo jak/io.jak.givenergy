@@ -1,0 +1,14 @@
+{
+  "title": { "en": "Battery SOC changed" },
+  "titleFormatted": { "en": "Battery SOC changed to [[soc]]%" },
+  "args": [
+    { "type": "device", "name": "device", "filter": "driver_id=battery" }
+  ],
+  "tokens": [
+    {
+      "name": "soc",
+      "type": "number",
+      "title": { "en": "SOC (%)" }
+    }
+  ]
+}

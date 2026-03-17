@@ -1,0 +1,6 @@
+{
+  "title": { "en": "Grid switched to importing" },
+  "args": [
+    { "type": "device", "name": "device", "filter": "driver_id=solar-inverter" }
+  ]
+}
