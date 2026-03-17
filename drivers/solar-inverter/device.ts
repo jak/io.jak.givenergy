@@ -13,6 +13,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private debugHandler?: (msg: string) => void;
   private lastGridVoltage?: number;
   private lastGridFrequency?: number;
+  private lastSettingsSyncMs = 0;
 
   async onInit() {
     const { host } = this.getStore();
@@ -102,6 +103,40 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.fireGridQualityTriggers(snapshot.gridVoltage, snapshot.gridFrequency);
     this.lastGridVoltage = snapshot.gridVoltage;
     this.lastGridFrequency = snapshot.gridFrequency;
+
+    this.syncSettings(snapshot);
+  }
+
+  private syncSettings(snapshot: InverterSnapshot) {
+    const now = Date.now();
+    if (now - this.lastSettingsSyncMs < 60_000) return;
+    this.lastSettingsSyncMs = now;
+
+    const chargeSlot = snapshot.chargeSlots[0];
+    const dischargeSlot = snapshot.dischargeSlots[0];
+
+    const settings: Record<string, any> = {
+      eco_mode: snapshot.ecoMode,
+      timed_export: snapshot.timedExport,
+      charge_schedule_enabled: snapshot.timedCharge,
+      charge_slot1_start: chargeSlot?.start ?? '00:00',
+      charge_slot1_end: chargeSlot?.end ?? '00:00',
+      discharge_slot1_start: dischargeSlot?.start ?? '00:00',
+      discharge_slot1_end: dischargeSlot?.end ?? '00:00',
+      charge_rate: snapshot.chargeRatePercent,
+      discharge_rate: snapshot.dischargeRatePercent,
+    };
+
+    // Gen3 slots carry per-slot target SOC; Gen2 uses the legacy chargeTargetStateOfCharge
+    if (snapshot.generation === 'gen3') {
+      settings.charge_slot1_target_soc = (chargeSlot as any)?.targetStateOfCharge ?? 100;
+      settings.discharge_slot1_target_soc = (dischargeSlot as any)?.targetStateOfCharge ?? 0;
+      settings.battery_pause_mode = snapshot.batteryPauseMode;
+    } else {
+      settings.charge_slot1_target_soc = snapshot.chargeTargetStateOfCharge;
+    }
+
+    this.setSettings(settings).catch(this.error);
   }
 
   private fireGridQualityTriggers(voltage: number, frequency: number) {
@@ -156,10 +191,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
           break;
         }
         case 'charge_rate':
-          await this.inverter.setChargeRate(newSettings.charge_rate);
+          await this.inverter.setChargeRatePercent(newSettings.charge_rate);
           break;
         case 'discharge_rate':
-          await this.inverter.setDischargeRate(newSettings.discharge_rate);
+          await this.inverter.setDischargeRatePercent(newSettings.discharge_rate);
           break;
         case 'charge_slot1_start':
         case 'charge_slot1_end':
@@ -170,7 +205,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
             end: newSettings.charge_slot1_end,
             targetStateOfCharge: newSettings.charge_slot1_target_soc,
           };
-          await this.inverter.setChargeSlot(0, config);
+          await this.inverter.setChargeSlot(1, config);
           break;
         }
         case 'discharge_slot1_start':
@@ -182,7 +217,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
             end: newSettings.discharge_slot1_end,
             targetStateOfCharge: newSettings.discharge_slot1_target_soc,
           };
-          await this.inverter.setDischargeSlot(0, config);
+          await this.inverter.setDischargeSlot(1, config);
           break;
         }
         case 'export_limit': {

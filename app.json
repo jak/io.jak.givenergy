@@ -896,11 +896,11 @@
               "id": "charge_rate",
               "type": "number",
               "label": {
-                "en": "Charge Rate (W)"
+                "en": "Charge Rate (%)"
               },
-              "value": 2600,
+              "value": 100,
               "min": 0,
-              "max": 10000
+              "max": 100
             }
           ]
         },
@@ -948,11 +948,11 @@
               "id": "discharge_rate",
               "type": "number",
               "label": {
-                "en": "Discharge Rate (W)"
+                "en": "Discharge Rate (%)"
               },
-              "value": 2600,
+              "value": 100,
               "min": 0,
-              "max": 10000
+              "max": 100
             }
           ]
         },
