@@ -1,0 +1,24 @@
+{
+  "title": { "en": "Set charge slot" },
+  "titleFormatted": { "en": "Set charge slot 1 to [[start_time]] - [[end_time]]" },
+  "hint": { "en": "Configures the charge schedule time window. Gen1/Gen2 inverters support 1 charge slot." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "text",
+      "name": "start_time",
+      "title": { "en": "Start Time (HH:MM)" },
+      "placeholder": { "en": "00:30" }
+    },
+    {
+      "type": "text",
+      "name": "end_time",
+      "title": { "en": "End Time (HH:MM)" },
+      "placeholder": { "en": "04:30" }
+    }
+  ]
+}

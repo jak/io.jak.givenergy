@@ -1,6 +1,7 @@
 'use strict';
 
 import Homey from 'homey';
+import { withRetry } from './lib/retry';
 
 // Import type with resolution-mode to bridge ESM package from CJS context.
 type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
@@ -49,40 +50,40 @@ module.exports = class GivEnergyApp extends Homey.App {
         return snapshot ? snapshot.ecoMode : false;
       });
 
-    // Action cards
+    // Action cards — all write operations use withRetry for inverter timeout resilience
     this.homey.flow.getActionCard('toggle_eco_mode')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setEcoMode(args.action === 'enable');
+        await withRetry(() => inverter.setEcoMode(args.action === 'enable'), this.log);
       });
 
     this.homey.flow.getActionCard('toggle_timed_export')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setTimedExport(args.action === 'enable');
+        await withRetry(() => inverter.setTimedExport(args.action === 'enable'), this.log);
       });
 
     this.homey.flow.getActionCard('enable_charge_schedule')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setTimedCharge(args.action === 'enable');
+        await withRetry(() => inverter.setTimedCharge(args.action === 'enable'), this.log);
       });
 
     this.homey.flow.getActionCard('set_charge_rate')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setChargeRate(args.watts);
+        await withRetry(() => inverter.setChargeRate(args.watts), this.log);
       });
 
     this.homey.flow.getActionCard('set_discharge_rate')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await inverter.setDischargeRate(args.watts);
+        await withRetry(() => inverter.setDischargeRate(args.watts), this.log);
       });
 
     // Gen3-specific action cards
@@ -92,7 +93,7 @@ module.exports = class GivEnergyApp extends Homey.App {
         if (!inverter) throw new Error('Inverter not connected');
         const { Gen3Inverter } = await import('givenergy-modbus');
         if (!(inverter instanceof Gen3Inverter)) throw new Error('Discharge schedule is only supported on Gen3 inverters');
-        await inverter.setTimedDischarge(args.action === 'enable');
+        await withRetry(() => inverter.setTimedDischarge(args.action === 'enable'), this.log);
       });
 
     this.homey.flow.getActionCard('set_export_limit')
@@ -101,7 +102,7 @@ module.exports = class GivEnergyApp extends Homey.App {
         if (!inverter) throw new Error('Inverter not connected');
         const { Gen3Inverter } = await import('givenergy-modbus');
         if (!(inverter instanceof Gen3Inverter)) throw new Error('Export limit is only supported on Gen3 inverters');
-        await inverter.setExportLimit(args.watts);
+        await withRetry(() => inverter.setExportLimit(args.watts), this.log);
       });
 
     this.homey.flow.getActionCard('set_battery_pause_mode')
@@ -110,28 +111,69 @@ module.exports = class GivEnergyApp extends Homey.App {
         if (!inverter) throw new Error('Inverter not connected');
         const { Gen3Inverter } = await import('givenergy-modbus');
         if (!(inverter instanceof Gen3Inverter)) throw new Error('Battery pause mode is only supported on Gen3 inverters');
-        await inverter.setBatteryPauseMode(args.mode);
+        await withRetry(() => inverter.setBatteryPauseMode(args.mode), this.log);
+      });
+
+    // Slot configuration action cards (Gen2 — no target SOC)
+    this.homey.flow.getActionCard('set_charge_slot')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await withRetry(() => inverter.setChargeSlot(1, { start: args.start_time, end: args.end_time }), this.log);
+      });
+
+    this.homey.flow.getActionCard('set_discharge_slot')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const slot = parseInt(args.slot, 10);
+        await withRetry(() => inverter.setDischargeSlot(slot, { start: args.start_time, end: args.end_time }), this.log);
+      });
+
+    // Slot configuration action cards (Gen3 — with target SOC)
+    this.homey.flow.getActionCard('set_charge_slot_gen3')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const slot = parseInt(args.slot, 10);
+        await withRetry(() => inverter.setChargeSlot(slot, {
+          start: args.start_time,
+          end: args.end_time,
+          targetStateOfCharge: args.target_soc,
+        }), this.log);
+      });
+
+    this.homey.flow.getActionCard('set_discharge_slot_gen3')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const slot = parseInt(args.slot, 10);
+        await withRetry(() => inverter.setDischargeSlot(slot, {
+          start: args.start_time,
+          end: args.end_time,
+          targetStateOfCharge: args.target_soc,
+        }), this.log);
       });
 
     // Force charge/discharge action cards
     this.homey.flow.getActionCard('force_charge')
       .registerRunListener(async (args: any) => {
-        await args.device.forceCharge(args.target_soc, args.charge_rate);
+        await withRetry(() => args.device.forceCharge(args.target_soc, args.charge_rate), this.log);
       });
 
     this.homey.flow.getActionCard('stop_force_charge')
       .registerRunListener(async (args: any) => {
-        await args.device.stopForceCharge();
+        await withRetry(() => args.device.stopForceCharge(), this.log);
       });
 
     this.homey.flow.getActionCard('force_discharge')
       .registerRunListener(async (args: any) => {
-        await args.device.forceDischarge(args.discharge_rate, args.battery_reserve);
+        await withRetry(() => args.device.forceDischarge(args.discharge_rate, args.battery_reserve), this.log);
       });
 
     this.homey.flow.getActionCard('stop_force_discharge')
       .registerRunListener(async (args: any) => {
-        await args.device.stopForceDischarge();
+        await withRetry(() => args.device.stopForceDischarge(), this.log);
       });
   }
 

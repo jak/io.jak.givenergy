@@ -1,0 +1,43 @@
+{
+  "title": { "en": "Set charge slot" },
+  "titleFormatted": { "en": "Set charge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%" },
+  "hint": { "en": "Configures a charge schedule slot with target SOC. Gen3 inverters support slots 1-3." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+    },
+    {
+      "type": "dropdown",
+      "name": "slot",
+      "title": { "en": "Slot" },
+      "values": [
+        { "id": "1", "label": { "en": "Slot 1" } },
+        { "id": "2", "label": { "en": "Slot 2" } },
+        { "id": "3", "label": { "en": "Slot 3" } }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "start_time",
+      "title": { "en": "Start Time (HH:MM)" },
+      "placeholder": { "en": "00:30" }
+    },
+    {
+      "type": "text",
+      "name": "end_time",
+      "title": { "en": "End Time (HH:MM)" },
+      "placeholder": { "en": "04:30" }
+    },
+    {
+      "type": "number",
+      "name": "target_soc",
+      "title": { "en": "Target SOC (%)" },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    }
+  ]
+}

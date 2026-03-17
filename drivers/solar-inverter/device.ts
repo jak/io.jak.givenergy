@@ -1,6 +1,7 @@
 'use strict';
 
 import Homey from 'homey';
+import { withRetry } from '../../lib/retry';
 
 type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
 type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
@@ -38,6 +39,18 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     for (const cap of ['grid_voltage', 'grid_frequency', 'pv_energy_today', 'grid_import_energy_today', 'grid_export_energy_today', 'consumption_energy_today']) {
       if (!this.hasCapability(cap)) {
         await this.addCapability(cap).catch(this.error);
+      }
+    }
+
+    // Add Gen3 capability for flow card filtering
+    const generation = this.getStore().generation;
+    if (generation === 'gen3') {
+      if (!this.hasCapability('inverter_gen3')) {
+        await this.addCapability('inverter_gen3').catch(this.error);
+      }
+    } else {
+      if (this.hasCapability('inverter_gen3')) {
+        await this.removeCapability('inverter_gen3').catch(this.error);
       }
     }
 
@@ -114,25 +127,48 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (now - this.lastSettingsSyncMs < 60_000) return;
     this.lastSettingsSyncMs = now;
 
-    const chargeSlot = snapshot.chargeSlots[0];
-    const dischargeSlot = snapshot.dischargeSlots[0];
+    const cs = snapshot.chargeSlots;
+    const ds = snapshot.dischargeSlots;
+    const isGen3 = snapshot.generation === 'gen3';
 
     const settings: Record<string, any> = {
       eco_mode: snapshot.ecoMode,
       timed_export: snapshot.timedExport,
       charge_schedule_enabled: snapshot.timedCharge,
-      charge_slot1_start: chargeSlot?.start ?? '00:00',
-      charge_slot1_end: chargeSlot?.end ?? '00:00',
-      discharge_slot1_start: dischargeSlot?.start ?? '00:00',
-      discharge_slot1_end: dischargeSlot?.end ?? '00:00',
+
+      // Charge slot 1 — all generations
+      charge_slot1_start: cs[0]?.start ?? '00:00',
+      charge_slot1_end: cs[0]?.end ?? '00:00',
+
+      // Charge slots 2-3 — Gen3 only, "Unsupported" on Gen2
+      charge_slot2_start: isGen3 ? (cs[1]?.start ?? '00:00') : 'Unsupported',
+      charge_slot2_end: isGen3 ? (cs[1]?.end ?? '00:00') : 'Unsupported',
+      charge_slot3_start: isGen3 ? (cs[2]?.start ?? '00:00') : 'Unsupported',
+      charge_slot3_end: isGen3 ? (cs[2]?.end ?? '00:00') : 'Unsupported',
+
+      // Discharge slot 1 — all generations
+      discharge_slot1_start: ds[0]?.start ?? '00:00',
+      discharge_slot1_end: ds[0]?.end ?? '00:00',
+
+      // Discharge slot 2 — Gen2 supports 2 discharge slots
+      discharge_slot2_start: ds[1]?.start ?? '00:00',
+      discharge_slot2_end: ds[1]?.end ?? '00:00',
+
+      // Discharge slot 3 — Gen3 only
+      discharge_slot3_start: isGen3 ? (ds[2]?.start ?? '00:00') : 'Unsupported',
+      discharge_slot3_end: isGen3 ? (ds[2]?.end ?? '00:00') : 'Unsupported',
+
       charge_rate: snapshot.chargeRatePercent,
       discharge_rate: snapshot.dischargeRatePercent,
     };
 
-    // Gen3 slots carry per-slot target SOC; Gen2 uses the legacy chargeTargetStateOfCharge
-    if (snapshot.generation === 'gen3') {
-      settings.charge_slot1_target_soc = (chargeSlot as any)?.targetStateOfCharge ?? 100;
-      settings.discharge_slot1_target_soc = (dischargeSlot as any)?.targetStateOfCharge ?? 0;
+    if (isGen3) {
+      settings.charge_slot1_target_soc = (cs[0] as any)?.targetStateOfCharge ?? 100;
+      settings.charge_slot2_target_soc = (cs[1] as any)?.targetStateOfCharge ?? 100;
+      settings.charge_slot3_target_soc = (cs[2] as any)?.targetStateOfCharge ?? 100;
+      settings.discharge_slot1_target_soc = (ds[0] as any)?.targetStateOfCharge ?? 0;
+      settings.discharge_slot2_target_soc = (ds[1] as any)?.targetStateOfCharge ?? 0;
+      settings.discharge_slot3_target_soc = (ds[2] as any)?.targetStateOfCharge ?? 0;
       settings.battery_pause_mode = snapshot.batteryPauseMode;
     } else {
       settings.charge_slot1_target_soc = snapshot.chargeTargetStateOfCharge;
@@ -232,69 +268,152 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {
     if (!this.inverter) throw new Error('Not connected to inverter');
 
-    const chargeSlotKeys = ['charge_slot1_start', 'charge_slot1_end', 'charge_slot1_target_soc'];
-    const dischargeSlotKeys = ['discharge_slot1_start', 'discharge_slot1_end', 'discharge_slot1_target_soc'];
+    // Validate synchronously before returning (catches gen2 unsupported slots etc.)
+    this.validateSettings(newSettings, changedKeys);
+
+    // Apply in background with retry — return immediately so Homey doesn't timeout
+    // syncSettings will correct the UI from inverter state on the next poll cycle
+    this.applySettingsInBackground(newSettings, changedKeys);
+  }
+
+  private validateSettings(newSettings: Record<string, any>, changedKeys: string[]) {
+    const isGen3 = this.getStore().generation === 'gen3';
+    for (const key of changedKeys) {
+      if (key.startsWith('charge_slot') && !key.includes('slot1') && !isGen3) {
+        const slotNum = key.match(/slot(\d)/)?.[1];
+        throw new Error(`Charge slot ${slotNum} is not supported on Gen2 inverters`);
+      }
+      if (key.startsWith('discharge_slot3') && !isGen3) {
+        throw new Error('Discharge slot 3 is not supported on Gen2 inverters');
+      }
+      if (key === 'discharge_schedule_enabled' && !isGen3) {
+        throw new Error('Discharge schedule is only supported on Gen3 inverters');
+      }
+      if (key === 'export_limit' && !isGen3) {
+        throw new Error('Export limit is only supported on Gen3 inverters');
+      }
+      if (key === 'battery_pause_mode' && !isGen3) {
+        throw new Error('Battery pause mode is only supported on Gen3 inverters');
+      }
+    }
+  }
+
+  private applySettingsInBackground(newSettings: Record<string, any>, changedKeys: string[]) {
+    withRetry(() => this.applySettings(newSettings, changedKeys), this.log.bind(this))
+      .then(() => this.log('Settings applied to inverter successfully'))
+      .catch((err: any) => {
+        this.error('Failed to apply settings to inverter:', err?.message ?? err);
+      });
+  }
+
+  private async applySettings(newSettings: Record<string, any>, changedKeys: string[]) {
+    const inverter = this.inverter!;
     const handled = new Set<string>();
+
+    const isGen3 = this.getStore().generation === 'gen3';
+
+    const handleChargeSlot = async (slot: number) => {
+      const prefix = `charge_slot${slot}`;
+      [`${prefix}_start`, `${prefix}_end`, `${prefix}_target_soc`].forEach((k) => handled.add(k));
+
+      const config: TimeSlotInput = {
+        start: newSettings[`${prefix}_start`],
+        end: newSettings[`${prefix}_end`],
+        targetStateOfCharge: newSettings[`${prefix}_target_soc`],
+      };
+      await inverter.setChargeSlot(slot, config);
+
+      // Gen2 uses a single global charge target SOC (HR116), not per-slot
+      if (!isGen3 && newSettings[`${prefix}_target_soc`] !== undefined) {
+        await inverter.setChargeTarget(newSettings[`${prefix}_target_soc`]);
+      }
+    };
+
+    const handleDischargeSlot = async (slot: number) => {
+      const prefix = `discharge_slot${slot}`;
+      [`${prefix}_start`, `${prefix}_end`, `${prefix}_target_soc`].forEach((k) => handled.add(k));
+
+      const config: TimeSlotInput = {
+        start: newSettings[`${prefix}_start`],
+        end: newSettings[`${prefix}_end`],
+        targetStateOfCharge: newSettings[`${prefix}_target_soc`],
+      };
+      await inverter.setDischargeSlot(slot, config);
+    };
 
     for (const key of changedKeys) {
       if (handled.has(key)) continue;
 
       switch (key) {
         case 'eco_mode':
-          await this.inverter.setEcoMode(newSettings.eco_mode);
+          await inverter.setEcoMode(newSettings.eco_mode);
           break;
         case 'timed_export':
-          await this.inverter.setTimedExport(newSettings.timed_export);
+          await inverter.setTimedExport(newSettings.timed_export);
           break;
         case 'charge_schedule_enabled':
-          await this.inverter.setTimedCharge(newSettings.charge_schedule_enabled);
+          await inverter.setTimedCharge(newSettings.charge_schedule_enabled);
           break;
         case 'discharge_schedule_enabled': {
           const { Gen3Inverter } = await import('givenergy-modbus');
-          if (!(this.inverter instanceof Gen3Inverter)) throw new Error('Discharge schedule is only supported on Gen3 inverters');
-          await this.inverter.setTimedDischarge(newSettings.discharge_schedule_enabled);
+          if (inverter instanceof Gen3Inverter) {
+            await inverter.setTimedDischarge(newSettings.discharge_schedule_enabled);
+          }
           break;
         }
         case 'charge_rate':
-          await this.inverter.setChargeRatePercent(newSettings.charge_rate);
+          await inverter.setChargeRatePercent(newSettings.charge_rate);
           break;
         case 'discharge_rate':
-          await this.inverter.setDischargeRatePercent(newSettings.discharge_rate);
+          await inverter.setDischargeRatePercent(newSettings.discharge_rate);
           break;
+
+        // Charge slots 1-3
         case 'charge_slot1_start':
         case 'charge_slot1_end':
-        case 'charge_slot1_target_soc': {
-          chargeSlotKeys.forEach((k) => handled.add(k));
-          const config: TimeSlotInput = {
-            start: newSettings.charge_slot1_start,
-            end: newSettings.charge_slot1_end,
-            targetStateOfCharge: newSettings.charge_slot1_target_soc,
-          };
-          await this.inverter.setChargeSlot(1, config);
+        case 'charge_slot1_target_soc':
+          await handleChargeSlot(1);
           break;
-        }
+        case 'charge_slot2_start':
+        case 'charge_slot2_end':
+        case 'charge_slot2_target_soc':
+          await handleChargeSlot(2);
+          break;
+        case 'charge_slot3_start':
+        case 'charge_slot3_end':
+        case 'charge_slot3_target_soc':
+          await handleChargeSlot(3);
+          break;
+
+        // Discharge slots 1-3
         case 'discharge_slot1_start':
         case 'discharge_slot1_end':
-        case 'discharge_slot1_target_soc': {
-          dischargeSlotKeys.forEach((k) => handled.add(k));
-          const config: TimeSlotInput = {
-            start: newSettings.discharge_slot1_start,
-            end: newSettings.discharge_slot1_end,
-            targetStateOfCharge: newSettings.discharge_slot1_target_soc,
-          };
-          await this.inverter.setDischargeSlot(1, config);
+        case 'discharge_slot1_target_soc':
+          await handleDischargeSlot(1);
           break;
-        }
+        case 'discharge_slot2_start':
+        case 'discharge_slot2_end':
+        case 'discharge_slot2_target_soc':
+          await handleDischargeSlot(2);
+          break;
+        case 'discharge_slot3_start':
+        case 'discharge_slot3_end':
+        case 'discharge_slot3_target_soc':
+          await handleDischargeSlot(3);
+          break;
+
         case 'export_limit': {
-          const { Gen3Inverter } = await import('givenergy-modbus');
-          if (!(this.inverter instanceof Gen3Inverter)) throw new Error('Export limit is only supported on Gen3 inverters');
-          await this.inverter.setExportLimit(newSettings.export_limit);
+          const { Gen3Inverter: Gen3Export } = await import('givenergy-modbus');
+          if (inverter instanceof Gen3Export) {
+            await inverter.setExportLimit(newSettings.export_limit);
+          }
           break;
         }
         case 'battery_pause_mode': {
-          const { Gen3Inverter } = await import('givenergy-modbus');
-          if (!(this.inverter instanceof Gen3Inverter)) throw new Error('Battery pause mode is only supported on Gen3 inverters');
-          await this.inverter.setBatteryPauseMode(newSettings.battery_pause_mode);
+          const { Gen3Inverter: Gen3Pause } = await import('givenergy-modbus');
+          if (inverter instanceof Gen3Pause) {
+            await inverter.setBatteryPauseMode(newSettings.battery_pause_mode);
+          }
           break;
         }
       }

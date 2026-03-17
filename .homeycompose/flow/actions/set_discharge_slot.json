@@ -1,0 +1,33 @@
+{
+  "title": { "en": "Set discharge slot" },
+  "titleFormatted": { "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]]" },
+  "hint": { "en": "Configures a discharge schedule time window. Gen1/Gen2 inverters support slots 1-2." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "slot",
+      "title": { "en": "Slot" },
+      "values": [
+        { "id": "1", "label": { "en": "Slot 1" } },
+        { "id": "2", "label": { "en": "Slot 2" } }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "start_time",
+      "title": { "en": "Start Time (HH:MM)" },
+      "placeholder": { "en": "16:00" }
+    },
+    {
+      "type": "text",
+      "name": "end_time",
+      "title": { "en": "End Time (HH:MM)" },
+      "placeholder": { "en": "19:00" }
+    }
+  ]
+}

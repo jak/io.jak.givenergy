@@ -494,6 +494,122 @@
       },
       {
         "title": {
+          "en": "Set charge slot"
+        },
+        "titleFormatted": {
+          "en": "Set charge slot 1 to [[start_time]] - [[end_time]]"
+        },
+        "hint": {
+          "en": "Configures the charge schedule time window. Gen1/Gen2 inverters support 1 charge slot."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "00:30"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "04:30"
+            }
+          }
+        ],
+        "id": "set_charge_slot"
+      },
+      {
+        "title": {
+          "en": "Set charge slot"
+        },
+        "titleFormatted": {
+          "en": "Set charge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%"
+        },
+        "hint": {
+          "en": "Configures a charge schedule slot with target SOC. Gen3 inverters support slots 1-3."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Slot 3"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "00:30"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "04:30"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "set_charge_slot_gen3"
+      },
+      {
+        "title": {
           "en": "Set discharge rate"
         },
         "titleFormatted": {
@@ -520,6 +636,143 @@
           }
         ],
         "id": "set_discharge_rate"
+      },
+      {
+        "title": {
+          "en": "Set discharge slot"
+        },
+        "titleFormatted": {
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]]"
+        },
+        "hint": {
+          "en": "Configures a discharge schedule time window. Gen1/Gen2 inverters support slots 1-2."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "16:00"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "19:00"
+            }
+          }
+        ],
+        "id": "set_discharge_slot"
+      },
+      {
+        "title": {
+          "en": "Set discharge slot"
+        },
+        "titleFormatted": {
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%"
+        },
+        "hint": {
+          "en": "Configures a discharge schedule slot with target SOC. Gen3 inverters support slots 1-3."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Slot 3"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "16:00"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)"
+            },
+            "placeholder": {
+              "en": "19:00"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 0
+          }
+        ],
+        "id": "set_discharge_slot_gen3"
       },
       {
         "title": {
@@ -1015,6 +1268,58 @@
               "value": 100,
               "min": 0,
               "max": 100
+            },
+            {
+              "id": "charge_slot2_start",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 2 Start (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot2_end",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 2 End (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot2_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Charge Slot 2 Target SOC (%) — Gen3 only"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "charge_slot3_start",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 3 Start (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot3_end",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 3 End (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot3_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Charge Slot 3 Target SOC (%) — Gen3 only"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
             }
           ]
         },
@@ -1065,6 +1370,58 @@
                 "en": "Discharge Rate (%)"
               },
               "value": 100,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "discharge_slot2_start",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 2 Start (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot2_end",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 2 End (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot2_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Discharge Slot 2 Target SOC (%) — Gen3 only"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "discharge_slot3_start",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 3 Start (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot3_end",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 3 End (HH:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot3_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Discharge Slot 3 Target SOC (%) — Gen3 only"
+              },
+              "value": 0,
               "min": 0,
               "max": 100
             }
@@ -1312,6 +1669,16 @@
       "getable": true,
       "setable": false,
       "icon": "/assets/capabilities/grid.svg"
+    },
+    "inverter_gen3": {
+      "type": "boolean",
+      "title": {
+        "en": "Gen3 Inverter"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
     },
     "load_power": {
       "type": "number",
