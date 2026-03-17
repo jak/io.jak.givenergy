@@ -15,10 +15,10 @@
       "title": { "en": "Grid Power" }
     },
     "meter_power.imported": {
-      "title": { "en": "Grid Import" }
+      "title": { "en": "Grid Import Total" }
     },
     "meter_power.exported": {
-      "title": { "en": "Grid Export" }
+      "title": { "en": "Grid Export Total" }
     }
   },
   "energy": {

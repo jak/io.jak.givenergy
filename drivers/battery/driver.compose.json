@@ -15,10 +15,10 @@
       "title": { "en": "Battery Power" }
     },
     "meter_power.charged": {
-      "title": { "en": "Charged Energy" }
+      "title": { "en": "Battery Charged Total" }
     },
     "meter_power.discharged": {
-      "title": { "en": "Discharged Energy" }
+      "title": { "en": "Battery Discharged Total" }
     }
   },
   "energy": {

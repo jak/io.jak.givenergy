@@ -573,12 +573,12 @@
         },
         "meter_power.charged": {
           "title": {
-            "en": "Charged Energy"
+            "en": "Battery Charged Total"
           }
         },
         "meter_power.discharged": {
           "title": {
-            "en": "Discharged Energy"
+            "en": "Battery Discharged Total"
           }
         }
       },
@@ -651,12 +651,12 @@
         },
         "meter_power.imported": {
           "title": {
-            "en": "Grid Import"
+            "en": "Grid Import Total"
           }
         },
         "meter_power.exported": {
           "title": {
-            "en": "Grid Export"
+            "en": "Grid Export Total"
           }
         }
       },
@@ -734,7 +734,7 @@
         },
         "meter_power": {
           "title": {
-            "en": "Solar Energy"
+            "en": "Solar Energy Total"
           }
         }
       },
@@ -1021,6 +1021,7 @@
   "capabilities": {
     "battery_charge_energy_today": {
       "type": "number",
+      "icon": "/assets/capabilities/battery.svg",
       "title": {
         "en": "Battery Charged Today"
       },
@@ -1038,6 +1039,7 @@
     },
     "battery_discharge_energy_today": {
       "type": "number",
+      "icon": "/assets/capabilities/battery.svg",
       "title": {
         "en": "Battery Discharged Today"
       },
@@ -1055,6 +1057,7 @@
     },
     "consumption_energy_today": {
       "type": "number",
+      "icon": "/assets/capabilities/house.svg",
       "title": {
         "en": "Consumption Today"
       },
@@ -1072,8 +1075,9 @@
     },
     "grid_export_energy": {
       "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
       "title": {
-        "en": "Grid Export Energy"
+        "en": "Grid Export Total"
       },
       "units": {
         "en": "kWh"
@@ -1089,6 +1093,7 @@
     },
     "grid_export_energy_today": {
       "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
       "title": {
         "en": "Grid Export Today"
       },
@@ -1124,8 +1129,9 @@
     },
     "grid_import_energy": {
       "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
       "title": {
-        "en": "Grid Import Energy"
+        "en": "Grid Import Total"
       },
       "units": {
         "en": "kWh"
@@ -1141,6 +1147,7 @@
     },
     "grid_import_energy_today": {
       "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
       "title": {
         "en": "Grid Import Today"
       },
@@ -1212,6 +1219,7 @@
     },
     "pv_energy_today": {
       "type": "number",
+      "icon": "/assets/capabilities/solar.svg",
       "title": {
         "en": "Solar Energy Today"
       },

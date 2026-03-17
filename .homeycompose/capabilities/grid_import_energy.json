@@ -1,6 +1,7 @@
 {
   "type": "number",
-  "title": { "en": "Grid Import Energy" },
+  "icon": "/assets/capabilities/energy.svg",
+  "title": { "en": "Grid Import Total" },
   "units": { "en": "kWh" },
   "insights": true,
   "desc": { "en": "Cumulative grid import energy." },

@@ -1,6 +1,7 @@
 {
   "type": "number",
-  "title": { "en": "Grid Export Energy" },
+  "icon": "/assets/capabilities/energy.svg",
+  "title": { "en": "Grid Export Total" },
   "units": { "en": "kWh" },
   "insights": true,
   "desc": { "en": "Cumulative grid export energy." },

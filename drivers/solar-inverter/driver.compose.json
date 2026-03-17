@@ -20,7 +20,7 @@
       "title": { "en": "Solar Power" }
     },
     "meter_power": {
-      "title": { "en": "Solar Energy" }
+      "title": { "en": "Solar Energy Total" }
     }
   },
   "energy": {
