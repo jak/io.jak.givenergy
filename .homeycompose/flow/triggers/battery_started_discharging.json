@@ -1,8 +1,0 @@
-{
-  "title": { "en": "Battery started discharging" },
-  "titleFormatted": { "en": "Battery discharge power exceeds [[threshold]]W" },
-  "args": [
-    { "type": "device", "name": "device", "filter": "driver_id=battery" },
-    { "type": "number", "name": "threshold", "title": { "en": "Threshold (W)" }, "min": 0, "max": 5000, "step": 10, "value": 50 }
-  ]
-}

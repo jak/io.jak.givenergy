@@ -55,85 +55,6 @@
     "triggers": [
       {
         "title": {
-          "en": "Battery SOC changed"
-        },
-        "titleFormatted": {
-          "en": "Battery SOC changed to [[soc]]%"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=battery"
-          }
-        ],
-        "tokens": [
-          {
-            "name": "soc",
-            "type": "number",
-            "title": {
-              "en": "SOC (%)"
-            }
-          }
-        ],
-        "id": "battery_soc_changed"
-      },
-      {
-        "title": {
-          "en": "Battery started charging"
-        },
-        "titleFormatted": {
-          "en": "Battery charge power exceeds [[threshold]]W"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=battery"
-          },
-          {
-            "type": "number",
-            "name": "threshold",
-            "title": {
-              "en": "Threshold (W)"
-            },
-            "min": 0,
-            "max": 5000,
-            "step": 10,
-            "value": 50
-          }
-        ],
-        "id": "battery_started_charging"
-      },
-      {
-        "title": {
-          "en": "Battery started discharging"
-        },
-        "titleFormatted": {
-          "en": "Battery discharge power exceeds [[threshold]]W"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=battery"
-          },
-          {
-            "type": "number",
-            "name": "threshold",
-            "title": {
-              "en": "Threshold (W)"
-            },
-            "min": 0,
-            "max": 5000,
-            "step": 10,
-            "value": 50
-          }
-        ],
-        "id": "battery_started_discharging"
-      },
-      {
-        "title": {
           "en": "Grid frequency dropped below a value"
         },
         "titleFormatted": {
@@ -182,60 +103,6 @@
       },
       {
         "title": {
-          "en": "Grid switched to exporting"
-        },
-        "titleFormatted": {
-          "en": "Grid export exceeds [[threshold]]W"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=solar-inverter"
-          },
-          {
-            "type": "number",
-            "name": "threshold",
-            "title": {
-              "en": "Threshold (W)"
-            },
-            "min": 0,
-            "max": 1000,
-            "step": 10,
-            "value": 50
-          }
-        ],
-        "id": "grid_switched_to_exporting"
-      },
-      {
-        "title": {
-          "en": "Grid switched to importing"
-        },
-        "titleFormatted": {
-          "en": "Grid import exceeds [[threshold]]W"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=solar-inverter"
-          },
-          {
-            "type": "number",
-            "name": "threshold",
-            "title": {
-              "en": "Threshold (W)"
-            },
-            "min": 0,
-            "max": 1000,
-            "step": 10,
-            "value": 50
-          }
-        ],
-        "id": "grid_switched_to_importing"
-      },
-      {
-        "title": {
           "en": "Grid voltage dropped below a value"
         },
         "titleFormatted": {
@@ -281,60 +148,6 @@
           }
         ],
         "id": "grid_voltage_rose_above"
-      },
-      {
-        "title": {
-          "en": "Solar started generating"
-        },
-        "titleFormatted": {
-          "en": "Solar generation exceeds [[threshold]]W"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=solar-inverter"
-          },
-          {
-            "type": "number",
-            "name": "threshold",
-            "title": {
-              "en": "Threshold (W)"
-            },
-            "min": 0,
-            "max": 1000,
-            "step": 10,
-            "value": 10
-          }
-        ],
-        "id": "solar_started_generating"
-      },
-      {
-        "title": {
-          "en": "Solar stopped generating"
-        },
-        "titleFormatted": {
-          "en": "Solar generation dropped below [[threshold]]W"
-        },
-        "args": [
-          {
-            "type": "device",
-            "name": "device",
-            "filter": "driver_id=solar-inverter"
-          },
-          {
-            "type": "number",
-            "name": "threshold",
-            "title": {
-              "en": "Threshold (W)"
-            },
-            "min": 0,
-            "max": 1000,
-            "step": 10,
-            "value": 10
-          }
-        ],
-        "id": "solar_stopped_generating"
       }
     ],
     "conditions": [
