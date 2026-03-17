@@ -9,7 +9,7 @@ module.exports = class BatteryDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
   private lostHandler?: (err: any) => void;
-  private lastSoc?: number;
+
 
   async onInit() {
     const { host } = this.getStore();
@@ -78,16 +78,6 @@ module.exports = class BatteryDevice extends Homey.Device {
     this.setCapabilityValue('battery_charge_energy_today', snapshot.batteryChargeEnergyTodayKwh).catch(this.error);
     this.setCapabilityValue('battery_discharge_energy_today', snapshot.batteryDischargeEnergyTodayKwh).catch(this.error);
 
-    this.fireSocTrigger(snapshot);
-    this.lastSoc = snapshot.stateOfCharge;
-  }
-
-  private fireSocTrigger(snapshot: InverterSnapshot) {
-    if (this.lastSoc !== undefined && this.lastSoc !== snapshot.stateOfCharge) {
-      (this.homey.flow.getDeviceTriggerCard('battery_soc_changed') as any)
-        .trigger(this, { soc: snapshot.stateOfCharge })
-        .catch(this.error);
-    }
   }
 
   async onUninit() {
