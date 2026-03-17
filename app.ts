@@ -112,6 +112,39 @@ module.exports = class GivEnergyApp extends Homey.App {
         if (!(inverter instanceof Gen3Inverter)) throw new Error('Battery pause mode is only supported on Gen3 inverters');
         await inverter.setBatteryPauseMode(args.mode);
       });
+
+    // Transition trigger cards — filter by configurable threshold
+    for (const id of [
+      'solar_started_generating', 'solar_stopped_generating',
+      'grid_switched_to_importing', 'grid_switched_to_exporting',
+      'battery_started_charging', 'battery_started_discharging',
+    ]) {
+      this.homey.flow.getDeviceTriggerCard(id)
+        .registerRunListener(async (args: any, state: any) => {
+          return state.power >= args.threshold;
+        });
+    }
+
+    // Force charge/discharge action cards
+    this.homey.flow.getActionCard('force_charge')
+      .registerRunListener(async (args: any) => {
+        await args.device.forceCharge(args.target_soc, args.charge_rate);
+      });
+
+    this.homey.flow.getActionCard('stop_force_charge')
+      .registerRunListener(async (args: any) => {
+        await args.device.stopForceCharge();
+      });
+
+    this.homey.flow.getActionCard('force_discharge')
+      .registerRunListener(async (args: any) => {
+        await args.device.forceDischarge(args.discharge_rate, args.battery_reserve);
+      });
+
+    this.homey.flow.getActionCard('stop_force_discharge')
+      .registerRunListener(async (args: any) => {
+        await args.device.stopForceDischarge();
+      });
   }
 
   async getConnection(serialNumber: string, host: string): Promise<GivEnergyInverter> {

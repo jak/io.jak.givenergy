@@ -82,11 +82,25 @@
         "title": {
           "en": "Battery started charging"
         },
+        "titleFormatted": {
+          "en": "Battery charge power exceeds [[threshold]]W"
+        },
         "args": [
           {
             "type": "device",
             "name": "device",
             "filter": "driver_id=battery"
+          },
+          {
+            "type": "number",
+            "name": "threshold",
+            "title": {
+              "en": "Threshold (W)"
+            },
+            "min": 0,
+            "max": 5000,
+            "step": 10,
+            "value": 50
           }
         ],
         "id": "battery_started_charging"
@@ -95,11 +109,25 @@
         "title": {
           "en": "Battery started discharging"
         },
+        "titleFormatted": {
+          "en": "Battery discharge power exceeds [[threshold]]W"
+        },
         "args": [
           {
             "type": "device",
             "name": "device",
             "filter": "driver_id=battery"
+          },
+          {
+            "type": "number",
+            "name": "threshold",
+            "title": {
+              "en": "Threshold (W)"
+            },
+            "min": 0,
+            "max": 5000,
+            "step": 10,
+            "value": 50
           }
         ],
         "id": "battery_started_discharging"
@@ -156,11 +184,25 @@
         "title": {
           "en": "Grid switched to exporting"
         },
+        "titleFormatted": {
+          "en": "Grid export exceeds [[threshold]]W"
+        },
         "args": [
           {
             "type": "device",
             "name": "device",
             "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "threshold",
+            "title": {
+              "en": "Threshold (W)"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 10,
+            "value": 50
           }
         ],
         "id": "grid_switched_to_exporting"
@@ -169,11 +211,25 @@
         "title": {
           "en": "Grid switched to importing"
         },
+        "titleFormatted": {
+          "en": "Grid import exceeds [[threshold]]W"
+        },
         "args": [
           {
             "type": "device",
             "name": "device",
             "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "threshold",
+            "title": {
+              "en": "Threshold (W)"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 10,
+            "value": 50
           }
         ],
         "id": "grid_switched_to_importing"
@@ -230,11 +286,25 @@
         "title": {
           "en": "Solar started generating"
         },
+        "titleFormatted": {
+          "en": "Solar generation exceeds [[threshold]]W"
+        },
         "args": [
           {
             "type": "device",
             "name": "device",
             "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "threshold",
+            "title": {
+              "en": "Threshold (W)"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 10,
+            "value": 10
           }
         ],
         "id": "solar_started_generating"
@@ -243,11 +313,25 @@
         "title": {
           "en": "Solar stopped generating"
         },
+        "titleFormatted": {
+          "en": "Solar generation dropped below [[threshold]]W"
+        },
         "args": [
           {
             "type": "device",
             "name": "device",
             "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "threshold",
+            "title": {
+              "en": "Threshold (W)"
+            },
+            "min": 0,
+            "max": 1000,
+            "step": 10,
+            "value": 10
           }
         ],
         "id": "solar_stopped_generating"
@@ -434,6 +518,88 @@
       },
       {
         "title": {
+          "en": "Force charge from grid"
+        },
+        "titleFormatted": {
+          "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate"
+        },
+        "hint": {
+          "en": "Enables timed charge with a full-day slot, forcing the battery to charge from the grid. Use 'Stop force charge' to restore previous settings."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          },
+          {
+            "type": "number",
+            "name": "charge_rate",
+            "title": {
+              "en": "Charge Rate (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "force_charge"
+      },
+      {
+        "title": {
+          "en": "Force discharge to grid"
+        },
+        "titleFormatted": {
+          "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]%"
+        },
+        "hint": {
+          "en": "Enables timed export with a full-day slot, forcing the battery to discharge to the grid. Use 'Stop force discharge' to restore previous settings."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "discharge_rate",
+            "title": {
+              "en": "Discharge Rate (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          },
+          {
+            "type": "number",
+            "name": "battery_reserve",
+            "title": {
+              "en": "Battery Reserve (%)"
+            },
+            "min": 4,
+            "max": 100,
+            "step": 1,
+            "value": 4
+          }
+        ],
+        "id": "force_discharge"
+      },
+      {
+        "title": {
           "en": "Set battery pause mode"
         },
         "titleFormatted": {
@@ -570,6 +736,38 @@
           }
         ],
         "id": "set_export_limit"
+      },
+      {
+        "title": {
+          "en": "Stop force charge"
+        },
+        "hint": {
+          "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "stop_force_charge"
+      },
+      {
+        "title": {
+          "en": "Stop force discharge"
+        },
+        "hint": {
+          "en": "Restores inverter discharge settings to their state before 'Force discharge to grid' was used."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "stop_force_discharge"
       },
       {
         "title": {

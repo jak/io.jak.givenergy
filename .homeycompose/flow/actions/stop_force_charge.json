@@ -1,0 +1,11 @@
+{
+  "title": { "en": "Stop force charge" },
+  "hint": { "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    }
+  ]
+}

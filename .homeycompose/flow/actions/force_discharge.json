@@ -1,0 +1,30 @@
+{
+  "title": { "en": "Force discharge to grid" },
+  "titleFormatted": { "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]%" },
+  "hint": { "en": "Enables timed export with a full-day slot, forcing the battery to discharge to the grid. Use 'Stop force discharge' to restore previous settings." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "number",
+      "name": "discharge_rate",
+      "title": { "en": "Discharge Rate (%)" },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    },
+    {
+      "type": "number",
+      "name": "battery_reserve",
+      "title": { "en": "Battery Reserve (%)" },
+      "min": 4,
+      "max": 100,
+      "step": 1,
+      "value": 4
+    }
+  ]
+}
