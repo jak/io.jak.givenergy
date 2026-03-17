@@ -126,25 +126,48 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (now - this.lastSettingsSyncMs < 60_000) return;
     this.lastSettingsSyncMs = now;
 
-    const chargeSlot = snapshot.chargeSlots[0];
-    const dischargeSlot = snapshot.dischargeSlots[0];
+    const cs = snapshot.chargeSlots;
+    const ds = snapshot.dischargeSlots;
+    const isGen3 = snapshot.generation === 'gen3';
 
     const settings: Record<string, any> = {
       eco_mode: snapshot.ecoMode,
       timed_export: snapshot.timedExport,
       charge_schedule_enabled: snapshot.timedCharge,
-      charge_slot1_start: chargeSlot?.start ?? '00:00',
-      charge_slot1_end: chargeSlot?.end ?? '00:00',
-      discharge_slot1_start: dischargeSlot?.start ?? '00:00',
-      discharge_slot1_end: dischargeSlot?.end ?? '00:00',
+
+      // Charge slot 1 — all generations
+      charge_slot1_start: cs[0]?.start ?? '00:00',
+      charge_slot1_end: cs[0]?.end ?? '00:00',
+
+      // Charge slots 2-3 — Gen3 only, "Unsupported" on Gen2
+      charge_slot2_start: isGen3 ? (cs[1]?.start ?? '00:00') : 'Unsupported',
+      charge_slot2_end: isGen3 ? (cs[1]?.end ?? '00:00') : 'Unsupported',
+      charge_slot3_start: isGen3 ? (cs[2]?.start ?? '00:00') : 'Unsupported',
+      charge_slot3_end: isGen3 ? (cs[2]?.end ?? '00:00') : 'Unsupported',
+
+      // Discharge slot 1 — all generations
+      discharge_slot1_start: ds[0]?.start ?? '00:00',
+      discharge_slot1_end: ds[0]?.end ?? '00:00',
+
+      // Discharge slot 2 — Gen2 supports 2 discharge slots
+      discharge_slot2_start: ds[1]?.start ?? '00:00',
+      discharge_slot2_end: ds[1]?.end ?? '00:00',
+
+      // Discharge slot 3 — Gen3 only
+      discharge_slot3_start: isGen3 ? (ds[2]?.start ?? '00:00') : 'Unsupported',
+      discharge_slot3_end: isGen3 ? (ds[2]?.end ?? '00:00') : 'Unsupported',
+
       charge_rate: snapshot.chargeRatePercent,
       discharge_rate: snapshot.dischargeRatePercent,
     };
 
-    // Gen3 slots carry per-slot target SOC; Gen2 uses the legacy chargeTargetStateOfCharge
-    if (snapshot.generation === 'gen3') {
-      settings.charge_slot1_target_soc = (chargeSlot as any)?.targetStateOfCharge ?? 100;
-      settings.discharge_slot1_target_soc = (dischargeSlot as any)?.targetStateOfCharge ?? 0;
+    if (isGen3) {
+      settings.charge_slot1_target_soc = (cs[0] as any)?.targetStateOfCharge ?? 100;
+      settings.charge_slot2_target_soc = (cs[1] as any)?.targetStateOfCharge ?? 100;
+      settings.charge_slot3_target_soc = (cs[2] as any)?.targetStateOfCharge ?? 100;
+      settings.discharge_slot1_target_soc = (ds[0] as any)?.targetStateOfCharge ?? 0;
+      settings.discharge_slot2_target_soc = (ds[1] as any)?.targetStateOfCharge ?? 0;
+      settings.discharge_slot3_target_soc = (ds[2] as any)?.targetStateOfCharge ?? 0;
       settings.battery_pause_mode = snapshot.batteryPauseMode;
     } else {
       settings.charge_slot1_target_soc = snapshot.chargeTargetStateOfCharge;
@@ -244,9 +267,49 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {
     if (!this.inverter) throw new Error('Not connected to inverter');
 
-    const chargeSlotKeys = ['charge_slot1_start', 'charge_slot1_end', 'charge_slot1_target_soc'];
-    const dischargeSlotKeys = ['discharge_slot1_start', 'discharge_slot1_end', 'discharge_slot1_target_soc'];
     const handled = new Set<string>();
+
+    const handleChargeSlot = async (slot: number) => {
+      const prefix = `charge_slot${slot}`;
+      const keys = [`${prefix}_start`, `${prefix}_end`, `${prefix}_target_soc`];
+      keys.forEach((k) => handled.add(k));
+
+      // Gen2: only slot 1 supported
+      if (slot > 1) {
+        const snapshot = this.inverter!.getData();
+        if (snapshot.generation !== 'gen3') {
+          throw new Error(`Charge slot ${slot} is not supported on Gen2 inverters`);
+        }
+      }
+
+      const config: TimeSlotInput = {
+        start: newSettings[`${prefix}_start`],
+        end: newSettings[`${prefix}_end`],
+        targetStateOfCharge: newSettings[`${prefix}_target_soc`],
+      };
+      await this.inverter!.setChargeSlot(slot, config);
+    };
+
+    const handleDischargeSlot = async (slot: number) => {
+      const prefix = `discharge_slot${slot}`;
+      const keys = [`${prefix}_start`, `${prefix}_end`, `${prefix}_target_soc`];
+      keys.forEach((k) => handled.add(k));
+
+      // Gen2: only slots 1-2 supported
+      if (slot > 2) {
+        const snapshot = this.inverter!.getData();
+        if (snapshot.generation !== 'gen3') {
+          throw new Error(`Discharge slot ${slot} is not supported on Gen2 inverters`);
+        }
+      }
+
+      const config: TimeSlotInput = {
+        start: newSettings[`${prefix}_start`],
+        end: newSettings[`${prefix}_end`],
+        targetStateOfCharge: newSettings[`${prefix}_target_soc`],
+      };
+      await this.inverter!.setDischargeSlot(slot, config);
+    };
 
     for (const key of changedKeys) {
       if (handled.has(key)) continue;
@@ -273,30 +336,41 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         case 'discharge_rate':
           await this.inverter.setDischargeRatePercent(newSettings.discharge_rate);
           break;
+
+        // Charge slots 1-3
         case 'charge_slot1_start':
         case 'charge_slot1_end':
-        case 'charge_slot1_target_soc': {
-          chargeSlotKeys.forEach((k) => handled.add(k));
-          const config: TimeSlotInput = {
-            start: newSettings.charge_slot1_start,
-            end: newSettings.charge_slot1_end,
-            targetStateOfCharge: newSettings.charge_slot1_target_soc,
-          };
-          await this.inverter.setChargeSlot(1, config);
+        case 'charge_slot1_target_soc':
+          await handleChargeSlot(1);
           break;
-        }
+        case 'charge_slot2_start':
+        case 'charge_slot2_end':
+        case 'charge_slot2_target_soc':
+          await handleChargeSlot(2);
+          break;
+        case 'charge_slot3_start':
+        case 'charge_slot3_end':
+        case 'charge_slot3_target_soc':
+          await handleChargeSlot(3);
+          break;
+
+        // Discharge slots 1-3
         case 'discharge_slot1_start':
         case 'discharge_slot1_end':
-        case 'discharge_slot1_target_soc': {
-          dischargeSlotKeys.forEach((k) => handled.add(k));
-          const config: TimeSlotInput = {
-            start: newSettings.discharge_slot1_start,
-            end: newSettings.discharge_slot1_end,
-            targetStateOfCharge: newSettings.discharge_slot1_target_soc,
-          };
-          await this.inverter.setDischargeSlot(1, config);
+        case 'discharge_slot1_target_soc':
+          await handleDischargeSlot(1);
           break;
-        }
+        case 'discharge_slot2_start':
+        case 'discharge_slot2_end':
+        case 'discharge_slot2_target_soc':
+          await handleDischargeSlot(2);
+          break;
+        case 'discharge_slot3_start':
+        case 'discharge_slot3_end':
+        case 'discharge_slot3_target_soc':
+          await handleDischargeSlot(3);
+          break;
+
         case 'export_limit': {
           const { Gen3Inverter } = await import('givenergy-modbus');
           if (!(this.inverter instanceof Gen3Inverter)) throw new Error('Export limit is only supported on Gen3 inverters');
