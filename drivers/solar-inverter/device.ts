@@ -265,14 +265,15 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.dischargeSnapshot = undefined;
   }
 
-  async onSettings({ newSettings, changedKeys, oldSettings }: { newSettings: Record<string, any>; changedKeys: string[]; oldSettings: Record<string, any> }) {
+  async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {
     if (!this.inverter) throw new Error('Not connected to inverter');
 
     // Validate synchronously before returning (catches gen2 unsupported slots etc.)
     this.validateSettings(newSettings, changedKeys);
 
     // Apply in background with retry — return immediately so Homey doesn't timeout
-    this.applySettingsInBackground(newSettings, changedKeys, oldSettings);
+    // syncSettings will correct the UI from inverter state on the next poll cycle
+    this.applySettingsInBackground(newSettings, changedKeys);
   }
 
   private validateSettings(newSettings: Record<string, any>, changedKeys: string[]) {
@@ -297,20 +298,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
   }
 
-  private applySettingsInBackground(newSettings: Record<string, any>, changedKeys: string[], oldSettings: Record<string, any>) {
+  private applySettingsInBackground(newSettings: Record<string, any>, changedKeys: string[]) {
     withRetry(() => this.applySettings(newSettings, changedKeys), this.log.bind(this))
       .then(() => this.log('Settings applied to inverter successfully'))
       .catch((err: any) => {
         this.error('Failed to apply settings to inverter:', err?.message ?? err);
-        // Revert to old settings so UI stays in sync with actual inverter state
-        const revert: Record<string, any> = {};
-        for (const key of changedKeys) {
-          if (oldSettings[key] !== undefined) revert[key] = oldSettings[key];
-        }
-        if (Object.keys(revert).length > 0) {
-          this.setSettings(revert).catch(this.error);
-          this.log('Reverted settings to previous values');
-        }
       });
   }
 
