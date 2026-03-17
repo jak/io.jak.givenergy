@@ -175,28 +175,28 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     const prevSolar = this.lastSolarPower;
     const prevGrid = this.lastGridPower;
 
-    // Solar: 0 → >0
-    if (prevSolar !== undefined && prevSolar === 0 && snapshot.solarPower > 0) {
+    // Solar: was below threshold → now above (run listener checks threshold)
+    if (prevSolar !== undefined && prevSolar <= snapshot.solarPower && snapshot.solarPower > 0) {
       (this.homey.flow.getDeviceTriggerCard('solar_started_generating') as any)
-        .trigger(this)
+        .trigger(this, {}, { power: snapshot.solarPower })
         .catch(this.error);
     }
-    // Solar: >0 → 0
-    if (prevSolar !== undefined && prevSolar > 0 && snapshot.solarPower === 0) {
+    // Solar: was above threshold → now below
+    if (prevSolar !== undefined && prevSolar >= snapshot.solarPower && snapshot.solarPower >= 0) {
       (this.homey.flow.getDeviceTriggerCard('solar_stopped_generating') as any)
-        .trigger(this)
+        .trigger(this, {}, { power: snapshot.solarPower })
         .catch(this.error);
     }
-    // Grid: was not importing → now importing (gridPower < 0)
-    if (prevGrid !== undefined && prevGrid >= 0 && snapshot.gridPower < 0) {
+    // Grid: power decreased (toward importing, gridPower < 0 = importing)
+    if (prevGrid !== undefined && prevGrid >= snapshot.gridPower && snapshot.gridPower < 0) {
       (this.homey.flow.getDeviceTriggerCard('grid_switched_to_importing') as any)
-        .trigger(this)
+        .trigger(this, {}, { power: Math.abs(snapshot.gridPower) })
         .catch(this.error);
     }
-    // Grid: was not exporting → now exporting (gridPower > 0)
-    if (prevGrid !== undefined && prevGrid <= 0 && snapshot.gridPower > 0) {
+    // Grid: power increased (toward exporting, gridPower > 0 = exporting)
+    if (prevGrid !== undefined && prevGrid <= snapshot.gridPower && snapshot.gridPower > 0) {
       (this.homey.flow.getDeviceTriggerCard('grid_switched_to_exporting') as any)
-        .trigger(this)
+        .trigger(this, {}, { power: snapshot.gridPower })
         .catch(this.error);
     }
   }

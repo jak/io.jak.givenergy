@@ -113,6 +113,18 @@ module.exports = class GivEnergyApp extends Homey.App {
         await inverter.setBatteryPauseMode(args.mode);
       });
 
+    // Transition trigger cards — filter by configurable threshold
+    for (const id of [
+      'solar_started_generating', 'solar_stopped_generating',
+      'grid_switched_to_importing', 'grid_switched_to_exporting',
+      'battery_started_charging', 'battery_started_discharging',
+    ]) {
+      this.homey.flow.getDeviceTriggerCard(id)
+        .registerRunListener(async (args: any, state: any) => {
+          return state.power >= args.threshold;
+        });
+    }
+
     // Force charge/discharge action cards
     this.homey.flow.getActionCard('force_charge')
       .registerRunListener(async (args: any) => {

@@ -94,16 +94,16 @@ module.exports = class BatteryDevice extends Homey.Device {
         .trigger(this, { soc: snapshot.stateOfCharge })
         .catch(this.error);
     }
-    // Battery: was not charging → now charging (batteryPower < 0)
-    if (prevPower !== undefined && prevPower >= 0 && snapshot.batteryPower < 0) {
+    // Battery: power decreased (toward charging, batteryPower < 0 = charging)
+    if (prevPower !== undefined && prevPower >= snapshot.batteryPower && snapshot.batteryPower < 0) {
       (this.homey.flow.getDeviceTriggerCard('battery_started_charging') as any)
-        .trigger(this)
+        .trigger(this, {}, { power: Math.abs(snapshot.batteryPower) })
         .catch(this.error);
     }
-    // Battery: was not discharging → now discharging (batteryPower > 0)
-    if (prevPower !== undefined && prevPower <= 0 && snapshot.batteryPower > 0) {
+    // Battery: power increased (toward discharging, batteryPower > 0 = discharging)
+    if (prevPower !== undefined && prevPower <= snapshot.batteryPower && snapshot.batteryPower > 0) {
       (this.homey.flow.getDeviceTriggerCard('battery_started_discharging') as any)
-        .trigger(this)
+        .trigger(this, {}, { power: snapshot.batteryPower })
         .catch(this.error);
     }
   }
