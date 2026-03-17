@@ -112,6 +112,27 @@ module.exports = class GivEnergyApp extends Homey.App {
         if (!(inverter instanceof Gen3Inverter)) throw new Error('Battery pause mode is only supported on Gen3 inverters');
         await inverter.setBatteryPauseMode(args.mode);
       });
+
+    // Force charge/discharge action cards
+    this.homey.flow.getActionCard('force_charge')
+      .registerRunListener(async (args: any) => {
+        await args.device.forceCharge(args.target_soc, args.charge_rate);
+      });
+
+    this.homey.flow.getActionCard('stop_force_charge')
+      .registerRunListener(async (args: any) => {
+        await args.device.stopForceCharge();
+      });
+
+    this.homey.flow.getActionCard('force_discharge')
+      .registerRunListener(async (args: any) => {
+        await args.device.forceDischarge(args.discharge_rate, args.battery_reserve);
+      });
+
+    this.homey.flow.getActionCard('stop_force_discharge')
+      .registerRunListener(async (args: any) => {
+        await args.device.stopForceDischarge();
+      });
   }
 
   async getConnection(serialNumber: string, host: string): Promise<GivEnergyInverter> {

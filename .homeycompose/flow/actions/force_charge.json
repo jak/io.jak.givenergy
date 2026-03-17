@@ -1,0 +1,30 @@
+{
+  "title": { "en": "Force charge from grid" },
+  "titleFormatted": { "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate" },
+  "hint": { "en": "Enables timed charge with a full-day slot, forcing the battery to charge from the grid. Use 'Stop force charge' to restore previous settings." },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "number",
+      "name": "target_soc",
+      "title": { "en": "Target SOC (%)" },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    },
+    {
+      "type": "number",
+      "name": "charge_rate",
+      "title": { "en": "Charge Rate (%)" },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    }
+  ]
+}

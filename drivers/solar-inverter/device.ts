@@ -16,6 +16,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private lastSolarPower?: number;
   private lastGridPower?: number;
   private lastSettingsSyncMs = 0;
+  private chargeSnapshot?: { timedCharge: boolean; chargeSlot: any; chargeRatePercent: number };
+  private dischargeSnapshot?: { timedExport: boolean; dischargeSlot: any; dischargeRatePercent: number; batteryReservePercent: number };
 
   async onInit() {
     const { host } = this.getStore();
@@ -197,6 +199,69 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         .trigger(this)
         .catch(this.error);
     }
+  }
+
+  async forceCharge(targetSoc: number, chargeRate: number) {
+    if (!this.inverter) throw new Error('Not connected to inverter');
+    const snapshot = this.inverter.getData();
+
+    this.chargeSnapshot = {
+      timedCharge: snapshot.timedCharge,
+      chargeSlot: snapshot.chargeSlots[0],
+      chargeRatePercent: snapshot.chargeRatePercent,
+    };
+
+    this.log(`Force charge: target=${targetSoc}% rate=${chargeRate}%`);
+    await this.inverter.setTimedCharge(true);
+    await this.inverter.setChargeSlot(1, { start: '00:00', end: '23:59', targetStateOfCharge: targetSoc });
+    await this.inverter.setChargeRatePercent(chargeRate);
+  }
+
+  async stopForceCharge() {
+    if (!this.inverter) throw new Error('Not connected to inverter');
+    if (!this.chargeSnapshot) throw new Error('No force charge in progress');
+
+    const { timedCharge, chargeSlot, chargeRatePercent } = this.chargeSnapshot;
+    this.log('Restoring charge settings');
+    await this.inverter.setTimedCharge(timedCharge);
+    if (chargeSlot) {
+      await this.inverter.setChargeSlot(1, chargeSlot);
+    }
+    await this.inverter.setChargeRatePercent(chargeRatePercent);
+    this.chargeSnapshot = undefined;
+  }
+
+  async forceDischarge(dischargeRate: number, batteryReserve: number) {
+    if (!this.inverter) throw new Error('Not connected to inverter');
+    const snapshot = this.inverter.getData();
+
+    this.dischargeSnapshot = {
+      timedExport: snapshot.timedExport,
+      dischargeSlot: snapshot.dischargeSlots[0],
+      dischargeRatePercent: snapshot.dischargeRatePercent,
+      batteryReservePercent: snapshot.batteryReservePercent,
+    };
+
+    this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
+    await this.inverter.setTimedExport(true);
+    await this.inverter.setDischargeSlot(1, { start: '00:00', end: '23:59' });
+    await this.inverter.setDischargeRatePercent(dischargeRate);
+    await this.inverter.setBatteryReserve(batteryReserve);
+  }
+
+  async stopForceDischarge() {
+    if (!this.inverter) throw new Error('Not connected to inverter');
+    if (!this.dischargeSnapshot) throw new Error('No force discharge in progress');
+
+    const { timedExport, dischargeSlot, dischargeRatePercent, batteryReservePercent } = this.dischargeSnapshot;
+    this.log('Restoring discharge settings');
+    await this.inverter.setTimedExport(timedExport);
+    if (dischargeSlot) {
+      await this.inverter.setDischargeSlot(1, dischargeSlot);
+    }
+    await this.inverter.setDischargeRatePercent(dischargeRatePercent);
+    await this.inverter.setBatteryReserve(batteryReservePercent);
+    this.dischargeSnapshot = undefined;
   }
 
   async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {
