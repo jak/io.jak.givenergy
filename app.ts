@@ -113,6 +113,47 @@ module.exports = class GivEnergyApp extends Homey.App {
         await inverter.setBatteryPauseMode(args.mode);
       });
 
+    // Slot configuration action cards (Gen2 — no target SOC)
+    this.homey.flow.getActionCard('set_charge_slot')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        await inverter.setChargeSlot(1, { start: args.start_time, end: args.end_time });
+      });
+
+    this.homey.flow.getActionCard('set_discharge_slot')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const slot = parseInt(args.slot, 10);
+        await inverter.setDischargeSlot(slot, { start: args.start_time, end: args.end_time });
+      });
+
+    // Slot configuration action cards (Gen3 — with target SOC)
+    this.homey.flow.getActionCard('set_charge_slot_gen3')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const slot = parseInt(args.slot, 10);
+        await inverter.setChargeSlot(slot, {
+          start: args.start_time,
+          end: args.end_time,
+          targetStateOfCharge: args.target_soc,
+        });
+      });
+
+    this.homey.flow.getActionCard('set_discharge_slot_gen3')
+      .registerRunListener(async (args: any) => {
+        const inverter = this.getInverter(args.device.getData().id);
+        if (!inverter) throw new Error('Inverter not connected');
+        const slot = parseInt(args.slot, 10);
+        await inverter.setDischargeSlot(slot, {
+          start: args.start_time,
+          end: args.end_time,
+          targetStateOfCharge: args.target_soc,
+        });
+      });
+
     // Force charge/discharge action cards
     this.homey.flow.getActionCard('force_charge')
       .registerRunListener(async (args: any) => {
