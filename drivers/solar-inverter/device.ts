@@ -274,12 +274,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
       const keys = [`${prefix}_start`, `${prefix}_end`, `${prefix}_target_soc`];
       keys.forEach((k) => handled.add(k));
 
+      const isGen3 = this.getStore().generation === 'gen3';
+
       // Gen2: only slot 1 supported
-      if (slot > 1) {
-        const snapshot = this.inverter!.getData();
-        if (snapshot.generation !== 'gen3') {
-          throw new Error(`Charge slot ${slot} is not supported on Gen2 inverters`);
-        }
+      if (slot > 1 && !isGen3) {
+        throw new Error(`Charge slot ${slot} is not supported on Gen2 inverters`);
       }
 
       const config: TimeSlotInput = {
@@ -288,6 +287,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         targetStateOfCharge: newSettings[`${prefix}_target_soc`],
       };
       await this.inverter!.setChargeSlot(slot, config);
+
+      // Gen2 uses a single global charge target SOC (HR116), not per-slot
+      if (!isGen3 && newSettings[`${prefix}_target_soc`] !== undefined) {
+        await this.inverter!.setChargeTarget(newSettings[`${prefix}_target_soc`]);
+      }
     };
 
     const handleDischargeSlot = async (slot: number) => {
@@ -296,11 +300,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
       keys.forEach((k) => handled.add(k));
 
       // Gen2: only slots 1-2 supported
-      if (slot > 2) {
-        const snapshot = this.inverter!.getData();
-        if (snapshot.generation !== 'gen3') {
-          throw new Error(`Discharge slot ${slot} is not supported on Gen2 inverters`);
-        }
+      if (slot > 2 && this.getStore().generation !== 'gen3') {
+        throw new Error(`Discharge slot ${slot} is not supported on Gen2 inverters`);
       }
 
       const config: TimeSlotInput = {
