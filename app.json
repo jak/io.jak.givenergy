@@ -1,0 +1,2182 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "io.jak.givenergy",
+  "version": "1.4.1",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "brandColor": "#003A34",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "GivEnergy",
+    "nl": "GivEnergy",
+    "af": "GivEnergy"
+  },
+  "description": {
+    "en": "Monitor and control your solar energy system locally",
+    "nl": "Bewaak en bedien je zonne-energiesysteem lokaal",
+    "af": "Monitor en beheer jou sonkragstelsel plaaslik"
+  },
+  "category": [
+    "energy"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.jpg",
+    "large": "/assets/images/large.jpg",
+    "xlarge": "/assets/images/xlarge.jpg"
+  },
+  "support": "https://community.homey.app/t/app-pro-givenergy/152231",
+  "bugs": {
+    "url": "https://github.com/jak/io.jak.givenergy/issues"
+  },
+  "source": "https://github.com/jak/io.jak.givenergy",
+  "homepage": "https://community.homey.app/t/app-pro-givenergy/152231",
+  "homeyCommunityTopicId": 152231,
+  "tags": {
+    "en": [
+      "givenergy",
+      "solar",
+      "inverter",
+      "battery",
+      "modbus",
+      "energy"
+    ],
+    "nl": [
+      "givenergy",
+      "zonne-energie",
+      "omvormer",
+      "batterij",
+      "modbus",
+      "energie"
+    ],
+    "af": [
+      "givenergy",
+      "sonkrag",
+      "omsetter",
+      "battery",
+      "modbus",
+      "energie"
+    ]
+  },
+  "contributing": {
+    "donate": {
+      "githubSponsors": {
+        "username": "jak"
+      }
+    }
+  },
+  "author": {
+    "name": "Jak Spalding",
+    "email": "jak.spalding@gmail.com"
+  },
+  "flow": {
+    "triggers": [
+      {
+        "title": {
+          "en": "Grid frequency dropped below a value",
+          "nl": "Netfrequentie daalde onder een waarde",
+          "af": "Netfrekwensie het onder 'n waarde gedaal"
+        },
+        "titleFormatted": {
+          "en": "Grid frequency dropped below [[frequency]]Hz",
+          "nl": "Netfrequentie daalde onder [[frequency]]Hz",
+          "af": "Netfrekwensie het onder [[frequency]]Hz gedaal"
+        },
+        "args": [
+          {
+            "name": "frequency",
+            "type": "number",
+            "title": {
+              "en": "Frequency (Hz)",
+              "nl": "Frequentie (Hz)",
+              "af": "Frekwensie (Hz)"
+            },
+            "placeholder": {
+              "en": "e.g. 49.5",
+              "nl": "bijv. 49,5",
+              "af": "bv. 49,5"
+            },
+            "min": 45,
+            "max": 55,
+            "step": 0.1
+          }
+        ],
+        "id": "grid_frequency_dropped_below"
+      },
+      {
+        "title": {
+          "en": "Grid frequency rose above a value",
+          "nl": "Netfrequentie steeg boven een waarde",
+          "af": "Netfrekwensie het bo 'n waarde gestyg"
+        },
+        "titleFormatted": {
+          "en": "Grid frequency rose above [[frequency]]Hz",
+          "nl": "Netfrequentie steeg boven [[frequency]]Hz",
+          "af": "Netfrekwensie het bo [[frequency]]Hz gestyg"
+        },
+        "args": [
+          {
+            "name": "frequency",
+            "type": "number",
+            "title": {
+              "en": "Frequency (Hz)",
+              "nl": "Frequentie (Hz)",
+              "af": "Frekwensie (Hz)"
+            },
+            "placeholder": {
+              "en": "e.g. 50.5",
+              "nl": "bijv. 50,5",
+              "af": "bv. 50,5"
+            },
+            "min": 45,
+            "max": 55,
+            "step": 0.1
+          }
+        ],
+        "id": "grid_frequency_rose_above"
+      },
+      {
+        "title": {
+          "en": "Grid voltage dropped below a value",
+          "nl": "Netspanning daalde onder een waarde",
+          "af": "Netspanning het onder 'n waarde gedaal"
+        },
+        "titleFormatted": {
+          "en": "Grid voltage dropped below [[voltage]]V",
+          "nl": "Netspanning daalde onder [[voltage]]V",
+          "af": "Netspanning het onder [[voltage]]V gedaal"
+        },
+        "args": [
+          {
+            "name": "voltage",
+            "type": "number",
+            "title": {
+              "en": "Voltage (V)",
+              "nl": "Spanning (V)",
+              "af": "Spanning (V)"
+            },
+            "placeholder": {
+              "en": "e.g. 220",
+              "nl": "bijv. 220",
+              "af": "bv. 220"
+            },
+            "min": 100,
+            "max": 260,
+            "step": 1
+          }
+        ],
+        "id": "grid_voltage_dropped_below"
+      },
+      {
+        "title": {
+          "en": "Grid voltage rose above a value",
+          "nl": "Netspanning steeg boven een waarde",
+          "af": "Netspanning het bo 'n waarde gestyg"
+        },
+        "titleFormatted": {
+          "en": "Grid voltage rose above [[voltage]]V",
+          "nl": "Netspanning steeg boven [[voltage]]V",
+          "af": "Netspanning het bo [[voltage]]V gestyg"
+        },
+        "args": [
+          {
+            "name": "voltage",
+            "type": "number",
+            "title": {
+              "en": "Voltage (V)",
+              "nl": "Spanning (V)",
+              "af": "Spanning (V)"
+            },
+            "placeholder": {
+              "en": "e.g. 250",
+              "nl": "bijv. 250",
+              "af": "bv. 250"
+            },
+            "min": 100,
+            "max": 260,
+            "step": 1
+          }
+        ],
+        "id": "grid_voltage_rose_above"
+      }
+    ],
+    "conditions": [
+      {
+        "title": {
+          "en": "Battery is charging",
+          "nl": "Batterij wordt geladen",
+          "af": "Battery word gelaai"
+        },
+        "hint": {
+          "en": "True when the battery is being charged.",
+          "nl": "Waar wanneer de batterij wordt geladen.",
+          "af": "Waar wanneer die battery gelaai word."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ],
+        "id": "battery_charging"
+      },
+      {
+        "title": {
+          "en": "Battery is discharging",
+          "nl": "Batterij wordt ontladen",
+          "af": "Battery word ontlaai"
+        },
+        "hint": {
+          "en": "True when the battery is being discharged.",
+          "nl": "Waar wanneer de batterij wordt ontladen.",
+          "af": "Waar wanneer die battery ontlaai word."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ],
+        "id": "battery_discharging"
+      },
+      {
+        "title": {
+          "en": "Eco mode is enabled",
+          "nl": "Eco-modus is ingeschakeld",
+          "af": "Eko-modus is geaktiveer"
+        },
+        "hint": {
+          "en": "True when the inverter is operating in eco mode.",
+          "nl": "Waar wanneer de omvormer in eco-modus werkt.",
+          "af": "Waar wanneer die omsetter in eko-modus werk."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "eco_mode_enabled"
+      },
+      {
+        "title": {
+          "en": "Grid is exporting",
+          "nl": "Net exporteert",
+          "af": "Net voer uit"
+        },
+        "hint": {
+          "en": "True when exporting power to the grid.",
+          "nl": "Waar wanneer stroom naar het net wordt geëxporteerd.",
+          "af": "Waar wanneer krag na die net uitgevoer word."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "grid_exporting"
+      },
+      {
+        "title": {
+          "en": "Grid is importing",
+          "nl": "Net importeert",
+          "af": "Net voer in"
+        },
+        "hint": {
+          "en": "True when importing power from the grid.",
+          "nl": "Waar wanneer stroom van het net wordt geïmporteerd.",
+          "af": "Waar wanneer krag van die net ingevoer word."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "grid_importing"
+      },
+      {
+        "title": {
+          "en": "Solar is generating",
+          "nl": "Zonne-energie wordt opgewekt",
+          "af": "Sonkrag wek op"
+        },
+        "hint": {
+          "en": "True when solar panels are producing power.",
+          "nl": "Waar wanneer zonnepanelen stroom opwekken.",
+          "af": "Waar wanneer sonpanele krag opwek."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "solar_generating"
+      }
+    ],
+    "actions": [
+      {
+        "title": {
+          "en": "Enable or disable charge schedule",
+          "nl": "Laadschema in- of uitschakelen",
+          "af": "Aktiveer of deaktiveer laaiskedule"
+        },
+        "titleFormatted": {
+          "en": "[[action]] charge schedule",
+          "nl": "[[action]] laadschema",
+          "af": "[[action]] laaiskedule"
+        },
+        "hint": {
+          "en": "Enables or disables the battery charge schedule.",
+          "nl": "Schakelt het laadschema van de batterij in of uit.",
+          "af": "Aktiveer of deaktiveer die battery se laaiskedule."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie",
+              "af": "Aksie"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable",
+                  "nl": "Inschakelen",
+                  "af": "Aktiveer"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable",
+                  "nl": "Uitschakelen",
+                  "af": "Deaktiveer"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "enable_charge_schedule"
+      },
+      {
+        "title": {
+          "en": "Enable or disable discharge schedule",
+          "nl": "Ontlaadschema in- of uitschakelen",
+          "af": "Aktiveer of deaktiveer ontlaaiskedule"
+        },
+        "titleFormatted": {
+          "en": "[[action]] discharge schedule",
+          "nl": "[[action]] ontlaadschema",
+          "af": "[[action]] ontlaaiskedule"
+        },
+        "hint": {
+          "en": "Enables or disables the battery discharge schedule.",
+          "nl": "Schakelt het ontlaadschema van de batterij in of uit.",
+          "af": "Aktiveer of deaktiveer die battery se ontlaaiskedule."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie",
+              "af": "Aksie"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable",
+                  "nl": "Inschakelen",
+                  "af": "Aktiveer"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable",
+                  "nl": "Uitschakelen",
+                  "af": "Deaktiveer"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "enable_discharge_schedule"
+      },
+      {
+        "title": {
+          "en": "Force charge from grid",
+          "nl": "Geforceerd laden van het net",
+          "af": "Forseer laai van die net"
+        },
+        "titleFormatted": {
+          "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate",
+          "nl": "Geforceerd laden tot [[target_soc]]% met [[charge_rate]]% snelheid",
+          "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo"
+        },
+        "hint": {
+          "en": "Enables timed charge with a full-day slot, forcing the battery to charge from the grid. Use 'Stop force charge' to restore previous settings.",
+          "nl": "Schakelt geforceerd laden in met een schema voor de hele dag, waardoor de batterij van het net wordt geladen. Gebruik 'Geforceerd laden stoppen' om de vorige instellingen te herstellen.",
+          "af": "Aktiveer geforseerde laai met 'n voldag-slot, wat die battery forseer om van die net te laai. Gebruik 'Stop forseer laai' om vorige instellings te herstel."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)",
+              "nl": "Doel-SOC (%)",
+              "af": "Teiken-SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          },
+          {
+            "type": "number",
+            "name": "charge_rate",
+            "title": {
+              "en": "Charge Rate (%)",
+              "nl": "Laadsnelheid (%)",
+              "af": "Laaitempo (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "force_charge"
+      },
+      {
+        "title": {
+          "en": "Force discharge to grid",
+          "nl": "Geforceerd ontladen naar het net",
+          "af": "Forseer ontlaai na die net"
+        },
+        "titleFormatted": {
+          "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]%",
+          "nl": "Geforceerd ontladen met [[discharge_rate]]% snelheid, reserve [[battery_reserve]]%",
+          "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]%"
+        },
+        "hint": {
+          "en": "Enables timed export with a full-day slot, forcing the battery to discharge to the grid. Use 'Stop force discharge' to restore previous settings.",
+          "nl": "Schakelt geplande export in met een schema voor de hele dag, waardoor de batterij naar het net wordt ontladen. Gebruik 'Geforceerd ontladen stoppen' om de vorige instellingen te herstellen.",
+          "af": "Aktiveer geskeduleerde uitvoer met 'n voldag-slot, wat die battery forseer om na die net te ontlaai. Gebruik 'Stop forseer ontlaai' om vorige instellings te herstel."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "discharge_rate",
+            "title": {
+              "en": "Discharge Rate (%)",
+              "nl": "Ontlaadsnelheid (%)",
+              "af": "Ontlaaitempo (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          },
+          {
+            "type": "number",
+            "name": "battery_reserve",
+            "title": {
+              "en": "Battery Reserve (%)",
+              "nl": "Batterijreserve (%)",
+              "af": "Batteryreserwe (%)"
+            },
+            "min": 4,
+            "max": 100,
+            "step": 1,
+            "value": 4
+          }
+        ],
+        "id": "force_discharge"
+      },
+      {
+        "title": {
+          "en": "Set battery pause mode",
+          "nl": "Batterij pauzemodus instellen",
+          "af": "Stel battery pouse-modus"
+        },
+        "titleFormatted": {
+          "en": "Set battery pause mode to [[mode]]",
+          "nl": "Batterij pauzemodus instellen op [[mode]]",
+          "af": "Stel battery pouse-modus op [[mode]]"
+        },
+        "hint": {
+          "en": "Pauses battery charge, discharge, or both. Gen3 inverters only.",
+          "nl": "Pauzeert het laden, ontladen of beide van de batterij. Alleen Gen3-omvormers.",
+          "af": "Pouseer batterylaai, ontlaai, of beide. Slegs Gen3-omsetters."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Mode",
+              "nl": "Modus",
+              "af": "Modus"
+            },
+            "values": [
+              {
+                "id": "disabled",
+                "title": {
+                  "en": "Disabled (normal)",
+                  "nl": "Uitgeschakeld (normaal)",
+                  "af": "Gedeaktiveer (normaal)"
+                }
+              },
+              {
+                "id": "pause_charge",
+                "title": {
+                  "en": "Pause Charge",
+                  "nl": "Laden pauzeren",
+                  "af": "Pouseer laai"
+                }
+              },
+              {
+                "id": "pause_discharge",
+                "title": {
+                  "en": "Pause Discharge",
+                  "nl": "Ontladen pauzeren",
+                  "af": "Pouseer ontlaai"
+                }
+              },
+              {
+                "id": "pause_both",
+                "title": {
+                  "en": "Pause Both",
+                  "nl": "Beide pauzeren",
+                  "af": "Pouseer beide"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set_battery_pause_mode"
+      },
+      {
+        "title": {
+          "en": "Set charge rate",
+          "nl": "Laadsnelheid instellen",
+          "af": "Stel laaitempo"
+        },
+        "titleFormatted": {
+          "en": "Set charge rate to [[watts]] W",
+          "nl": "Laadsnelheid instellen op [[watts]] W",
+          "af": "Stel laaitempo op [[watts]] W"
+        },
+        "hint": {
+          "en": "Sets the battery charge rate in watts.",
+          "nl": "Stelt de laadsnelheid van de batterij in watt in.",
+          "af": "Stel die battery se laaitempo in watt."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts",
+              "nl": "Watt",
+              "af": "Watt"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_charge_rate"
+      },
+      {
+        "title": {
+          "en": "Set charge slot",
+          "nl": "Laadslot instellen",
+          "af": "Stel laaislot"
+        },
+        "titleFormatted": {
+          "en": "Set charge slot 1 to [[start_time]] - [[end_time]]",
+          "nl": "Laadslot 1 instellen op [[start_time]] - [[end_time]]",
+          "af": "Stel laaislot 1 op [[start_time]] - [[end_time]]"
+        },
+        "hint": {
+          "en": "Configures the charge schedule time window. Gen1/Gen2 inverters support 1 charge slot.",
+          "nl": "Configureert het tijdvenster van het laadschema. Gen1/Gen2-omvormers ondersteunen 1 laadslot.",
+          "af": "Stel die laaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun 1 laaislot."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "00:30",
+              "nl": "00:30",
+              "af": "00:30"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "04:30",
+              "nl": "04:30",
+              "af": "04:30"
+            }
+          }
+        ],
+        "id": "set_charge_slot"
+      },
+      {
+        "title": {
+          "en": "Set charge slot",
+          "nl": "Laadslot instellen",
+          "af": "Stel laaislot"
+        },
+        "titleFormatted": {
+          "en": "Set charge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%",
+          "nl": "Laadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]%",
+          "af": "Stel laaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]%"
+        },
+        "hint": {
+          "en": "Configures a charge schedule slot with target SOC. Gen3 inverters support slots 1-3.",
+          "nl": "Configureert een laadslot met doel-SOC. Gen3-omvormers ondersteunen slots 1-3.",
+          "af": "Stel 'n laaislot op met teiken-SOC. Gen3-omsetters ondersteun slots 1-3."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Slot",
+              "af": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1",
+                  "nl": "Slot 1",
+                  "af": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2",
+                  "nl": "Slot 2",
+                  "af": "Slot 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Slot 3",
+                  "nl": "Slot 3",
+                  "af": "Slot 3"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "00:30",
+              "nl": "00:30",
+              "af": "00:30"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "04:30",
+              "nl": "04:30",
+              "af": "04:30"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)",
+              "nl": "Doel-SOC (%)",
+              "af": "Teiken-SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "set_charge_slot_gen3"
+      },
+      {
+        "title": {
+          "en": "Set discharge rate",
+          "nl": "Ontlaadsnelheid instellen",
+          "af": "Stel ontlaaitempo"
+        },
+        "titleFormatted": {
+          "en": "Set discharge rate to [[watts]] W",
+          "nl": "Ontlaadsnelheid instellen op [[watts]] W",
+          "af": "Stel ontlaaitempo op [[watts]] W"
+        },
+        "hint": {
+          "en": "Sets the battery discharge rate in watts.",
+          "nl": "Stelt de ontlaadsnelheid van de batterij in watt in.",
+          "af": "Stel die battery se ontlaaitempo in watt."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts",
+              "nl": "Watt",
+              "af": "Watt"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_discharge_rate"
+      },
+      {
+        "title": {
+          "en": "Set discharge slot",
+          "nl": "Ontlaadslot instellen",
+          "af": "Stel ontlaaislot"
+        },
+        "titleFormatted": {
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]]",
+          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]]",
+          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]]"
+        },
+        "hint": {
+          "en": "Configures a discharge schedule time window. Gen1/Gen2 inverters support slots 1-2.",
+          "nl": "Configureert het tijdvenster van het ontlaadschema. Gen1/Gen2-omvormers ondersteunen slots 1-2.",
+          "af": "Stel die ontlaaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun slots 1-2."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Slot",
+              "af": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1",
+                  "nl": "Slot 1",
+                  "af": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2",
+                  "nl": "Slot 2",
+                  "af": "Slot 2"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "16:00",
+              "nl": "16:00",
+              "af": "16:00"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "19:00",
+              "nl": "19:00",
+              "af": "19:00"
+            }
+          }
+        ],
+        "id": "set_discharge_slot"
+      },
+      {
+        "title": {
+          "en": "Set discharge slot",
+          "nl": "Ontlaadslot instellen",
+          "af": "Stel ontlaaislot"
+        },
+        "titleFormatted": {
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%",
+          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]%",
+          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]%"
+        },
+        "hint": {
+          "en": "Configures a discharge schedule slot with target SOC. Gen3 inverters support slots 1-3.",
+          "nl": "Configureert een ontlaadslot met doel-SOC. Gen3-omvormers ondersteunen slots 1-3.",
+          "af": "Stel 'n ontlaaislot op met teiken-SOC. Gen3-omsetters ondersteun slots 1-3."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Slot",
+              "af": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1",
+                  "nl": "Slot 1",
+                  "af": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2",
+                  "nl": "Slot 2",
+                  "af": "Slot 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Slot 3",
+                  "nl": "Slot 3",
+                  "af": "Slot 3"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "16:00",
+              "nl": "16:00",
+              "af": "16:00"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "19:00",
+              "nl": "19:00",
+              "af": "19:00"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)",
+              "nl": "Doel-SOC (%)",
+              "af": "Teiken-SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 0
+          }
+        ],
+        "id": "set_discharge_slot_gen3"
+      },
+      {
+        "title": {
+          "en": "Set export limit",
+          "nl": "Exportlimiet instellen",
+          "af": "Stel uitvoerlimiet"
+        },
+        "titleFormatted": {
+          "en": "Set export limit to [[watts]] W",
+          "nl": "Exportlimiet instellen op [[watts]] W",
+          "af": "Stel uitvoerlimiet op [[watts]] W"
+        },
+        "hint": {
+          "en": "Sets the grid export limit in watts. Gen3 inverters only.",
+          "nl": "Stelt de exportlimiet naar het net in watt in. Alleen Gen3-omvormers.",
+          "af": "Stel die netuitvoerlimiet in watt. Slegs Gen3-omsetters."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts",
+              "nl": "Watt",
+              "af": "Watt"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_export_limit"
+      },
+      {
+        "title": {
+          "en": "Stop force charge",
+          "nl": "Geforceerd laden stoppen",
+          "af": "Stop forseer laai"
+        },
+        "hint": {
+          "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used.",
+          "nl": "Herstelt de laadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd laden van het net'.",
+          "af": "Herstel die omsetter se laai-instellings na hul toestand voor 'Forseer laai van die net' gebruik is."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "stop_force_charge"
+      },
+      {
+        "title": {
+          "en": "Stop force discharge",
+          "nl": "Geforceerd ontladen stoppen",
+          "af": "Stop forseer ontlaai"
+        },
+        "hint": {
+          "en": "Restores inverter discharge settings to their state before 'Force discharge to grid' was used.",
+          "nl": "Herstelt de ontlaadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd ontladen naar het net'.",
+          "af": "Herstel die omsetter se ontlaai-instellings na hul toestand voor 'Forseer ontlaai na die net' gebruik is."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          }
+        ],
+        "id": "stop_force_discharge"
+      },
+      {
+        "title": {
+          "en": "Toggle eco mode",
+          "nl": "Eco-modus schakelen",
+          "af": "Wissel eko-modus"
+        },
+        "titleFormatted": {
+          "en": "[[action]] eco mode",
+          "nl": "[[action]] eco-modus",
+          "af": "[[action]] eko-modus"
+        },
+        "hint": {
+          "en": "Enables or disables eco mode (HR27). Independent of timed export.",
+          "nl": "Schakelt eco-modus in of uit (HR27). Onafhankelijk van geplande export.",
+          "af": "Aktiveer of deaktiveer eko-modus (HR27). Onafhanklik van geskeduleerde uitvoer."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie",
+              "af": "Aksie"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable",
+                  "nl": "Inschakelen",
+                  "af": "Aktiveer"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable",
+                  "nl": "Uitschakelen",
+                  "af": "Deaktiveer"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "toggle_eco_mode"
+      },
+      {
+        "title": {
+          "en": "Toggle timed export",
+          "nl": "Geplande export schakelen",
+          "af": "Wissel geskeduleerde uitvoer"
+        },
+        "titleFormatted": {
+          "en": "[[action]] timed export",
+          "nl": "[[action]] geplande export",
+          "af": "[[action]] geskeduleerde uitvoer"
+        },
+        "hint": {
+          "en": "Enables or disables timed export (HR59). Independent of eco mode.",
+          "nl": "Schakelt geplande export in of uit (HR59). Onafhankelijk van eco-modus.",
+          "af": "Aktiveer of deaktiveer geskeduleerde uitvoer (HR59). Onafhanklik van eko-modus."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie",
+              "af": "Aksie"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable",
+                  "nl": "Inschakelen",
+                  "af": "Aktiveer"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable",
+                  "nl": "Uitschakelen",
+                  "af": "Deaktiveer"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "toggle_timed_export"
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Battery",
+        "nl": "Batterij",
+        "af": "Battery"
+      },
+      "class": "battery",
+      "capabilities": [
+        "measure_power",
+        "measure_battery",
+        "meter_power.charged",
+        "meter_power.discharged",
+        "measure_temperature",
+        "battery_charge_energy_today",
+        "battery_discharge_energy_today"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Battery Power",
+            "nl": "Batterijvermogen",
+            "af": "Batterykrag"
+          }
+        },
+        "meter_power.charged": {
+          "title": {
+            "en": "Battery Charged Total",
+            "nl": "Batterij geladen totaal",
+            "af": "Battery gelaai totaal"
+          }
+        },
+        "meter_power.discharged": {
+          "title": {
+            "en": "Battery Discharged Total",
+            "nl": "Batterij ontladen totaal",
+            "af": "Battery ontlaai totaal"
+          }
+        }
+      },
+      "energy": {
+        "homeBattery": true,
+        "meterPowerImportedCapability": "meter_power.charged",
+        "meterPowerExportedCapability": "meter_power.discharged"
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/battery/assets/images/small.jpg",
+        "large": "/drivers/battery/assets/images/large.jpg",
+        "xlarge": "/drivers/battery/assets/images/xlarge.jpg"
+      },
+      "pair": [
+        {
+          "id": "discover",
+          "options": {
+            "title": {
+              "en": "Find Inverter",
+              "nl": "Omvormer zoeken",
+              "af": "Soek omsetter"
+            }
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "repair"
+        }
+      ],
+      "id": "battery"
+    },
+    {
+      "name": {
+        "en": "Grid Meter",
+        "nl": "Netmeter",
+        "af": "Kragnetmeter"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "measure_power",
+        "meter_power.imported",
+        "meter_power.exported",
+        "grid_voltage",
+        "grid_frequency",
+        "grid_import_energy_today",
+        "grid_export_energy_today"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Grid Power",
+            "nl": "Netvermogen",
+            "af": "Netkrag"
+          }
+        },
+        "meter_power.imported": {
+          "title": {
+            "en": "Grid Import Total",
+            "nl": "Netimport totaal",
+            "af": "Netinvoer totaal"
+          }
+        },
+        "meter_power.exported": {
+          "title": {
+            "en": "Grid Export Total",
+            "nl": "Netexport totaal",
+            "af": "Netuitvoer totaal"
+          }
+        }
+      },
+      "energy": {
+        "cumulative": true,
+        "cumulativeImportedCapability": "meter_power.imported",
+        "cumulativeExportedCapability": "meter_power.exported"
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/grid-meter/assets/images/small.jpg",
+        "large": "/drivers/grid-meter/assets/images/large.jpg",
+        "xlarge": "/drivers/grid-meter/assets/images/xlarge.jpg"
+      },
+      "pair": [
+        {
+          "id": "discover",
+          "options": {
+            "title": {
+              "en": "Find Inverter",
+              "nl": "Omvormer zoeken",
+              "af": "Soek omsetter"
+            }
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "repair"
+        }
+      ],
+      "id": "grid-meter"
+    },
+    {
+      "name": {
+        "en": "Solar Inverter",
+        "nl": "Zonne-omvormer",
+        "af": "Sonkrag-omsetter"
+      },
+      "class": "solarpanel",
+      "capabilities": [
+        "measure_power",
+        "meter_power",
+        "grid_power",
+        "load_power",
+        "grid_import_energy",
+        "grid_export_energy",
+        "grid_voltage",
+        "grid_frequency",
+        "pv_energy_today",
+        "grid_import_energy_today",
+        "grid_export_energy_today",
+        "consumption_energy_today"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Solar Power",
+            "nl": "Zonne-energie vermogen",
+            "af": "Sonkragvermoë"
+          }
+        },
+        "meter_power": {
+          "title": {
+            "en": "Solar Energy Total",
+            "nl": "Zonne-energie totaal",
+            "af": "Sonkrag-energie totaal"
+          }
+        }
+      },
+      "energy": {
+        "meterPowerExportedCapability": "meter_power"
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/solar-inverter/assets/images/small.jpg",
+        "large": "/drivers/solar-inverter/assets/images/large.jpg",
+        "xlarge": "/drivers/solar-inverter/assets/images/xlarge.jpg"
+      },
+      "pair": [
+        {
+          "id": "discover",
+          "options": {
+            "title": {
+              "en": "Find Inverter",
+              "nl": "Omvormer zoeken",
+              "af": "Soek omsetter"
+            }
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          },
+          "options": {
+            "singular": false
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "repair"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Device Info",
+            "nl": "Apparaatinfo",
+            "af": "Toestelinligting"
+          },
+          "children": [
+            {
+              "id": "label_serial_number",
+              "type": "label",
+              "label": {
+                "en": "Serial Number",
+                "nl": "Serienummer",
+                "af": "Reeksnommer"
+              },
+              "value": "-"
+            },
+            {
+              "id": "label_generation",
+              "type": "label",
+              "label": {
+                "en": "Generation",
+                "nl": "Generatie",
+                "af": "Generasie"
+              },
+              "value": "-"
+            },
+            {
+              "id": "label_ip_address",
+              "type": "label",
+              "label": {
+                "en": "IP Address",
+                "nl": "IP-adres",
+                "af": "IP-adres"
+              },
+              "value": "-"
+            },
+            {
+              "id": "label_model_code",
+              "type": "label",
+              "label": {
+                "en": "Model Code",
+                "nl": "Modelcode",
+                "af": "Modelkode"
+              },
+              "value": "-"
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Inverter Toggles",
+            "nl": "Omvormerinstellingen",
+            "af": "Omsetter-instellings"
+          },
+          "children": [
+            {
+              "id": "eco_mode",
+              "type": "checkbox",
+              "label": {
+                "en": "Eco Mode",
+                "nl": "Eco-modus",
+                "af": "Eko-modus"
+              },
+              "hint": {
+                "en": "Battery charges from solar only and discharges to meet load (HR27).",
+                "nl": "Batterij laadt alleen van zonne-energie en ontlaadt om de belasting te dekken (HR27).",
+                "af": "Battery laai slegs van sonkrag en ontlaai om die las te dek (HR27)."
+              },
+              "value": true
+            },
+            {
+              "id": "timed_export",
+              "type": "checkbox",
+              "label": {
+                "en": "Timed Export",
+                "nl": "Geplande export",
+                "af": "Geskeduleerde uitvoer"
+              },
+              "hint": {
+                "en": "Battery discharges to grid on schedule (HR59). Independent of eco mode.",
+                "nl": "Batterij ontlaadt naar het net volgens schema (HR59). Onafhankelijk van eco-modus.",
+                "af": "Battery ontlaai na die net volgens skedule (HR59). Onafhanklik van eko-modus."
+              },
+              "value": false
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Charge Schedule",
+            "nl": "Laadschema",
+            "af": "Laaiskedule"
+          },
+          "children": [
+            {
+              "id": "charge_schedule_enabled",
+              "type": "checkbox",
+              "label": {
+                "en": "Enable Charge Schedule",
+                "nl": "Laadschema inschakelen",
+                "af": "Aktiveer laaiskedule"
+              },
+              "value": false
+            },
+            {
+              "id": "charge_slot1_start",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 1 Start (HH:MM)",
+                "nl": "Laadslot 1 start (UU:MM)",
+                "af": "Laaislot 1 begin (UU:MM)"
+              },
+              "value": "00:30"
+            },
+            {
+              "id": "charge_slot1_end",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 1 End (HH:MM)",
+                "nl": "Laadslot 1 einde (UU:MM)",
+                "af": "Laaislot 1 einde (UU:MM)"
+              },
+              "value": "04:30"
+            },
+            {
+              "id": "charge_slot1_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Charge Slot 1 Target SOC (%)",
+                "nl": "Laadslot 1 doel-SOC (%)",
+                "af": "Laaislot 1 teiken-SOC (%)"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "charge_rate",
+              "type": "number",
+              "label": {
+                "en": "Charge Rate (%)",
+                "nl": "Laadsnelheid (%)",
+                "af": "Laaitempo (%)"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "charge_slot2_start",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 2 Start (HH:MM)",
+                "nl": "Laadslot 2 start (UU:MM)",
+                "af": "Laaislot 2 begin (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot2_end",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 2 End (HH:MM)",
+                "nl": "Laadslot 2 einde (UU:MM)",
+                "af": "Laaislot 2 einde (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot2_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Charge Slot 2 Target SOC (%) — Gen3 only",
+                "nl": "Laadslot 2 doel-SOC (%) — alleen Gen3",
+                "af": "Laaislot 2 teiken-SOC (%) — slegs Gen3"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "charge_slot3_start",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 3 Start (HH:MM)",
+                "nl": "Laadslot 3 start (UU:MM)",
+                "af": "Laaislot 3 begin (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot3_end",
+              "type": "text",
+              "label": {
+                "en": "Charge Slot 3 End (HH:MM)",
+                "nl": "Laadslot 3 einde (UU:MM)",
+                "af": "Laaislot 3 einde (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "charge_slot3_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Charge Slot 3 Target SOC (%) — Gen3 only",
+                "nl": "Laadslot 3 doel-SOC (%) — alleen Gen3",
+                "af": "Laaislot 3 teiken-SOC (%) — slegs Gen3"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Discharge Schedule",
+            "nl": "Ontlaadschema",
+            "af": "Ontlaaiskedule"
+          },
+          "children": [
+            {
+              "id": "discharge_schedule_enabled",
+              "type": "checkbox",
+              "label": {
+                "en": "Enable Discharge Schedule",
+                "nl": "Ontlaadschema inschakelen",
+                "af": "Aktiveer ontlaaiskedule"
+              },
+              "value": false
+            },
+            {
+              "id": "discharge_slot1_start",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 1 Start (HH:MM)",
+                "nl": "Ontlaadslot 1 start (UU:MM)",
+                "af": "Ontlaaislot 1 begin (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot1_end",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 1 End (HH:MM)",
+                "nl": "Ontlaadslot 1 einde (UU:MM)",
+                "af": "Ontlaaislot 1 einde (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot1_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Discharge Slot 1 Target SOC (%)",
+                "nl": "Ontlaadslot 1 doel-SOC (%)",
+                "af": "Ontlaaislot 1 teiken-SOC (%)"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "discharge_rate",
+              "type": "number",
+              "label": {
+                "en": "Discharge Rate (%)",
+                "nl": "Ontlaadsnelheid (%)",
+                "af": "Ontlaaitempo (%)"
+              },
+              "value": 100,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "discharge_slot2_start",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 2 Start (HH:MM)",
+                "nl": "Ontlaadslot 2 start (UU:MM)",
+                "af": "Ontlaaislot 2 begin (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot2_end",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 2 End (HH:MM)",
+                "nl": "Ontlaadslot 2 einde (UU:MM)",
+                "af": "Ontlaaislot 2 einde (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot2_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Discharge Slot 2 Target SOC (%) — Gen3 only",
+                "nl": "Ontlaadslot 2 doel-SOC (%) — alleen Gen3",
+                "af": "Ontlaaislot 2 teiken-SOC (%) — slegs Gen3"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "id": "discharge_slot3_start",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 3 Start (HH:MM)",
+                "nl": "Ontlaadslot 3 start (UU:MM)",
+                "af": "Ontlaaislot 3 begin (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot3_end",
+              "type": "text",
+              "label": {
+                "en": "Discharge Slot 3 End (HH:MM)",
+                "nl": "Ontlaadslot 3 einde (UU:MM)",
+                "af": "Ontlaaislot 3 einde (UU:MM)"
+              },
+              "value": "00:00"
+            },
+            {
+              "id": "discharge_slot3_target_soc",
+              "type": "number",
+              "label": {
+                "en": "Discharge Slot 3 Target SOC (%) — Gen3 only",
+                "nl": "Ontlaadslot 3 doel-SOC (%) — alleen Gen3",
+                "af": "Ontlaaislot 3 teiken-SOC (%) — slegs Gen3"
+              },
+              "value": 0,
+              "min": 0,
+              "max": 100
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Gen3 Features",
+            "nl": "Gen3-functies",
+            "af": "Gen3-kenmerke"
+          },
+          "children": [
+            {
+              "id": "export_limit",
+              "type": "number",
+              "label": {
+                "en": "Export Limit (W)",
+                "nl": "Exportlimiet (W)",
+                "af": "Uitvoerlimiet (W)"
+              },
+              "hint": {
+                "en": "Grid export limit in watts. Gen3 inverters only.",
+                "nl": "Exportlimiet naar het net in watt. Alleen Gen3-omvormers.",
+                "af": "Netuitvoerlimiet in watt. Slegs Gen3-omsetters."
+              },
+              "value": 10000,
+              "min": 0,
+              "max": 10000
+            },
+            {
+              "id": "battery_pause_mode",
+              "type": "dropdown",
+              "label": {
+                "en": "Battery Pause Mode",
+                "nl": "Batterij pauzemodus",
+                "af": "Battery pouse-modus"
+              },
+              "hint": {
+                "en": "Pause battery charge/discharge. Gen3 inverters only.",
+                "nl": "Pauzeer het laden/ontladen van de batterij. Alleen Gen3-omvormers.",
+                "af": "Pouseer batterylaai/ontlaai. Slegs Gen3-omsetters."
+              },
+              "value": "disabled",
+              "values": [
+                {
+                  "id": "disabled",
+                  "label": {
+                    "en": "Disabled (normal)",
+                    "nl": "Uitgeschakeld (normaal)",
+                    "af": "Gedeaktiveer (normaal)"
+                  }
+                },
+                {
+                  "id": "pause_charge",
+                  "label": {
+                    "en": "Pause Charge",
+                    "nl": "Laden pauzeren",
+                    "af": "Pouseer laai"
+                  }
+                },
+                {
+                  "id": "pause_discharge",
+                  "label": {
+                    "en": "Pause Discharge",
+                    "nl": "Ontladen pauzeren",
+                    "af": "Pouseer ontlaai"
+                  }
+                },
+                {
+                  "id": "pause_both",
+                  "label": {
+                    "en": "Pause Both",
+                    "nl": "Beide pauzeren",
+                    "af": "Pouseer beide"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "solar-inverter"
+    }
+  ],
+  "capabilities": {
+    "battery_charge_energy_today": {
+      "type": "number",
+      "icon": "/assets/capabilities/battery.svg",
+      "title": {
+        "en": "Battery Charged Today",
+        "nl": "Batterij geladen vandaag",
+        "af": "Battery gelaai vandag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy charged into battery today.",
+        "nl": "Vandaag in de batterij geladen energie.",
+        "af": "Energie vandag in die battery gelaai."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "battery_discharge_energy_today": {
+      "type": "number",
+      "icon": "/assets/capabilities/battery.svg",
+      "title": {
+        "en": "Battery Discharged Today",
+        "nl": "Batterij ontladen vandaag",
+        "af": "Battery ontlaai vandag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy discharged from battery today.",
+        "nl": "Vandaag uit de batterij ontladen energie.",
+        "af": "Energie vandag uit die battery ontlaai."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "consumption_energy_today": {
+      "type": "number",
+      "icon": "/assets/capabilities/house.svg",
+      "title": {
+        "en": "Consumption Today",
+        "nl": "Verbruik vandaag",
+        "af": "Verbruik vandag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "House energy consumption today.",
+        "nl": "Energieverbruik van het huis vandaag.",
+        "af": "Huis-energieverbruik vandag."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_export_energy": {
+      "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
+      "title": {
+        "en": "Grid Export Total",
+        "nl": "Netexport totaal",
+        "af": "Netuitvoer totaal"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Cumulative grid export energy.",
+        "nl": "Cumulatieve netexportenergie.",
+        "af": "Kumulatiewe netuitvoerenergie."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_export_energy_today": {
+      "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
+      "title": {
+        "en": "Grid Export Today",
+        "nl": "Netexport vandaag",
+        "af": "Netuitvoer vandag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy exported to grid today.",
+        "nl": "Vandaag naar het net geëxporteerde energie.",
+        "af": "Energie vandag na die net uitgevoer."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_frequency": {
+      "type": "number",
+      "title": {
+        "en": "Grid Frequency",
+        "nl": "Netfrequentie",
+        "af": "Netfrekwensie"
+      },
+      "units": {
+        "en": "Hz",
+        "nl": "Hz",
+        "af": "Hz"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Grid AC frequency in hertz.",
+        "nl": "AC-netfrequentie in hertz.",
+        "af": "Net-WS-frekwensie in hertz."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/grid.svg"
+    },
+    "grid_import_energy": {
+      "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
+      "title": {
+        "en": "Grid Import Total",
+        "nl": "Netimport totaal",
+        "af": "Netinvoer totaal"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Cumulative grid import energy.",
+        "nl": "Cumulatieve netimportenergie.",
+        "af": "Kumulatiewe netinvoerenergie."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_import_energy_today": {
+      "type": "number",
+      "icon": "/assets/capabilities/energy.svg",
+      "title": {
+        "en": "Grid Import Today",
+        "nl": "Netimport vandaag",
+        "af": "Netinvoer vandag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Energy imported from grid today.",
+        "nl": "Vandaag van het net geïmporteerde energie.",
+        "af": "Energie vandag van die net ingevoer."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    },
+    "grid_power": {
+      "type": "number",
+      "title": {
+        "en": "Grid Power",
+        "nl": "Netvermogen",
+        "af": "Netkrag"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "af": "W"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Grid power in watts. Positive = exporting, negative = importing.",
+        "nl": "Netvermogen in watt. Positief = export, negatief = import.",
+        "af": "Netkrag in watt. Positief = uitvoer, negatief = invoer."
+      },
+      "chartType": "spline",
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/grid.svg"
+    },
+    "grid_voltage": {
+      "type": "number",
+      "title": {
+        "en": "Grid Voltage",
+        "nl": "Netspanning",
+        "af": "Netspanning"
+      },
+      "units": {
+        "en": "V",
+        "nl": "V",
+        "af": "V"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Grid AC voltage in volts.",
+        "nl": "AC-netspanning in volt.",
+        "af": "Net-WS-spanning in volt."
+      },
+      "chartType": "spline",
+      "decimals": 1,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/grid.svg"
+    },
+    "inverter_gen3": {
+      "type": "boolean",
+      "title": {
+        "en": "Gen3 Inverter",
+        "nl": "Gen3-omvormer",
+        "af": "Gen3-omsetter"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "load_power": {
+      "type": "number",
+      "title": {
+        "en": "House Load",
+        "nl": "Huisbelasting",
+        "af": "Huislading"
+      },
+      "units": {
+        "en": "W",
+        "nl": "W",
+        "af": "W"
+      },
+      "insights": true,
+      "desc": {
+        "en": "House power consumption in watts.",
+        "nl": "Stroomverbruik van het huis in watt.",
+        "af": "Kragverbruik van die huis in watt."
+      },
+      "chartType": "spline",
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/capabilities/house.svg"
+    },
+    "pv_energy_today": {
+      "type": "number",
+      "icon": "/assets/capabilities/solar.svg",
+      "title": {
+        "en": "Solar Energy Today",
+        "nl": "Zonne-energie vandaag",
+        "af": "Sonkrag-energie vandag"
+      },
+      "units": {
+        "en": "kWh",
+        "nl": "kWh",
+        "af": "kWh"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Solar energy generated today.",
+        "nl": "Vandaag opgewekte zonne-energie.",
+        "af": "Sonkrag-energie vandag opgewek."
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false
+    }
+  }
+}

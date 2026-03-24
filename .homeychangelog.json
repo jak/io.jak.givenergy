@@ -23,5 +23,8 @@
     "en": "Multiple charge/discharge slots, force charge/discharge actions, energy event triggers, daily",
     "nl": "Meerdere laad-/ontlaadslots, geforceerd laden/ontladen acties, energie-gebeurtenistriggers, dagelijks",
     "af": "Meervoudige laai-/ontlaaislotte, forseer laai/ontlaai-aksies, energie-gebeurtenissnellers, daagliks"
+  },
+  "1.4.1": {
+    "en": "Added nl and af translations"
   }
 }
