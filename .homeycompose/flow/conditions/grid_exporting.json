@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Grid is exporting" },
-  "hint": { "en": "True when exporting power to the grid." },
+  "title": {
+    "en": "Grid is exporting",
+    "nl": "Net exporteert",
+    "af": "Net voer uit"
+  },
+  "hint": {
+    "en": "True when exporting power to the grid.",
+    "nl": "Waar wanneer stroom naar het net wordt geëxporteerd.",
+    "af": "Waar wanneer krag na die net uitgevoer word."
+  },
   "args": [
     {
       "type": "device",

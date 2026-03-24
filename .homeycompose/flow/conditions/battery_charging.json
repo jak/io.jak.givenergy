@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Battery is charging" },
-  "hint": { "en": "True when the battery is being charged." },
+  "title": {
+    "en": "Battery is charging",
+    "nl": "Batterij wordt geladen",
+    "af": "Battery word gelaai"
+  },
+  "hint": {
+    "en": "True when the battery is being charged.",
+    "nl": "Waar wanneer de batterij wordt geladen.",
+    "af": "Waar wanneer die battery gelaai word."
+  },
   "args": [
     {
       "type": "device",

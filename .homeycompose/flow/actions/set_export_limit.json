@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Set export limit" },
-  "titleFormatted": { "en": "Set export limit to [[watts]] W" },
-  "hint": { "en": "Sets the grid export limit in watts. Gen3 inverters only." },
+  "title": {
+    "en": "Set export limit",
+    "nl": "Exportlimiet instellen",
+    "af": "Stel uitvoerlimiet"
+  },
+  "titleFormatted": {
+    "en": "Set export limit to [[watts]] W",
+    "nl": "Exportlimiet instellen op [[watts]] W",
+    "af": "Stel uitvoerlimiet op [[watts]] W"
+  },
+  "hint": {
+    "en": "Sets the grid export limit in watts. Gen3 inverters only.",
+    "nl": "Stelt de exportlimiet naar het net in watt in. Alleen Gen3-omvormers.",
+    "af": "Stel die netuitvoerlimiet in watt. Slegs Gen3-omsetters."
+  },
   "args": [
     {
       "type": "device",
@@ -11,7 +23,11 @@
     {
       "type": "number",
       "name": "watts",
-      "title": { "en": "Watts" },
+      "title": {
+        "en": "Watts",
+        "nl": "Watt",
+        "af": "Watt"
+      },
       "min": 0,
       "max": 10000,
       "step": 100

@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Toggle timed export" },
-  "titleFormatted": { "en": "[[action]] timed export" },
-  "hint": { "en": "Enables or disables timed export (HR59). Independent of eco mode." },
+  "title": {
+    "en": "Toggle timed export",
+    "nl": "Geplande export schakelen",
+    "af": "Wissel geskeduleerde uitvoer"
+  },
+  "titleFormatted": {
+    "en": "[[action]] timed export",
+    "nl": "[[action]] geplande export",
+    "af": "[[action]] geskeduleerde uitvoer"
+  },
+  "hint": {
+    "en": "Enables or disables timed export (HR59). Independent of eco mode.",
+    "nl": "Schakelt geplande export in of uit (HR59). Onafhankelijk van eco-modus.",
+    "af": "Aktiveer of deaktiveer geskeduleerde uitvoer (HR59). Onafhanklik van eko-modus."
+  },
   "args": [
     {
       "type": "device",
@@ -11,10 +23,28 @@
     {
       "type": "dropdown",
       "name": "action",
-      "title": { "en": "Action" },
+      "title": {
+        "en": "Action",
+        "nl": "Actie",
+        "af": "Aksie"
+      },
       "values": [
-        { "id": "enable", "title": { "en": "Enable" } },
-        { "id": "disable", "title": { "en": "Disable" } }
+        {
+          "id": "enable",
+          "title": {
+            "en": "Enable",
+            "nl": "Inschakelen",
+            "af": "Aktiveer"
+          }
+        },
+        {
+          "id": "disable",
+          "title": {
+            "en": "Disable",
+            "nl": "Uitschakelen",
+            "af": "Deaktiveer"
+          }
+        }
       ]
     }
   ]

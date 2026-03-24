@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/energy.svg",
-  "title": { "en": "Grid Import Total" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Grid Import Total",
+    "nl": "Netimport totaal",
+    "af": "Netinvoer totaal"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "Cumulative grid import energy." },
+  "desc": {
+    "en": "Cumulative grid import energy.",
+    "nl": "Cumulatieve netimportenergie.",
+    "af": "Kumulatiewe netinvoerenergie."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

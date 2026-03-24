@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Enable or disable discharge schedule" },
-  "titleFormatted": { "en": "[[action]] discharge schedule" },
-  "hint": { "en": "Enables or disables the battery discharge schedule." },
+  "title": {
+    "en": "Enable or disable discharge schedule",
+    "nl": "Ontlaadschema in- of uitschakelen",
+    "af": "Aktiveer of deaktiveer ontlaaiskedule"
+  },
+  "titleFormatted": {
+    "en": "[[action]] discharge schedule",
+    "nl": "[[action]] ontlaadschema",
+    "af": "[[action]] ontlaaiskedule"
+  },
+  "hint": {
+    "en": "Enables or disables the battery discharge schedule.",
+    "nl": "Schakelt het ontlaadschema van de batterij in of uit.",
+    "af": "Aktiveer of deaktiveer die battery se ontlaaiskedule."
+  },
   "args": [
     {
       "type": "device",
@@ -11,10 +23,28 @@
     {
       "type": "dropdown",
       "name": "action",
-      "title": { "en": "Action" },
+      "title": {
+        "en": "Action",
+        "nl": "Actie",
+        "af": "Aksie"
+      },
       "values": [
-        { "id": "enable", "title": { "en": "Enable" } },
-        { "id": "disable", "title": { "en": "Disable" } }
+        {
+          "id": "enable",
+          "title": {
+            "en": "Enable",
+            "nl": "Inschakelen",
+            "af": "Aktiveer"
+          }
+        },
+        {
+          "id": "disable",
+          "title": {
+            "en": "Disable",
+            "nl": "Uitschakelen",
+            "af": "Deaktiveer"
+          }
+        }
       ]
     }
   ]

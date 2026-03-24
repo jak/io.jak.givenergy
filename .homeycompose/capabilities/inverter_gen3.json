@@ -1,6 +1,10 @@
 {
   "type": "boolean",
-  "title": { "en": "Gen3 Inverter" },
+  "title": {
+    "en": "Gen3 Inverter",
+    "nl": "Gen3-omvormer",
+    "af": "Gen3-omsetter"
+  },
   "getable": true,
   "setable": false,
   "uiComponent": null,

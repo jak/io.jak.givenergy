@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/battery.svg",
-  "title": { "en": "Battery Discharged Today" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Battery Discharged Today",
+    "nl": "Batterij ontladen vandaag",
+    "af": "Battery ontlaai vandag"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "Energy discharged from battery today." },
+  "desc": {
+    "en": "Energy discharged from battery today.",
+    "nl": "Vandaag uit de batterij ontladen energie.",
+    "af": "Energie vandag uit die battery ontlaai."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

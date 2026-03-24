@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Set battery pause mode" },
-  "titleFormatted": { "en": "Set battery pause mode to [[mode]]" },
-  "hint": { "en": "Pauses battery charge, discharge, or both. Gen3 inverters only." },
+  "title": {
+    "en": "Set battery pause mode",
+    "nl": "Batterij pauzemodus instellen",
+    "af": "Stel battery pouse-modus"
+  },
+  "titleFormatted": {
+    "en": "Set battery pause mode to [[mode]]",
+    "nl": "Batterij pauzemodus instellen op [[mode]]",
+    "af": "Stel battery pouse-modus op [[mode]]"
+  },
+  "hint": {
+    "en": "Pauses battery charge, discharge, or both. Gen3 inverters only.",
+    "nl": "Pauzeert het laden, ontladen of beide van de batterij. Alleen Gen3-omvormers.",
+    "af": "Pouseer batterylaai, ontlaai, of beide. Slegs Gen3-omsetters."
+  },
   "args": [
     {
       "type": "device",
@@ -11,12 +23,44 @@
     {
       "type": "dropdown",
       "name": "mode",
-      "title": { "en": "Mode" },
+      "title": {
+        "en": "Mode",
+        "nl": "Modus",
+        "af": "Modus"
+      },
       "values": [
-        { "id": "disabled", "title": { "en": "Disabled (normal)" } },
-        { "id": "pause_charge", "title": { "en": "Pause Charge" } },
-        { "id": "pause_discharge", "title": { "en": "Pause Discharge" } },
-        { "id": "pause_both", "title": { "en": "Pause Both" } }
+        {
+          "id": "disabled",
+          "title": {
+            "en": "Disabled (normal)",
+            "nl": "Uitgeschakeld (normaal)",
+            "af": "Gedeaktiveer (normaal)"
+          }
+        },
+        {
+          "id": "pause_charge",
+          "title": {
+            "en": "Pause Charge",
+            "nl": "Laden pauzeren",
+            "af": "Pouseer laai"
+          }
+        },
+        {
+          "id": "pause_discharge",
+          "title": {
+            "en": "Pause Discharge",
+            "nl": "Ontladen pauzeren",
+            "af": "Pouseer ontlaai"
+          }
+        },
+        {
+          "id": "pause_both",
+          "title": {
+            "en": "Pause Both",
+            "nl": "Beide pauzeren",
+            "af": "Pouseer beide"
+          }
+        }
       ]
     }
   ]

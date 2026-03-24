@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Battery is discharging" },
-  "hint": { "en": "True when the battery is being discharged." },
+  "title": {
+    "en": "Battery is discharging",
+    "nl": "Batterij wordt ontladen",
+    "af": "Battery word ontlaai"
+  },
+  "hint": {
+    "en": "True when the battery is being discharged.",
+    "nl": "Waar wanneer de batterij wordt ontladen.",
+    "af": "Waar wanneer die battery ontlaai word."
+  },
   "args": [
     {
       "type": "device",

@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/energy.svg",
-  "title": { "en": "Grid Import Today" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Grid Import Today",
+    "nl": "Netimport vandaag",
+    "af": "Netinvoer vandag"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "Energy imported from grid today." },
+  "desc": {
+    "en": "Energy imported from grid today.",
+    "nl": "Vandaag van het net geïmporteerde energie.",
+    "af": "Energie vandag van die net ingevoer."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

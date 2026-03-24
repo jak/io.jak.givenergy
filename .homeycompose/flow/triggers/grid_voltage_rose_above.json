@@ -1,12 +1,28 @@
 {
-  "title": { "en": "Grid voltage rose above a value" },
-  "titleFormatted": { "en": "Grid voltage rose above [[voltage]]V" },
+  "title": {
+    "en": "Grid voltage rose above a value",
+    "nl": "Netspanning steeg boven een waarde",
+    "af": "Netspanning het bo 'n waarde gestyg"
+  },
+  "titleFormatted": {
+    "en": "Grid voltage rose above [[voltage]]V",
+    "nl": "Netspanning steeg boven [[voltage]]V",
+    "af": "Netspanning het bo [[voltage]]V gestyg"
+  },
   "args": [
     {
       "name": "voltage",
       "type": "number",
-      "title": { "en": "Voltage (V)" },
-      "placeholder": { "en": "e.g. 250" },
+      "title": {
+        "en": "Voltage (V)",
+        "nl": "Spanning (V)",
+        "af": "Spanning (V)"
+      },
+      "placeholder": {
+        "en": "e.g. 250",
+        "nl": "bijv. 250",
+        "af": "bv. 250"
+      },
       "min": 100,
       "max": 260,
       "step": 1

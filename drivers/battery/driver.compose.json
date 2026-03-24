@@ -1,5 +1,9 @@
 {
-  "name": { "en": "Battery" },
+  "name": {
+    "en": "Battery",
+    "nl": "Batterij",
+    "af": "Battery"
+  },
   "class": "battery",
   "capabilities": [
     "measure_power",
@@ -12,13 +16,25 @@
   ],
   "capabilitiesOptions": {
     "measure_power": {
-      "title": { "en": "Battery Power" }
+      "title": {
+        "en": "Battery Power",
+        "nl": "Batterijvermogen",
+        "af": "Batterykrag"
+      }
     },
     "meter_power.charged": {
-      "title": { "en": "Battery Charged Total" }
+      "title": {
+        "en": "Battery Charged Total",
+        "nl": "Batterij geladen totaal",
+        "af": "Battery gelaai totaal"
+      }
     },
     "meter_power.discharged": {
-      "title": { "en": "Battery Discharged Total" }
+      "title": {
+        "en": "Battery Discharged Total",
+        "nl": "Batterij ontladen totaal",
+        "af": "Battery ontlaai totaal"
+      }
     }
   },
   "energy": {
@@ -26,8 +42,12 @@
     "meterPowerImportedCapability": "meter_power.charged",
     "meterPowerExportedCapability": "meter_power.discharged"
   },
-  "platforms": ["local"],
-  "connectivity": ["lan"],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
   "images": {
     "small": "/drivers/battery/assets/images/small.jpg",
     "large": "/drivers/battery/assets/images/large.jpg",
@@ -36,13 +56,23 @@
   "pair": [
     {
       "id": "discover",
-      "options": { "title": { "en": "Find Inverter" } }
+      "options": {
+        "title": {
+          "en": "Find Inverter",
+          "nl": "Omvormer zoeken",
+          "af": "Soek omsetter"
+        }
+      }
     },
     {
       "id": "list_devices",
       "template": "list_devices",
-      "navigation": { "next": "add_devices" },
-      "options": { "singular": false }
+      "navigation": {
+        "next": "add_devices"
+      },
+      "options": {
+        "singular": false
+      }
     },
     {
       "id": "add_devices",

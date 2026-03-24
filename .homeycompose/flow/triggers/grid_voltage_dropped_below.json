@@ -1,12 +1,28 @@
 {
-  "title": { "en": "Grid voltage dropped below a value" },
-  "titleFormatted": { "en": "Grid voltage dropped below [[voltage]]V" },
+  "title": {
+    "en": "Grid voltage dropped below a value",
+    "nl": "Netspanning daalde onder een waarde",
+    "af": "Netspanning het onder 'n waarde gedaal"
+  },
+  "titleFormatted": {
+    "en": "Grid voltage dropped below [[voltage]]V",
+    "nl": "Netspanning daalde onder [[voltage]]V",
+    "af": "Netspanning het onder [[voltage]]V gedaal"
+  },
   "args": [
     {
       "name": "voltage",
       "type": "number",
-      "title": { "en": "Voltage (V)" },
-      "placeholder": { "en": "e.g. 220" },
+      "title": {
+        "en": "Voltage (V)",
+        "nl": "Spanning (V)",
+        "af": "Spanning (V)"
+      },
+      "placeholder": {
+        "en": "e.g. 220",
+        "nl": "bijv. 220",
+        "af": "bv. 220"
+      },
       "min": 100,
       "max": 260,
       "step": 1

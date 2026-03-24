@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/energy.svg",
-  "title": { "en": "Grid Export Today" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Grid Export Today",
+    "nl": "Netexport vandaag",
+    "af": "Netuitvoer vandag"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "Energy exported to grid today." },
+  "desc": {
+    "en": "Energy exported to grid today.",
+    "nl": "Vandaag naar het net geëxporteerde energie.",
+    "af": "Energie vandag na die net uitgevoer."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

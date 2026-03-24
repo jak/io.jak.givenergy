@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Grid is importing" },
-  "hint": { "en": "True when importing power from the grid." },
+  "title": {
+    "en": "Grid is importing",
+    "nl": "Net importeert",
+    "af": "Net voer in"
+  },
+  "hint": {
+    "en": "True when importing power from the grid.",
+    "nl": "Waar wanneer stroom van het net wordt geïmporteerd.",
+    "af": "Waar wanneer krag van die net ingevoer word."
+  },
   "args": [
     {
       "type": "device",

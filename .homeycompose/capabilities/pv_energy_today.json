@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/solar.svg",
-  "title": { "en": "Solar Energy Today" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Solar Energy Today",
+    "nl": "Zonne-energie vandaag",
+    "af": "Sonkrag-energie vandag"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "Solar energy generated today." },
+  "desc": {
+    "en": "Solar energy generated today.",
+    "nl": "Vandaag opgewekte zonne-energie.",
+    "af": "Sonkrag-energie vandag opgewek."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

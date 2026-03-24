@@ -1,9 +1,21 @@
 {
   "type": "number",
-  "title": { "en": "House Load" },
-  "units": { "en": "W" },
+  "title": {
+    "en": "House Load",
+    "nl": "Huisbelasting",
+    "af": "Huislading"
+  },
+  "units": {
+    "en": "W",
+    "nl": "W",
+    "af": "W"
+  },
   "insights": true,
-  "desc": { "en": "House power consumption in watts." },
+  "desc": {
+    "en": "House power consumption in watts.",
+    "nl": "Stroomverbruik van het huis in watt.",
+    "af": "Kragverbruik van die huis in watt."
+  },
   "chartType": "spline",
   "decimals": 0,
   "getable": true,

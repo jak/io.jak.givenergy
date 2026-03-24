@@ -8,10 +8,14 @@
     "local"
   ],
   "name": {
-    "en": "GivEnergy"
+    "en": "GivEnergy",
+    "nl": "GivEnergy",
+    "af": "GivEnergy"
   },
   "description": {
-    "en": "Monitor and control your solar energy system locally"
+    "en": "Monitor and control your solar energy system locally",
+    "nl": "Bewaak en bedien je zonne-energiesysteem lokaal",
+    "af": "Monitor en beheer jou sonkragstelsel plaaslik"
   },
   "category": [
     "energy"
@@ -37,6 +41,22 @@
       "battery",
       "modbus",
       "energy"
+    ],
+    "nl": [
+      "givenergy",
+      "zonne-energie",
+      "omvormer",
+      "batterij",
+      "modbus",
+      "energie"
+    ],
+    "af": [
+      "givenergy",
+      "sonkrag",
+      "omsetter",
+      "battery",
+      "modbus",
+      "energie"
     ]
   },
   "contributing": {

@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Solar is generating" },
-  "hint": { "en": "True when solar panels are producing power." },
+  "title": {
+    "en": "Solar is generating",
+    "nl": "Zonne-energie wordt opgewekt",
+    "af": "Sonkrag wek op"
+  },
+  "hint": {
+    "en": "True when solar panels are producing power.",
+    "nl": "Waar wanneer zonnepanelen stroom opwekken.",
+    "af": "Waar wanneer sonpanele krag opwek."
+  },
   "args": [
     {
       "type": "device",

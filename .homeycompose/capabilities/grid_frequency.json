@@ -1,9 +1,21 @@
 {
   "type": "number",
-  "title": { "en": "Grid Frequency" },
-  "units": { "en": "Hz" },
+  "title": {
+    "en": "Grid Frequency",
+    "nl": "Netfrequentie",
+    "af": "Netfrekwensie"
+  },
+  "units": {
+    "en": "Hz",
+    "nl": "Hz",
+    "af": "Hz"
+  },
   "insights": true,
-  "desc": { "en": "Grid AC frequency in hertz." },
+  "desc": {
+    "en": "Grid AC frequency in hertz.",
+    "nl": "AC-netfrequentie in hertz.",
+    "af": "Net-WS-frekwensie in hertz."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

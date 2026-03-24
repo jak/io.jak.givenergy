@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Stop force charge" },
-  "hint": { "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used." },
+  "title": {
+    "en": "Stop force charge",
+    "nl": "Geforceerd laden stoppen",
+    "af": "Stop forseer laai"
+  },
+  "hint": {
+    "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used.",
+    "nl": "Herstelt de laadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd laden van het net'.",
+    "af": "Herstel die omsetter se laai-instellings na hul toestand voor 'Forseer laai van die net' gebruik is."
+  },
   "args": [
     {
       "type": "device",

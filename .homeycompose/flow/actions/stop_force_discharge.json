@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Stop force discharge" },
-  "hint": { "en": "Restores inverter discharge settings to their state before 'Force discharge to grid' was used." },
+  "title": {
+    "en": "Stop force discharge",
+    "nl": "Geforceerd ontladen stoppen",
+    "af": "Stop forseer ontlaai"
+  },
+  "hint": {
+    "en": "Restores inverter discharge settings to their state before 'Force discharge to grid' was used.",
+    "nl": "Herstelt de ontlaadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd ontladen naar het net'.",
+    "af": "Herstel die omsetter se ontlaai-instellings na hul toestand voor 'Forseer ontlaai na die net' gebruik is."
+  },
   "args": [
     {
       "type": "device",

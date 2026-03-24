@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Set discharge slot" },
-  "titleFormatted": { "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%" },
-  "hint": { "en": "Configures a discharge schedule slot with target SOC. Gen3 inverters support slots 1-3." },
+  "title": {
+    "en": "Set discharge slot",
+    "nl": "Ontlaadslot instellen",
+    "af": "Stel ontlaaislot"
+  },
+  "titleFormatted": {
+    "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%",
+    "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]%",
+    "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]%"
+  },
+  "hint": {
+    "en": "Configures a discharge schedule slot with target SOC. Gen3 inverters support slots 1-3.",
+    "nl": "Configureert een ontlaadslot met doel-SOC. Gen3-omvormers ondersteunen slots 1-3.",
+    "af": "Stel 'n ontlaaislot op met teiken-SOC. Gen3-omsetters ondersteun slots 1-3."
+  },
   "args": [
     {
       "type": "device",
@@ -11,29 +23,74 @@
     {
       "type": "dropdown",
       "name": "slot",
-      "title": { "en": "Slot" },
+      "title": {
+        "en": "Slot",
+        "nl": "Slot",
+        "af": "Slot"
+      },
       "values": [
-        { "id": "1", "label": { "en": "Slot 1" } },
-        { "id": "2", "label": { "en": "Slot 2" } },
-        { "id": "3", "label": { "en": "Slot 3" } }
+        {
+          "id": "1",
+          "label": {
+            "en": "Slot 1",
+            "nl": "Slot 1",
+            "af": "Slot 1"
+          }
+        },
+        {
+          "id": "2",
+          "label": {
+            "en": "Slot 2",
+            "nl": "Slot 2",
+            "af": "Slot 2"
+          }
+        },
+        {
+          "id": "3",
+          "label": {
+            "en": "Slot 3",
+            "nl": "Slot 3",
+            "af": "Slot 3"
+          }
+        }
       ]
     },
     {
       "type": "text",
       "name": "start_time",
-      "title": { "en": "Start Time (HH:MM)" },
-      "placeholder": { "en": "16:00" }
+      "title": {
+        "en": "Start Time (HH:MM)",
+        "nl": "Starttijd (UU:MM)",
+        "af": "Begintyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "16:00",
+        "nl": "16:00",
+        "af": "16:00"
+      }
     },
     {
       "type": "text",
       "name": "end_time",
-      "title": { "en": "End Time (HH:MM)" },
-      "placeholder": { "en": "19:00" }
+      "title": {
+        "en": "End Time (HH:MM)",
+        "nl": "Eindtijd (UU:MM)",
+        "af": "Eindtyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "19:00",
+        "nl": "19:00",
+        "af": "19:00"
+      }
     },
     {
       "type": "number",
       "name": "target_soc",
-      "title": { "en": "Target SOC (%)" },
+      "title": {
+        "en": "Target SOC (%)",
+        "nl": "Doel-SOC (%)",
+        "af": "Teiken-SOC (%)"
+      },
       "min": 0,
       "max": 100,
       "step": 1,

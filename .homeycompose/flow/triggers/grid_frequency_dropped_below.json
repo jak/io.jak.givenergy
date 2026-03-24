@@ -1,12 +1,28 @@
 {
-  "title": { "en": "Grid frequency dropped below a value" },
-  "titleFormatted": { "en": "Grid frequency dropped below [[frequency]]Hz" },
+  "title": {
+    "en": "Grid frequency dropped below a value",
+    "nl": "Netfrequentie daalde onder een waarde",
+    "af": "Netfrekwensie het onder 'n waarde gedaal"
+  },
+  "titleFormatted": {
+    "en": "Grid frequency dropped below [[frequency]]Hz",
+    "nl": "Netfrequentie daalde onder [[frequency]]Hz",
+    "af": "Netfrekwensie het onder [[frequency]]Hz gedaal"
+  },
   "args": [
     {
       "name": "frequency",
       "type": "number",
-      "title": { "en": "Frequency (Hz)" },
-      "placeholder": { "en": "e.g. 49.5" },
+      "title": {
+        "en": "Frequency (Hz)",
+        "nl": "Frequentie (Hz)",
+        "af": "Frekwensie (Hz)"
+      },
+      "placeholder": {
+        "en": "e.g. 49.5",
+        "nl": "bijv. 49,5",
+        "af": "bv. 49,5"
+      },
       "min": 45,
       "max": 55,
       "step": 0.1

@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Set charge rate" },
-  "titleFormatted": { "en": "Set charge rate to [[watts]] W" },
-  "hint": { "en": "Sets the battery charge rate in watts." },
+  "title": {
+    "en": "Set charge rate",
+    "nl": "Laadsnelheid instellen",
+    "af": "Stel laaitempo"
+  },
+  "titleFormatted": {
+    "en": "Set charge rate to [[watts]] W",
+    "nl": "Laadsnelheid instellen op [[watts]] W",
+    "af": "Stel laaitempo op [[watts]] W"
+  },
+  "hint": {
+    "en": "Sets the battery charge rate in watts.",
+    "nl": "Stelt de laadsnelheid van de batterij in watt in.",
+    "af": "Stel die battery se laaitempo in watt."
+  },
   "args": [
     {
       "type": "device",
@@ -11,7 +23,11 @@
     {
       "type": "number",
       "name": "watts",
-      "title": { "en": "Watts" },
+      "title": {
+        "en": "Watts",
+        "nl": "Watt",
+        "af": "Watt"
+      },
       "min": 0,
       "max": 10000,
       "step": 100

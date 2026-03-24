@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/house.svg",
-  "title": { "en": "Consumption Today" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Consumption Today",
+    "nl": "Verbruik vandaag",
+    "af": "Verbruik vandag"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "House energy consumption today." },
+  "desc": {
+    "en": "House energy consumption today.",
+    "nl": "Energieverbruik van het huis vandaag.",
+    "af": "Huis-energieverbruik vandag."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

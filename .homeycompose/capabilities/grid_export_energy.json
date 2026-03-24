@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/energy.svg",
-  "title": { "en": "Grid Export Total" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Grid Export Total",
+    "nl": "Netexport totaal",
+    "af": "Netuitvoer totaal"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "Cumulative grid export energy." },
+  "desc": {
+    "en": "Cumulative grid export energy.",
+    "nl": "Cumulatieve netexportenergie.",
+    "af": "Kumulatiewe netuitvoerenergie."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

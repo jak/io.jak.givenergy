@@ -1,17 +1,27 @@
 {
   "1.0.0": {
-    "en": "First version!"
+    "en": "First version!",
+    "nl": "Eerste versie!",
+    "af": "Eerste weergawe!"
   },
   "1.1.0": {
-    "en": "New autodiscover flow for connecting devices"
+    "en": "New autodiscover flow for connecting devices",
+    "nl": "Nieuwe automatische ontdekkingsflow voor het verbinden van apparaten",
+    "af": "Nuwe outomatiese ontdekkingsvloei vir die koppeling van toestelle"
   },
   "1.2.0": {
-    "en": "Fixed an autodiscovery issue where the app got stuck when it found something that looked like an Inverter but wasn't an Inverter"
+    "en": "Fixed an autodiscovery issue where the app got stuck when it found something that looked like an Inverter but wasn't an Inverter",
+    "nl": "Een probleem met automatische ontdekking opgelost waarbij de app vastliep wanneer iets werd gevonden dat op een omvormer leek maar geen omvormer was",
+    "af": "'n Outomatiese ontdekkingsprobleem opgelos waar die app vasgehaak het toe dit iets gevind het wat soos 'n omsetter gelyk het maar nie een was nie"
   },
   "1.3.0": {
-    "en": "  - Add repair flow for IP address changes — Users can now repair a device when its IP address changes, without needing to re-pair (#19)"
+    "en": "  - Add repair flow for IP address changes — Users can now repair a device when its IP address changes, without needing to re-pair (#19)",
+    "nl": "  - Herstelflow toegevoegd voor IP-adreswijzigingen — Gebruikers kunnen nu een apparaat herstellen wanneer het IP-adres verandert, zonder opnieuw te hoeven koppelen (#19)",
+    "af": "  - Herstelvloei bygevoeg vir IP-adresveranderings — Gebruikers kan nou 'n toestel herstel wanneer sy IP-adres verander, sonder om weer te koppel (#19)"
   },
   "1.4.0": {
-    "en": "Multiple charge/discharge slots, force charge/discharge actions, energy event triggers, daily"
+    "en": "Multiple charge/discharge slots, force charge/discharge actions, energy event triggers, daily",
+    "nl": "Meerdere laad-/ontlaadslots, geforceerd laden/ontladen acties, energie-gebeurtenistriggers, dagelijks",
+    "af": "Meervoudige laai-/ontlaaislotte, forseer laai/ontlaai-aksies, energie-gebeurtenissnellers, daagliks"
   }
 }

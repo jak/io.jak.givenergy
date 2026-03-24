@@ -1,5 +1,9 @@
 {
-  "name": { "en": "Solar Inverter" },
+  "name": {
+    "en": "Solar Inverter",
+    "nl": "Zonne-omvormer",
+    "af": "Sonkrag-omsetter"
+  },
   "class": "solarpanel",
   "capabilities": [
     "measure_power",
@@ -17,17 +21,29 @@
   ],
   "capabilitiesOptions": {
     "measure_power": {
-      "title": { "en": "Solar Power" }
+      "title": {
+        "en": "Solar Power",
+        "nl": "Zonne-energie vermogen",
+        "af": "Sonkragvermoë"
+      }
     },
     "meter_power": {
-      "title": { "en": "Solar Energy Total" }
+      "title": {
+        "en": "Solar Energy Total",
+        "nl": "Zonne-energie totaal",
+        "af": "Sonkrag-energie totaal"
+      }
     }
   },
   "energy": {
     "meterPowerExportedCapability": "meter_power"
   },
-  "platforms": ["local"],
-  "connectivity": ["lan"],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
   "images": {
     "small": "/drivers/solar-inverter/assets/images/small.jpg",
     "large": "/drivers/solar-inverter/assets/images/large.jpg",
@@ -36,13 +52,23 @@
   "pair": [
     {
       "id": "discover",
-      "options": { "title": { "en": "Find Inverter" } }
+      "options": {
+        "title": {
+          "en": "Find Inverter",
+          "nl": "Omvormer zoeken",
+          "af": "Soek omsetter"
+        }
+      }
     },
     {
       "id": "list_devices",
       "template": "list_devices",
-      "navigation": { "next": "add_devices" },
-      "options": { "singular": false }
+      "navigation": {
+        "next": "add_devices"
+      },
+      "options": {
+        "singular": false
+      }
     },
     {
       "id": "add_devices",
@@ -57,60 +83,140 @@
   "settings": [
     {
       "type": "group",
-      "label": { "en": "Device Info" },
+      "label": {
+        "en": "Device Info",
+        "nl": "Apparaatinfo",
+        "af": "Toestelinligting"
+      },
       "children": [
-        { "id": "label_serial_number", "type": "label", "label": { "en": "Serial Number" }, "value": "-" },
-        { "id": "label_generation", "type": "label", "label": { "en": "Generation" }, "value": "-" },
-        { "id": "label_ip_address", "type": "label", "label": { "en": "IP Address" }, "value": "-" },
-        { "id": "label_model_code", "type": "label", "label": { "en": "Model Code" }, "value": "-" }
+        {
+          "id": "label_serial_number",
+          "type": "label",
+          "label": {
+            "en": "Serial Number",
+            "nl": "Serienummer",
+            "af": "Reeksnommer"
+          },
+          "value": "-"
+        },
+        {
+          "id": "label_generation",
+          "type": "label",
+          "label": {
+            "en": "Generation",
+            "nl": "Generatie",
+            "af": "Generasie"
+          },
+          "value": "-"
+        },
+        {
+          "id": "label_ip_address",
+          "type": "label",
+          "label": {
+            "en": "IP Address",
+            "nl": "IP-adres",
+            "af": "IP-adres"
+          },
+          "value": "-"
+        },
+        {
+          "id": "label_model_code",
+          "type": "label",
+          "label": {
+            "en": "Model Code",
+            "nl": "Modelcode",
+            "af": "Modelkode"
+          },
+          "value": "-"
+        }
       ]
     },
     {
       "type": "group",
-      "label": { "en": "Inverter Toggles" },
+      "label": {
+        "en": "Inverter Toggles",
+        "nl": "Omvormerinstellingen",
+        "af": "Omsetter-instellings"
+      },
       "children": [
         {
           "id": "eco_mode",
           "type": "checkbox",
-          "label": { "en": "Eco Mode" },
-          "hint": { "en": "Battery charges from solar only and discharges to meet load (HR27)." },
+          "label": {
+            "en": "Eco Mode",
+            "nl": "Eco-modus",
+            "af": "Eko-modus"
+          },
+          "hint": {
+            "en": "Battery charges from solar only and discharges to meet load (HR27).",
+            "nl": "Batterij laadt alleen van zonne-energie en ontlaadt om de belasting te dekken (HR27).",
+            "af": "Battery laai slegs van sonkrag en ontlaai om die las te dek (HR27)."
+          },
           "value": true
         },
         {
           "id": "timed_export",
           "type": "checkbox",
-          "label": { "en": "Timed Export" },
-          "hint": { "en": "Battery discharges to grid on schedule (HR59). Independent of eco mode." },
+          "label": {
+            "en": "Timed Export",
+            "nl": "Geplande export",
+            "af": "Geskeduleerde uitvoer"
+          },
+          "hint": {
+            "en": "Battery discharges to grid on schedule (HR59). Independent of eco mode.",
+            "nl": "Batterij ontlaadt naar het net volgens schema (HR59). Onafhankelijk van eco-modus.",
+            "af": "Battery ontlaai na die net volgens skedule (HR59). Onafhanklik van eko-modus."
+          },
           "value": false
         }
       ]
     },
     {
       "type": "group",
-      "label": { "en": "Charge Schedule" },
+      "label": {
+        "en": "Charge Schedule",
+        "nl": "Laadschema",
+        "af": "Laaiskedule"
+      },
       "children": [
         {
           "id": "charge_schedule_enabled",
           "type": "checkbox",
-          "label": { "en": "Enable Charge Schedule" },
+          "label": {
+            "en": "Enable Charge Schedule",
+            "nl": "Laadschema inschakelen",
+            "af": "Aktiveer laaiskedule"
+          },
           "value": false
         },
         {
           "id": "charge_slot1_start",
           "type": "text",
-          "label": { "en": "Charge Slot 1 Start (HH:MM)" },
+          "label": {
+            "en": "Charge Slot 1 Start (HH:MM)",
+            "nl": "Laadslot 1 start (UU:MM)",
+            "af": "Laaislot 1 begin (UU:MM)"
+          },
           "value": "00:30"
         },
         {
           "id": "charge_slot1_end",
           "type": "text",
-          "label": { "en": "Charge Slot 1 End (HH:MM)" },
+          "label": {
+            "en": "Charge Slot 1 End (HH:MM)",
+            "nl": "Laadslot 1 einde (UU:MM)",
+            "af": "Laaislot 1 einde (UU:MM)"
+          },
           "value": "04:30"
         },
         {
           "id": "charge_slot1_target_soc",
           "type": "number",
-          "label": { "en": "Charge Slot 1 Target SOC (%)" },
+          "label": {
+            "en": "Charge Slot 1 Target SOC (%)",
+            "nl": "Laadslot 1 doel-SOC (%)",
+            "af": "Laaislot 1 teiken-SOC (%)"
+          },
           "value": 100,
           "min": 0,
           "max": 100
@@ -118,7 +224,11 @@
         {
           "id": "charge_rate",
           "type": "number",
-          "label": { "en": "Charge Rate (%)" },
+          "label": {
+            "en": "Charge Rate (%)",
+            "nl": "Laadsnelheid (%)",
+            "af": "Laaitempo (%)"
+          },
           "value": 100,
           "min": 0,
           "max": 100
@@ -126,19 +236,31 @@
         {
           "id": "charge_slot2_start",
           "type": "text",
-          "label": { "en": "Charge Slot 2 Start (HH:MM)" },
+          "label": {
+            "en": "Charge Slot 2 Start (HH:MM)",
+            "nl": "Laadslot 2 start (UU:MM)",
+            "af": "Laaislot 2 begin (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "charge_slot2_end",
           "type": "text",
-          "label": { "en": "Charge Slot 2 End (HH:MM)" },
+          "label": {
+            "en": "Charge Slot 2 End (HH:MM)",
+            "nl": "Laadslot 2 einde (UU:MM)",
+            "af": "Laaislot 2 einde (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "charge_slot2_target_soc",
           "type": "number",
-          "label": { "en": "Charge Slot 2 Target SOC (%) — Gen3 only" },
+          "label": {
+            "en": "Charge Slot 2 Target SOC (%) — Gen3 only",
+            "nl": "Laadslot 2 doel-SOC (%) — alleen Gen3",
+            "af": "Laaislot 2 teiken-SOC (%) — slegs Gen3"
+          },
           "value": 100,
           "min": 0,
           "max": 100
@@ -146,19 +268,31 @@
         {
           "id": "charge_slot3_start",
           "type": "text",
-          "label": { "en": "Charge Slot 3 Start (HH:MM)" },
+          "label": {
+            "en": "Charge Slot 3 Start (HH:MM)",
+            "nl": "Laadslot 3 start (UU:MM)",
+            "af": "Laaislot 3 begin (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "charge_slot3_end",
           "type": "text",
-          "label": { "en": "Charge Slot 3 End (HH:MM)" },
+          "label": {
+            "en": "Charge Slot 3 End (HH:MM)",
+            "nl": "Laadslot 3 einde (UU:MM)",
+            "af": "Laaislot 3 einde (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "charge_slot3_target_soc",
           "type": "number",
-          "label": { "en": "Charge Slot 3 Target SOC (%) — Gen3 only" },
+          "label": {
+            "en": "Charge Slot 3 Target SOC (%) — Gen3 only",
+            "nl": "Laadslot 3 doel-SOC (%) — alleen Gen3",
+            "af": "Laaislot 3 teiken-SOC (%) — slegs Gen3"
+          },
           "value": 100,
           "min": 0,
           "max": 100
@@ -167,30 +301,50 @@
     },
     {
       "type": "group",
-      "label": { "en": "Discharge Schedule" },
+      "label": {
+        "en": "Discharge Schedule",
+        "nl": "Ontlaadschema",
+        "af": "Ontlaaiskedule"
+      },
       "children": [
         {
           "id": "discharge_schedule_enabled",
           "type": "checkbox",
-          "label": { "en": "Enable Discharge Schedule" },
+          "label": {
+            "en": "Enable Discharge Schedule",
+            "nl": "Ontlaadschema inschakelen",
+            "af": "Aktiveer ontlaaiskedule"
+          },
           "value": false
         },
         {
           "id": "discharge_slot1_start",
           "type": "text",
-          "label": { "en": "Discharge Slot 1 Start (HH:MM)" },
+          "label": {
+            "en": "Discharge Slot 1 Start (HH:MM)",
+            "nl": "Ontlaadslot 1 start (UU:MM)",
+            "af": "Ontlaaislot 1 begin (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "discharge_slot1_end",
           "type": "text",
-          "label": { "en": "Discharge Slot 1 End (HH:MM)" },
+          "label": {
+            "en": "Discharge Slot 1 End (HH:MM)",
+            "nl": "Ontlaadslot 1 einde (UU:MM)",
+            "af": "Ontlaaislot 1 einde (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "discharge_slot1_target_soc",
           "type": "number",
-          "label": { "en": "Discharge Slot 1 Target SOC (%)" },
+          "label": {
+            "en": "Discharge Slot 1 Target SOC (%)",
+            "nl": "Ontlaadslot 1 doel-SOC (%)",
+            "af": "Ontlaaislot 1 teiken-SOC (%)"
+          },
           "value": 0,
           "min": 0,
           "max": 100
@@ -198,7 +352,11 @@
         {
           "id": "discharge_rate",
           "type": "number",
-          "label": { "en": "Discharge Rate (%)" },
+          "label": {
+            "en": "Discharge Rate (%)",
+            "nl": "Ontlaadsnelheid (%)",
+            "af": "Ontlaaitempo (%)"
+          },
           "value": 100,
           "min": 0,
           "max": 100
@@ -206,19 +364,31 @@
         {
           "id": "discharge_slot2_start",
           "type": "text",
-          "label": { "en": "Discharge Slot 2 Start (HH:MM)" },
+          "label": {
+            "en": "Discharge Slot 2 Start (HH:MM)",
+            "nl": "Ontlaadslot 2 start (UU:MM)",
+            "af": "Ontlaaislot 2 begin (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "discharge_slot2_end",
           "type": "text",
-          "label": { "en": "Discharge Slot 2 End (HH:MM)" },
+          "label": {
+            "en": "Discharge Slot 2 End (HH:MM)",
+            "nl": "Ontlaadslot 2 einde (UU:MM)",
+            "af": "Ontlaaislot 2 einde (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "discharge_slot2_target_soc",
           "type": "number",
-          "label": { "en": "Discharge Slot 2 Target SOC (%) — Gen3 only" },
+          "label": {
+            "en": "Discharge Slot 2 Target SOC (%) — Gen3 only",
+            "nl": "Ontlaadslot 2 doel-SOC (%) — alleen Gen3",
+            "af": "Ontlaaislot 2 teiken-SOC (%) — slegs Gen3"
+          },
           "value": 0,
           "min": 0,
           "max": 100
@@ -226,19 +396,31 @@
         {
           "id": "discharge_slot3_start",
           "type": "text",
-          "label": { "en": "Discharge Slot 3 Start (HH:MM)" },
+          "label": {
+            "en": "Discharge Slot 3 Start (HH:MM)",
+            "nl": "Ontlaadslot 3 start (UU:MM)",
+            "af": "Ontlaaislot 3 begin (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "discharge_slot3_end",
           "type": "text",
-          "label": { "en": "Discharge Slot 3 End (HH:MM)" },
+          "label": {
+            "en": "Discharge Slot 3 End (HH:MM)",
+            "nl": "Ontlaadslot 3 einde (UU:MM)",
+            "af": "Ontlaaislot 3 einde (UU:MM)"
+          },
           "value": "00:00"
         },
         {
           "id": "discharge_slot3_target_soc",
           "type": "number",
-          "label": { "en": "Discharge Slot 3 Target SOC (%) — Gen3 only" },
+          "label": {
+            "en": "Discharge Slot 3 Target SOC (%) — Gen3 only",
+            "nl": "Ontlaadslot 3 doel-SOC (%) — alleen Gen3",
+            "af": "Ontlaaislot 3 teiken-SOC (%) — slegs Gen3"
+          },
           "value": 0,
           "min": 0,
           "max": 100
@@ -247,13 +429,25 @@
     },
     {
       "type": "group",
-      "label": { "en": "Gen3 Features" },
+      "label": {
+        "en": "Gen3 Features",
+        "nl": "Gen3-functies",
+        "af": "Gen3-kenmerke"
+      },
       "children": [
         {
           "id": "export_limit",
           "type": "number",
-          "label": { "en": "Export Limit (W)" },
-          "hint": { "en": "Grid export limit in watts. Gen3 inverters only." },
+          "label": {
+            "en": "Export Limit (W)",
+            "nl": "Exportlimiet (W)",
+            "af": "Uitvoerlimiet (W)"
+          },
+          "hint": {
+            "en": "Grid export limit in watts. Gen3 inverters only.",
+            "nl": "Exportlimiet naar het net in watt. Alleen Gen3-omvormers.",
+            "af": "Netuitvoerlimiet in watt. Slegs Gen3-omsetters."
+          },
           "value": 10000,
           "min": 0,
           "max": 10000
@@ -261,14 +455,50 @@
         {
           "id": "battery_pause_mode",
           "type": "dropdown",
-          "label": { "en": "Battery Pause Mode" },
-          "hint": { "en": "Pause battery charge/discharge. Gen3 inverters only." },
+          "label": {
+            "en": "Battery Pause Mode",
+            "nl": "Batterij pauzemodus",
+            "af": "Battery pouse-modus"
+          },
+          "hint": {
+            "en": "Pause battery charge/discharge. Gen3 inverters only.",
+            "nl": "Pauzeer het laden/ontladen van de batterij. Alleen Gen3-omvormers.",
+            "af": "Pouseer batterylaai/ontlaai. Slegs Gen3-omsetters."
+          },
           "value": "disabled",
           "values": [
-            { "id": "disabled", "label": { "en": "Disabled (normal)" } },
-            { "id": "pause_charge", "label": { "en": "Pause Charge" } },
-            { "id": "pause_discharge", "label": { "en": "Pause Discharge" } },
-            { "id": "pause_both", "label": { "en": "Pause Both" } }
+            {
+              "id": "disabled",
+              "label": {
+                "en": "Disabled (normal)",
+                "nl": "Uitgeschakeld (normaal)",
+                "af": "Gedeaktiveer (normaal)"
+              }
+            },
+            {
+              "id": "pause_charge",
+              "label": {
+                "en": "Pause Charge",
+                "nl": "Laden pauzeren",
+                "af": "Pouseer laai"
+              }
+            },
+            {
+              "id": "pause_discharge",
+              "label": {
+                "en": "Pause Discharge",
+                "nl": "Ontladen pauzeren",
+                "af": "Pouseer ontlaai"
+              }
+            },
+            {
+              "id": "pause_both",
+              "label": {
+                "en": "Pause Both",
+                "nl": "Beide pauzeren",
+                "af": "Pouseer beide"
+              }
+            }
           ]
         }
       ]

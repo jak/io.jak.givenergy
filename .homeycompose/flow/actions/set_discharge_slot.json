@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Set discharge slot" },
-  "titleFormatted": { "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]]" },
-  "hint": { "en": "Configures a discharge schedule time window. Gen1/Gen2 inverters support slots 1-2." },
+  "title": {
+    "en": "Set discharge slot",
+    "nl": "Ontlaadslot instellen",
+    "af": "Stel ontlaaislot"
+  },
+  "titleFormatted": {
+    "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]]",
+    "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]]",
+    "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]]"
+  },
+  "hint": {
+    "en": "Configures a discharge schedule time window. Gen1/Gen2 inverters support slots 1-2.",
+    "nl": "Configureert het tijdvenster van het ontlaadschema. Gen1/Gen2-omvormers ondersteunen slots 1-2.",
+    "af": "Stel die ontlaaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun slots 1-2."
+  },
   "args": [
     {
       "type": "device",
@@ -11,23 +23,57 @@
     {
       "type": "dropdown",
       "name": "slot",
-      "title": { "en": "Slot" },
+      "title": {
+        "en": "Slot",
+        "nl": "Slot",
+        "af": "Slot"
+      },
       "values": [
-        { "id": "1", "label": { "en": "Slot 1" } },
-        { "id": "2", "label": { "en": "Slot 2" } }
+        {
+          "id": "1",
+          "label": {
+            "en": "Slot 1",
+            "nl": "Slot 1",
+            "af": "Slot 1"
+          }
+        },
+        {
+          "id": "2",
+          "label": {
+            "en": "Slot 2",
+            "nl": "Slot 2",
+            "af": "Slot 2"
+          }
+        }
       ]
     },
     {
       "type": "text",
       "name": "start_time",
-      "title": { "en": "Start Time (HH:MM)" },
-      "placeholder": { "en": "16:00" }
+      "title": {
+        "en": "Start Time (HH:MM)",
+        "nl": "Starttijd (UU:MM)",
+        "af": "Begintyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "16:00",
+        "nl": "16:00",
+        "af": "16:00"
+      }
     },
     {
       "type": "text",
       "name": "end_time",
-      "title": { "en": "End Time (HH:MM)" },
-      "placeholder": { "en": "19:00" }
+      "title": {
+        "en": "End Time (HH:MM)",
+        "nl": "Eindtijd (UU:MM)",
+        "af": "Eindtyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "19:00",
+        "nl": "19:00",
+        "af": "19:00"
+      }
     }
   ]
 }

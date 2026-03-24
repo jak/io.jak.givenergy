@@ -1,9 +1,21 @@
 {
   "type": "number",
-  "title": { "en": "Grid Power" },
-  "units": { "en": "W" },
+  "title": {
+    "en": "Grid Power",
+    "nl": "Netvermogen",
+    "af": "Netkrag"
+  },
+  "units": {
+    "en": "W",
+    "nl": "W",
+    "af": "W"
+  },
   "insights": true,
-  "desc": { "en": "Grid power in watts. Positive = exporting, negative = importing." },
+  "desc": {
+    "en": "Grid power in watts. Positive = exporting, negative = importing.",
+    "nl": "Netvermogen in watt. Positief = export, negatief = import.",
+    "af": "Netkrag in watt. Positief = uitvoer, negatief = invoer."
+  },
   "chartType": "spline",
   "decimals": 0,
   "getable": true,

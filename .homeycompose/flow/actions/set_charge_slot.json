@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Set charge slot" },
-  "titleFormatted": { "en": "Set charge slot 1 to [[start_time]] - [[end_time]]" },
-  "hint": { "en": "Configures the charge schedule time window. Gen1/Gen2 inverters support 1 charge slot." },
+  "title": {
+    "en": "Set charge slot",
+    "nl": "Laadslot instellen",
+    "af": "Stel laaislot"
+  },
+  "titleFormatted": {
+    "en": "Set charge slot 1 to [[start_time]] - [[end_time]]",
+    "nl": "Laadslot 1 instellen op [[start_time]] - [[end_time]]",
+    "af": "Stel laaislot 1 op [[start_time]] - [[end_time]]"
+  },
+  "hint": {
+    "en": "Configures the charge schedule time window. Gen1/Gen2 inverters support 1 charge slot.",
+    "nl": "Configureert het tijdvenster van het laadschema. Gen1/Gen2-omvormers ondersteunen 1 laadslot.",
+    "af": "Stel die laaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun 1 laaislot."
+  },
   "args": [
     {
       "type": "device",
@@ -11,14 +23,30 @@
     {
       "type": "text",
       "name": "start_time",
-      "title": { "en": "Start Time (HH:MM)" },
-      "placeholder": { "en": "00:30" }
+      "title": {
+        "en": "Start Time (HH:MM)",
+        "nl": "Starttijd (UU:MM)",
+        "af": "Begintyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "00:30",
+        "nl": "00:30",
+        "af": "00:30"
+      }
     },
     {
       "type": "text",
       "name": "end_time",
-      "title": { "en": "End Time (HH:MM)" },
-      "placeholder": { "en": "04:30" }
+      "title": {
+        "en": "End Time (HH:MM)",
+        "nl": "Eindtijd (UU:MM)",
+        "af": "Eindtyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "04:30",
+        "nl": "04:30",
+        "af": "04:30"
+      }
     }
   ]
 }

@@ -1,5 +1,9 @@
 {
-  "name": { "en": "Grid Meter" },
+  "name": {
+    "en": "Grid Meter",
+    "nl": "Netmeter",
+    "af": "Kragnetmeter"
+  },
   "class": "sensor",
   "capabilities": [
     "measure_power",
@@ -12,13 +16,25 @@
   ],
   "capabilitiesOptions": {
     "measure_power": {
-      "title": { "en": "Grid Power" }
+      "title": {
+        "en": "Grid Power",
+        "nl": "Netvermogen",
+        "af": "Netkrag"
+      }
     },
     "meter_power.imported": {
-      "title": { "en": "Grid Import Total" }
+      "title": {
+        "en": "Grid Import Total",
+        "nl": "Netimport totaal",
+        "af": "Netinvoer totaal"
+      }
     },
     "meter_power.exported": {
-      "title": { "en": "Grid Export Total" }
+      "title": {
+        "en": "Grid Export Total",
+        "nl": "Netexport totaal",
+        "af": "Netuitvoer totaal"
+      }
     }
   },
   "energy": {
@@ -26,8 +42,12 @@
     "cumulativeImportedCapability": "meter_power.imported",
     "cumulativeExportedCapability": "meter_power.exported"
   },
-  "platforms": ["local"],
-  "connectivity": ["lan"],
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
   "images": {
     "small": "/drivers/grid-meter/assets/images/small.jpg",
     "large": "/drivers/grid-meter/assets/images/large.jpg",
@@ -36,13 +56,23 @@
   "pair": [
     {
       "id": "discover",
-      "options": { "title": { "en": "Find Inverter" } }
+      "options": {
+        "title": {
+          "en": "Find Inverter",
+          "nl": "Omvormer zoeken",
+          "af": "Soek omsetter"
+        }
+      }
     },
     {
       "id": "list_devices",
       "template": "list_devices",
-      "navigation": { "next": "add_devices" },
-      "options": { "singular": false }
+      "navigation": {
+        "next": "add_devices"
+      },
+      "options": {
+        "singular": false
+      }
     },
     {
       "id": "add_devices",

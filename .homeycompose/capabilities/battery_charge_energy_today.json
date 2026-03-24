@@ -1,10 +1,22 @@
 {
   "type": "number",
   "icon": "/assets/capabilities/battery.svg",
-  "title": { "en": "Battery Charged Today" },
-  "units": { "en": "kWh" },
+  "title": {
+    "en": "Battery Charged Today",
+    "nl": "Batterij geladen vandaag",
+    "af": "Battery gelaai vandag"
+  },
+  "units": {
+    "en": "kWh",
+    "nl": "kWh",
+    "af": "kWh"
+  },
   "insights": true,
-  "desc": { "en": "Energy charged into battery today." },
+  "desc": {
+    "en": "Energy charged into battery today.",
+    "nl": "Vandaag in de batterij geladen energie.",
+    "af": "Energie vandag in die battery gelaai."
+  },
   "chartType": "spline",
   "decimals": 2,
   "getable": true,

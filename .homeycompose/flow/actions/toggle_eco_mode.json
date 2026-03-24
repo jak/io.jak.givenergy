@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Toggle eco mode" },
-  "titleFormatted": { "en": "[[action]] eco mode" },
-  "hint": { "en": "Enables or disables eco mode (HR27). Independent of timed export." },
+  "title": {
+    "en": "Toggle eco mode",
+    "nl": "Eco-modus schakelen",
+    "af": "Wissel eko-modus"
+  },
+  "titleFormatted": {
+    "en": "[[action]] eco mode",
+    "nl": "[[action]] eco-modus",
+    "af": "[[action]] eko-modus"
+  },
+  "hint": {
+    "en": "Enables or disables eco mode (HR27). Independent of timed export.",
+    "nl": "Schakelt eco-modus in of uit (HR27). Onafhankelijk van geplande export.",
+    "af": "Aktiveer of deaktiveer eko-modus (HR27). Onafhanklik van geskeduleerde uitvoer."
+  },
   "args": [
     {
       "type": "device",
@@ -11,10 +23,28 @@
     {
       "type": "dropdown",
       "name": "action",
-      "title": { "en": "Action" },
+      "title": {
+        "en": "Action",
+        "nl": "Actie",
+        "af": "Aksie"
+      },
       "values": [
-        { "id": "enable", "title": { "en": "Enable" } },
-        { "id": "disable", "title": { "en": "Disable" } }
+        {
+          "id": "enable",
+          "title": {
+            "en": "Enable",
+            "nl": "Inschakelen",
+            "af": "Aktiveer"
+          }
+        },
+        {
+          "id": "disable",
+          "title": {
+            "en": "Disable",
+            "nl": "Uitschakelen",
+            "af": "Deaktiveer"
+          }
+        }
       ]
     }
   ]

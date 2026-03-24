@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Force discharge to grid" },
-  "titleFormatted": { "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]%" },
-  "hint": { "en": "Enables timed export with a full-day slot, forcing the battery to discharge to the grid. Use 'Stop force discharge' to restore previous settings." },
+  "title": {
+    "en": "Force discharge to grid",
+    "nl": "Geforceerd ontladen naar het net",
+    "af": "Forseer ontlaai na die net"
+  },
+  "titleFormatted": {
+    "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]%",
+    "nl": "Geforceerd ontladen met [[discharge_rate]]% snelheid, reserve [[battery_reserve]]%",
+    "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]%"
+  },
+  "hint": {
+    "en": "Enables timed export with a full-day slot, forcing the battery to discharge to the grid. Use 'Stop force discharge' to restore previous settings.",
+    "nl": "Schakelt geplande export in met een schema voor de hele dag, waardoor de batterij naar het net wordt ontladen. Gebruik 'Geforceerd ontladen stoppen' om de vorige instellingen te herstellen.",
+    "af": "Aktiveer geskeduleerde uitvoer met 'n voldag-slot, wat die battery forseer om na die net te ontlaai. Gebruik 'Stop forseer ontlaai' om vorige instellings te herstel."
+  },
   "args": [
     {
       "type": "device",
@@ -11,7 +23,11 @@
     {
       "type": "number",
       "name": "discharge_rate",
-      "title": { "en": "Discharge Rate (%)" },
+      "title": {
+        "en": "Discharge Rate (%)",
+        "nl": "Ontlaadsnelheid (%)",
+        "af": "Ontlaaitempo (%)"
+      },
       "min": 0,
       "max": 100,
       "step": 1,
@@ -20,7 +36,11 @@
     {
       "type": "number",
       "name": "battery_reserve",
-      "title": { "en": "Battery Reserve (%)" },
+      "title": {
+        "en": "Battery Reserve (%)",
+        "nl": "Batterijreserve (%)",
+        "af": "Batteryreserwe (%)"
+      },
       "min": 4,
       "max": 100,
       "step": 1,

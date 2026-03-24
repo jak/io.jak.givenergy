@@ -1,9 +1,21 @@
 {
   "type": "number",
-  "title": { "en": "Grid Voltage" },
-  "units": { "en": "V" },
+  "title": {
+    "en": "Grid Voltage",
+    "nl": "Netspanning",
+    "af": "Netspanning"
+  },
+  "units": {
+    "en": "V",
+    "nl": "V",
+    "af": "V"
+  },
   "insights": true,
-  "desc": { "en": "Grid AC voltage in volts." },
+  "desc": {
+    "en": "Grid AC voltage in volts.",
+    "nl": "AC-netspanning in volt.",
+    "af": "Net-WS-spanning in volt."
+  },
   "chartType": "spline",
   "decimals": 1,
   "getable": true,

@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Set discharge rate" },
-  "titleFormatted": { "en": "Set discharge rate to [[watts]] W" },
-  "hint": { "en": "Sets the battery discharge rate in watts." },
+  "title": {
+    "en": "Set discharge rate",
+    "nl": "Ontlaadsnelheid instellen",
+    "af": "Stel ontlaaitempo"
+  },
+  "titleFormatted": {
+    "en": "Set discharge rate to [[watts]] W",
+    "nl": "Ontlaadsnelheid instellen op [[watts]] W",
+    "af": "Stel ontlaaitempo op [[watts]] W"
+  },
+  "hint": {
+    "en": "Sets the battery discharge rate in watts.",
+    "nl": "Stelt de ontlaadsnelheid van de batterij in watt in.",
+    "af": "Stel die battery se ontlaaitempo in watt."
+  },
   "args": [
     {
       "type": "device",
@@ -11,7 +23,11 @@
     {
       "type": "number",
       "name": "watts",
-      "title": { "en": "Watts" },
+      "title": {
+        "en": "Watts",
+        "nl": "Watt",
+        "af": "Watt"
+      },
       "min": 0,
       "max": 10000,
       "step": 100

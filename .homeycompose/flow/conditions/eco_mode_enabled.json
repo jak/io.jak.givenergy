@@ -1,6 +1,14 @@
 {
-  "title": { "en": "Eco mode is enabled" },
-  "hint": { "en": "True when the inverter is operating in eco mode." },
+  "title": {
+    "en": "Eco mode is enabled",
+    "nl": "Eco-modus is ingeschakeld",
+    "af": "Eko-modus is geaktiveer"
+  },
+  "hint": {
+    "en": "True when the inverter is operating in eco mode.",
+    "nl": "Waar wanneer de omvormer in eco-modus werkt.",
+    "af": "Waar wanneer die omsetter in eko-modus werk."
+  },
   "args": [
     {
       "type": "device",

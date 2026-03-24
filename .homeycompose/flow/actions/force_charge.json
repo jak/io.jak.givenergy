@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Force charge from grid" },
-  "titleFormatted": { "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate" },
-  "hint": { "en": "Enables timed charge with a full-day slot, forcing the battery to charge from the grid. Use 'Stop force charge' to restore previous settings." },
+  "title": {
+    "en": "Force charge from grid",
+    "nl": "Geforceerd laden van het net",
+    "af": "Forseer laai van die net"
+  },
+  "titleFormatted": {
+    "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate",
+    "nl": "Geforceerd laden tot [[target_soc]]% met [[charge_rate]]% snelheid",
+    "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo"
+  },
+  "hint": {
+    "en": "Enables timed charge with a full-day slot, forcing the battery to charge from the grid. Use 'Stop force charge' to restore previous settings.",
+    "nl": "Schakelt geforceerd laden in met een schema voor de hele dag, waardoor de batterij van het net wordt geladen. Gebruik 'Geforceerd laden stoppen' om de vorige instellingen te herstellen.",
+    "af": "Aktiveer geforseerde laai met 'n voldag-slot, wat die battery forseer om van die net te laai. Gebruik 'Stop forseer laai' om vorige instellings te herstel."
+  },
   "args": [
     {
       "type": "device",
@@ -11,7 +23,11 @@
     {
       "type": "number",
       "name": "target_soc",
-      "title": { "en": "Target SOC (%)" },
+      "title": {
+        "en": "Target SOC (%)",
+        "nl": "Doel-SOC (%)",
+        "af": "Teiken-SOC (%)"
+      },
       "min": 0,
       "max": 100,
       "step": 1,
@@ -20,7 +36,11 @@
     {
       "type": "number",
       "name": "charge_rate",
-      "title": { "en": "Charge Rate (%)" },
+      "title": {
+        "en": "Charge Rate (%)",
+        "nl": "Laadsnelheid (%)",
+        "af": "Laaitempo (%)"
+      },
       "min": 0,
       "max": 100,
       "step": 1,

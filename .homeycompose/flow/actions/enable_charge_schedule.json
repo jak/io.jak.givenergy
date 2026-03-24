@@ -1,7 +1,19 @@
 {
-  "title": { "en": "Enable or disable charge schedule" },
-  "titleFormatted": { "en": "[[action]] charge schedule" },
-  "hint": { "en": "Enables or disables the battery charge schedule." },
+  "title": {
+    "en": "Enable or disable charge schedule",
+    "nl": "Laadschema in- of uitschakelen",
+    "af": "Aktiveer of deaktiveer laaiskedule"
+  },
+  "titleFormatted": {
+    "en": "[[action]] charge schedule",
+    "nl": "[[action]] laadschema",
+    "af": "[[action]] laaiskedule"
+  },
+  "hint": {
+    "en": "Enables or disables the battery charge schedule.",
+    "nl": "Schakelt het laadschema van de batterij in of uit.",
+    "af": "Aktiveer of deaktiveer die battery se laaiskedule."
+  },
   "args": [
     {
       "type": "device",
@@ -11,10 +23,28 @@
     {
       "type": "dropdown",
       "name": "action",
-      "title": { "en": "Action" },
+      "title": {
+        "en": "Action",
+        "nl": "Actie",
+        "af": "Aksie"
+      },
       "values": [
-        { "id": "enable", "title": { "en": "Enable" } },
-        { "id": "disable", "title": { "en": "Disable" } }
+        {
+          "id": "enable",
+          "title": {
+            "en": "Enable",
+            "nl": "Inschakelen",
+            "af": "Aktiveer"
+          }
+        },
+        {
+          "id": "disable",
+          "title": {
+            "en": "Disable",
+            "nl": "Uitschakelen",
+            "af": "Deaktiveer"
+          }
+        }
       ]
     }
   ]
