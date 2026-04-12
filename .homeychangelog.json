@@ -26,5 +26,8 @@
   },
   "1.4.1": {
     "en": "Added nl and af translations"
+  },
+  "1.4.2": {
+    "en": "Fixes silent hangs when the inverter is unreachable. The modbus client now times out quickly instead of leaving devices blank or stuck on stale data."
   }
 }
