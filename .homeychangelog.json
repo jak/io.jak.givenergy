@@ -29,5 +29,8 @@
   },
   "1.4.2": {
     "en": "Fixes silent hangs when the inverter is unreachable. The modbus client now times out quickly instead of leaving devices blank or stuck on stale data."
+  },
+  "1.5.0": {
+    "en": "Fixed the app freezing after an inverter reboot or network drop — it now reconnects automatically."
   }
 }
