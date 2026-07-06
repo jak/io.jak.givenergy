@@ -202,6 +202,14 @@ module.exports = class GivEnergyApp extends Homey.App {
     try {
       const inverter = await connectPromise;
       inverter.on('lost', () => this.handleConnectionLost(serialNumber, host));
+      // The library's PollManager auto-reconnects on the same inverter object. Log the
+      // recovery lifecycle for diagnosability; no re-registration is needed.
+      inverter.on('reconnecting', (attempt: number, backoffMs: number) => {
+        this.log(`[reconnecting] inverter=${serialNumber} host=${host} attempt=${attempt} backoff=${backoffMs}ms`);
+      });
+      inverter.on('reconnected', () => {
+        this.log(`[reconnected] inverter=${serialNumber} host=${host}`);
+      });
       this.connections.set(serialNumber, { inverter, refCount: 1 });
       return inverter;
     } finally {
@@ -222,10 +230,11 @@ module.exports = class GivEnergyApp extends Homey.App {
 
   private handleConnectionLost(serialNumber: string, host: string) {
     this.error(`[connection-lost] inverter=${serialNumber} host=${host} timestamp=${new Date().toISOString()}`);
-    const entry = this.connections.get(serialNumber);
-    if (entry) {
-      this.connections.delete(serialNumber);
-    }
+    // Do NOT drop the connection entry: the library's PollManager keeps the same inverter
+    // object and auto-reconnects (emitting 'reconnecting'/'reconnected'). Keeping the entry
+    // means getInverter() — and therefore the flow action cards — keep working through the
+    // outage and recover automatically. It also ensures releaseConnection() can still call
+    // inverter.stop() on uninit, so the PollManager isn't leaked.
   }
 
   getInverter(serialNumber: string): GivEnergyInverter | undefined {
