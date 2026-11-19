@@ -32,5 +32,8 @@
   },
   "1.5.0": {
     "en": "Fixed the app freezing after an inverter reboot or network drop — it now reconnects automatically."
+  },
+  "1.6.0": {
+    "en": "New flow cards let you trigger when house load or grid power rises above or drops below a set number of watts, or check whether it's currently above it; the grid voltage and frequency triggers now fire only when your threshold is actually crossed (re-add them to existing flows); and dependencies have been updated with security fixes."
   }
 }
