@@ -15,5 +15,8 @@
   },
   "dependencies": {
     "givenergy-modbus": "^2.0.2"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
