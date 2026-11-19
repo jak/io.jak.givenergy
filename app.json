@@ -86,6 +86,11 @@
         },
         "args": [
           {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter|grid-meter"
+          },
+          {
             "name": "frequency",
             "type": "number",
             "title": {
@@ -103,6 +108,18 @@
             "step": 0.1
           }
         ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "Grid frequency",
+              "nl": "Netfrequentie",
+              "af": "Netfrekwensie"
+            },
+            "example": 50
+          }
+        ],
         "id": "grid_frequency_dropped_below"
       },
       {
@@ -117,6 +134,11 @@
           "af": "Netfrekwensie het bo [[frequency]]Hz gestyg"
         },
         "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter|grid-meter"
+          },
           {
             "name": "frequency",
             "type": "number",
@@ -135,7 +157,127 @@
             "step": 0.1
           }
         ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "Grid frequency",
+              "nl": "Netfrequentie",
+              "af": "Netfrekwensie"
+            },
+            "example": 50
+          }
+        ],
         "id": "grid_frequency_rose_above"
+      },
+      {
+        "title": {
+          "en": "Grid power dropped below a value",
+          "nl": "Netvermogen daalde onder een waarde",
+          "af": "Netkrag het onder 'n waarde gedaal"
+        },
+        "titleFormatted": {
+          "en": "Grid power dropped below [[power]] W",
+          "nl": "Netvermogen daalde onder [[power]] W",
+          "af": "Netkrag het onder [[power]] W gedaal"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "af": "Krag (W)"
+            },
+            "placeholder": {
+              "en": "e.g. -5000",
+              "nl": "bijv. -5000",
+              "af": "bv. -5000"
+            },
+            "min": -50000,
+            "max": 50000,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "Grid power",
+              "nl": "Netvermogen",
+              "af": "Netkrag"
+            },
+            "example": -6000
+          }
+        ],
+        "hint": {
+          "en": "Positive = exporting, negative = importing. E.g. \"dropped below -5000 W\" means grid import rose above 5 kW.",
+          "nl": "Positief = export, negatief = import. Bijv. \"daalde onder -5000 W\" betekent dat de netimport boven 5 kW kwam.",
+          "af": "Positief = uitvoer, negatief = invoer. Bv. \"het onder -5000 W gedaal\" beteken netinvoer het bo 5 kW gestyg."
+        },
+        "id": "grid_power_dropped_below"
+      },
+      {
+        "title": {
+          "en": "Grid power rose above a value",
+          "nl": "Netvermogen steeg boven een waarde",
+          "af": "Netkrag het bo 'n waarde gestyg"
+        },
+        "titleFormatted": {
+          "en": "Grid power rose above [[power]] W",
+          "nl": "Netvermogen steeg boven [[power]] W",
+          "af": "Netkrag het bo [[power]] W gestyg"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "af": "Krag (W)"
+            },
+            "placeholder": {
+              "en": "e.g. -5000",
+              "nl": "bijv. -5000",
+              "af": "bv. -5000"
+            },
+            "min": -50000,
+            "max": 50000,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "Grid power",
+              "nl": "Netvermogen",
+              "af": "Netkrag"
+            },
+            "example": -6000
+          }
+        ],
+        "hint": {
+          "en": "Positive = exporting, negative = importing. E.g. \"dropped below -5000 W\" means grid import rose above 5 kW.",
+          "nl": "Positief = export, negatief = import. Bijv. \"daalde onder -5000 W\" betekent dat de netimport boven 5 kW kwam.",
+          "af": "Positief = uitvoer, negatief = invoer. Bv. \"het onder -5000 W gedaal\" beteken netinvoer het bo 5 kW gestyg."
+        },
+        "id": "grid_power_rose_above"
       },
       {
         "title": {
@@ -149,6 +291,11 @@
           "af": "Netspanning het onder [[voltage]]V gedaal"
         },
         "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter|grid-meter"
+          },
           {
             "name": "voltage",
             "type": "number",
@@ -167,6 +314,18 @@
             "step": 1
           }
         ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "Grid voltage",
+              "nl": "Netspanning",
+              "af": "Netspanning"
+            },
+            "example": 240
+          }
+        ],
         "id": "grid_voltage_dropped_below"
       },
       {
@@ -181,6 +340,11 @@
           "af": "Netspanning het bo [[voltage]]V gestyg"
         },
         "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter|grid-meter"
+          },
           {
             "name": "voltage",
             "type": "number",
@@ -199,7 +363,117 @@
             "step": 1
           }
         ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "Grid voltage",
+              "nl": "Netspanning",
+              "af": "Netspanning"
+            },
+            "example": 240
+          }
+        ],
         "id": "grid_voltage_rose_above"
+      },
+      {
+        "title": {
+          "en": "House load dropped below a value",
+          "nl": "Huisbelasting daalde onder een waarde",
+          "af": "Huislading het onder 'n waarde gedaal"
+        },
+        "titleFormatted": {
+          "en": "House load dropped below [[power]] W",
+          "nl": "Huisbelasting daalde onder [[power]] W",
+          "af": "Huislading het onder [[power]] W gedaal"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "af": "Krag (W)"
+            },
+            "placeholder": {
+              "en": "e.g. 7000",
+              "nl": "bijv. 7000",
+              "af": "bv. 7000"
+            },
+            "min": 0,
+            "max": 50000,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "House load",
+              "nl": "Huisbelasting",
+              "af": "Huislading"
+            },
+            "example": 7500
+          }
+        ],
+        "id": "load_power_dropped_below"
+      },
+      {
+        "title": {
+          "en": "House load rose above a value",
+          "nl": "Huisbelasting steeg boven een waarde",
+          "af": "Huislading het bo 'n waarde gestyg"
+        },
+        "titleFormatted": {
+          "en": "House load rose above [[power]] W",
+          "nl": "Huisbelasting steeg boven [[power]] W",
+          "af": "Huislading het bo [[power]] W gestyg"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "af": "Krag (W)"
+            },
+            "placeholder": {
+              "en": "e.g. 7000",
+              "nl": "bijv. 7000",
+              "af": "bv. 7000"
+            },
+            "min": 0,
+            "max": 50000,
+            "step": 1
+          }
+        ],
+        "tokens": [
+          {
+            "name": "value",
+            "type": "number",
+            "title": {
+              "en": "House load",
+              "nl": "Huisbelasting",
+              "af": "Huislading"
+            },
+            "example": 7500
+          }
+        ],
+        "id": "load_power_rose_above"
       }
     ],
     "conditions": [
@@ -302,6 +576,85 @@
           }
         ],
         "id": "grid_importing"
+      },
+      {
+        "title": {
+          "en": "Grid power !{{is|isn't}} above a value",
+          "nl": "Netvermogen !{{is|is niet}} boven een waarde",
+          "af": "Netkrag !{{is|is nie}} bo 'n waarde"
+        },
+        "titleFormatted": {
+          "en": "Grid power !{{is|isn't}} above [[power]] W",
+          "nl": "Netvermogen !{{is|is niet}} boven [[power]] W",
+          "af": "Netkrag !{{is|is nie}} bo [[power]] W"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "af": "Krag (W)"
+            },
+            "placeholder": {
+              "en": "e.g. -5000",
+              "nl": "bijv. -5000",
+              "af": "bv. -5000"
+            },
+            "min": -50000,
+            "max": 50000,
+            "step": 1
+          }
+        ],
+        "hint": {
+          "en": "Positive = exporting, negative = importing. E.g. \"dropped below -5000 W\" means grid import rose above 5 kW.",
+          "nl": "Positief = export, negatief = import. Bijv. \"daalde onder -5000 W\" betekent dat de netimport boven 5 kW kwam.",
+          "af": "Positief = uitvoer, negatief = invoer. Bv. \"het onder -5000 W gedaal\" beteken netinvoer het bo 5 kW gestyg."
+        },
+        "id": "grid_power_above"
+      },
+      {
+        "title": {
+          "en": "House load !{{is|isn't}} above a value",
+          "nl": "Huisbelasting !{{is|is niet}} boven een waarde",
+          "af": "Huislading !{{is|is nie}} bo 'n waarde"
+        },
+        "titleFormatted": {
+          "en": "House load !{{is|isn't}} above [[power]] W",
+          "nl": "Huisbelasting !{{is|is niet}} boven [[power]] W",
+          "af": "Huislading !{{is|is nie}} bo [[power]] W"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Power (W)",
+              "nl": "Vermogen (W)",
+              "af": "Krag (W)"
+            },
+            "placeholder": {
+              "en": "e.g. 7000",
+              "nl": "bijv. 7000",
+              "af": "bv. 7000"
+            },
+            "min": 0,
+            "max": 50000,
+            "step": 1
+          }
+        ],
+        "id": "load_power_above"
       },
       {
         "title": {

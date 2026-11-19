@@ -1,0 +1,36 @@
+{
+  "title": {
+    "en": "House load !{{is|isn't}} above a value",
+    "nl": "Huisbelasting !{{is|is niet}} boven een waarde",
+    "af": "Huislading !{{is|is nie}} bo 'n waarde"
+  },
+  "titleFormatted": {
+    "en": "House load !{{is|isn't}} above [[power]] W",
+    "nl": "Huisbelasting !{{is|is niet}} boven [[power]] W",
+    "af": "Huislading !{{is|is nie}} bo [[power]] W"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Power (W)",
+        "nl": "Vermogen (W)",
+        "af": "Krag (W)"
+      },
+      "placeholder": {
+        "en": "e.g. 7000",
+        "nl": "bijv. 7000",
+        "af": "bv. 7000"
+      },
+      "min": 0,
+      "max": 50000,
+      "step": 1
+    }
+  ]
+}

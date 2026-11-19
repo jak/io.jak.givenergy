@@ -1,0 +1,41 @@
+{
+  "title": {
+    "en": "Grid power !{{is|isn't}} above a value",
+    "nl": "Netvermogen !{{is|is niet}} boven een waarde",
+    "af": "Netkrag !{{is|is nie}} bo 'n waarde"
+  },
+  "titleFormatted": {
+    "en": "Grid power !{{is|isn't}} above [[power]] W",
+    "nl": "Netvermogen !{{is|is niet}} boven [[power]] W",
+    "af": "Netkrag !{{is|is nie}} bo [[power]] W"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Power (W)",
+        "nl": "Vermogen (W)",
+        "af": "Krag (W)"
+      },
+      "placeholder": {
+        "en": "e.g. -5000",
+        "nl": "bijv. -5000",
+        "af": "bv. -5000"
+      },
+      "min": -50000,
+      "max": 50000,
+      "step": 1
+    }
+  ],
+  "hint": {
+    "en": "Positive = exporting, negative = importing. E.g. \"dropped below -5000 W\" means grid import rose above 5 kW.",
+    "nl": "Positief = export, negatief = import. Bijv. \"daalde onder -5000 W\" betekent dat de netimport boven 5 kW kwam.",
+    "af": "Positief = uitvoer, negatief = invoer. Bv. \"het onder -5000 W gedaal\" beteken netinvoer het bo 5 kW gestyg."
+  }
+}

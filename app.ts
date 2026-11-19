@@ -2,6 +2,9 @@
 
 import Homey from 'homey';
 import { withRetry } from './lib/retry';
+import {
+  METRICS, isAbove, roseAbove, droppedBelow, Crossing,
+} from './lib/threshold';
 
 // Import type with resolution-mode to bridge ESM package from CJS context.
 type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
@@ -12,6 +15,8 @@ module.exports = class GivEnergyApp extends Homey.App {
 
   async onInit() {
     this.log('GivEnergy app initialized');
+
+    this.registerThresholdCards();
 
     // Condition cards
     this.homey.flow.getConditionCard('solar_generating')
@@ -175,6 +180,28 @@ module.exports = class GivEnergyApp extends Homey.App {
       .registerRunListener(async (args: any) => {
         await withRetry(() => args.device.stopForceDischarge(), this.log);
       });
+  }
+
+  /**
+   * Threshold cards: devices trigger both crossing cards on every change with
+   * { previous, current }; each flow runs only if it crossed its own threshold.
+   */
+  private registerThresholdCards() {
+    for (const { id, argName, hasCondition } of METRICS) {
+      this.homey.flow.getDeviceTriggerCard(`${id}_rose_above`)
+        .registerRunListener(async (args: any, state: Crossing) => roseAbove(state, args[argName]));
+
+      this.homey.flow.getDeviceTriggerCard(`${id}_dropped_below`)
+        .registerRunListener(async (args: any, state: Crossing) => droppedBelow(state, args[argName]));
+
+      if (hasCondition) {
+        this.homey.flow.getConditionCard(`${id}_above`)
+          .registerRunListener(async (args: any) => {
+            const value = args.device.getCapabilityValue(id);
+            return typeof value === 'number' && isAbove(value, args[argName]);
+          });
+      }
+    }
   }
 
   async getConnection(serialNumber: string, host: string): Promise<GivEnergyInverter> {
