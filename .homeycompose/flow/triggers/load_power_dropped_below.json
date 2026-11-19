@@ -1,0 +1,48 @@
+{
+  "title": {
+    "en": "House load dropped below a value",
+    "nl": "Huisbelasting daalde onder een waarde",
+    "af": "Huislading het onder 'n waarde gedaal"
+  },
+  "titleFormatted": {
+    "en": "House load dropped below [[power]] W",
+    "nl": "Huisbelasting daalde onder [[power]] W",
+    "af": "Huislading het onder [[power]] W gedaal"
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "name": "power",
+      "type": "number",
+      "title": {
+        "en": "Power (W)",
+        "nl": "Vermogen (W)",
+        "af": "Krag (W)"
+      },
+      "placeholder": {
+        "en": "e.g. 7000",
+        "nl": "bijv. 7000",
+        "af": "bv. 7000"
+      },
+      "min": 0,
+      "max": 50000,
+      "step": 1
+    }
+  ],
+  "tokens": [
+    {
+      "name": "value",
+      "type": "number",
+      "title": {
+        "en": "House load",
+        "nl": "Huisbelasting",
+        "af": "Huislading"
+      },
+      "example": 7500
+    }
+  ]
+}

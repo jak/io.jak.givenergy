@@ -2,6 +2,7 @@
 
 import Homey from 'homey';
 import { withRetry } from '../../lib/retry';
+import { ThresholdTracker } from '../../lib/threshold';
 
 type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
 type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
@@ -12,13 +13,18 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private dataHandler?: (snapshot: InverterSnapshot) => void;
   private lostHandler?: (err: any) => void;
   private debugHandler?: (msg: string) => void;
-  private lastGridVoltage?: number;
-  private lastGridFrequency?: number;
+  private thresholds?: ThresholdTracker;
   private lastSettingsSyncMs = 0;
   private chargeSnapshot?: { timedCharge: boolean; chargeSlot: any; chargeRatePercent: number };
   private dischargeSnapshot?: { timedExport: boolean; dischargeSlot: any; dischargeRatePercent: number; batteryReservePercent: number };
 
   async onInit() {
+    this.thresholds = new ThresholdTracker((cardId, tokens, state) => {
+      this.homey.flow.getDeviceTriggerCard(cardId)
+        .trigger(this, tokens, state)
+        .catch(this.error);
+    });
+
     const { host } = this.getStore();
     const { id: serialNumber } = this.getData();
     this.log(`Initializing solar inverter device ${serialNumber} at ${host}`);
@@ -115,9 +121,12 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.setCapabilityValue('grid_export_energy_today', snapshot.gridExportEnergyTodayKwh).catch(this.error);
     this.setCapabilityValue('consumption_energy_today', snapshot.consumptionEnergyTodayKwh).catch(this.error);
 
-    this.fireGridQualityTriggers(snapshot.gridVoltage, snapshot.gridFrequency);
-    this.lastGridVoltage = snapshot.gridVoltage;
-    this.lastGridFrequency = snapshot.gridFrequency;
+    this.thresholds?.update({
+      grid_voltage: snapshot.gridVoltage,
+      grid_frequency: snapshot.gridFrequency,
+      load_power: snapshot.loadPower,
+      grid_power: snapshot.gridPower,
+    });
 
     this.syncSettings(snapshot);
   }
@@ -175,31 +184,6 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
 
     this.setSettings(settings).catch(this.error);
-  }
-
-  private fireGridQualityTriggers(voltage: number, frequency: number) {
-    const prev = { voltage: this.lastGridVoltage, frequency: this.lastGridFrequency };
-
-    if (prev.voltage !== undefined && prev.voltage >= voltage) {
-      (this.homey.flow.getDeviceTriggerCard('grid_voltage_dropped_below') as any)
-        .trigger(this, {}, { voltage })
-        .catch(this.error);
-    }
-    if (prev.voltage !== undefined && prev.voltage <= voltage) {
-      (this.homey.flow.getDeviceTriggerCard('grid_voltage_rose_above') as any)
-        .trigger(this, {}, { voltage })
-        .catch(this.error);
-    }
-    if (prev.frequency !== undefined && prev.frequency >= frequency) {
-      (this.homey.flow.getDeviceTriggerCard('grid_frequency_dropped_below') as any)
-        .trigger(this, {}, { frequency })
-        .catch(this.error);
-    }
-    if (prev.frequency !== undefined && prev.frequency <= frequency) {
-      (this.homey.flow.getDeviceTriggerCard('grid_frequency_rose_above') as any)
-        .trigger(this, {}, { frequency })
-        .catch(this.error);
-    }
   }
 
   async forceCharge(targetSoc: number, chargeRate: number) {

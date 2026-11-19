@@ -11,6 +11,11 @@
   },
   "args": [
     {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter|grid-meter"
+    },
+    {
       "name": "voltage",
       "type": "number",
       "title": {
@@ -26,6 +31,18 @@
       "min": 100,
       "max": 260,
       "step": 1
+    }
+  ],
+  "tokens": [
+    {
+      "name": "value",
+      "type": "number",
+      "title": {
+        "en": "Grid voltage",
+        "nl": "Netspanning",
+        "af": "Netspanning"
+      },
+      "example": 240
     }
   ]
 }
