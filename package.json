@@ -8,7 +8,7 @@
   "devDependencies": {
     "@tsconfig/node22": "^22.0.7",
     "@types/homey": "npm:homey-apps-sdk-v3-types@^1.8.4",
-    "@types/node": "^25.9.9",
+    "@types/node": "^22.20.5",
     "eslint": "^8.57.1",
     "eslint-config-athom": "^4.0.2",
     "typescript": "^6.0.3"
