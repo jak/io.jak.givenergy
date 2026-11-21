@@ -1,6 +1,6 @@
 'use strict';
 
-import { connectErrorMessage } from './errors';
+import { connectErrorMessage } from './errors.ts';
 
 import type { InverterIdentity } from './types';
 

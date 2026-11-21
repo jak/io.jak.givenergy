@@ -2,7 +2,13 @@
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "outDir": ".homeybuild/"
+    "outDir": ".homeybuild/",
+    "rewriteRelativeImportExtensions": true,
+    "allowImportingTsExtensions": true
   },
-  "exclude": ["node_modules", ".homeybuild", "test"]
+  "exclude": [
+    "node_modules",
+    ".homeybuild",
+    "test"
+  ]
 }

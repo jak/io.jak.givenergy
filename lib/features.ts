@@ -30,7 +30,10 @@ export interface FeatureSource {
   supports(key: 'inverterChargePowerPercent' | 'ecoMode'): boolean;
 }
 
-export function featureMarkers({ capabilities: c, supports }: FeatureSource): Record<FeatureMarker, boolean> {
+export function featureMarkers(source: FeatureSource): Record<FeatureMarker, boolean> {
+  const c = source.capabilities;
+  // Call supports() as a method: on the inverter it reads `this`
+  const supports = (key: 'inverterChargePowerPercent' | 'ecoMode') => source.supports(key);
   return {
     givenergy_slot_targets: c.perSlotTargets,
     givenergy_global_target: !c.perSlotTargets,

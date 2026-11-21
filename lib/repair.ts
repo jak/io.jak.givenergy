@@ -1,6 +1,6 @@
 'use strict';
 
-import { connectErrorMessage } from './errors';
+import { connectErrorMessage } from './errors.ts';
 
 const IDENTIFY_TIMEOUT_MS = 10_000;
 const IDENTIFY_RETRIES = 1;

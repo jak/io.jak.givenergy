@@ -73,3 +73,18 @@ test('markerChanges adds missing, removes stale, and always drops inverter_gen3'
   assert.deepEqual(add.sort(), ['givenergy_global_target', 'givenergy_pause_mode_only']);
   assert.deepEqual(remove.sort(), ['givenergy_slot_targets', 'inverter_gen3']);
 });
+
+test('works with a real inverter object, whose supports() uses `this`', () => {
+  class FakeInverter {
+    capabilities = { ...NONE, pauseMode: true };
+
+    private supported = new Set(['ecoMode']);
+
+    supports(key: string) {
+      return this.supported.has(key);
+    }
+  }
+  const m = featureMarkers(new FakeInverter());
+  assert.equal(m.givenergy_eco_mode, true);
+  assert.equal(m.givenergy_power_percent, false);
+});
