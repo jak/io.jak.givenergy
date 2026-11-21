@@ -1,5 +1,7 @@
 'use strict';
 
+import { connectErrorMessage } from './errors';
+
 import type { InverterIdentity } from './types';
 
 const IDENTIFY_TIMEOUT_MS = 10_000;
@@ -105,7 +107,7 @@ export function setupPairSession(
         store: { host, model: identity.model, layout: identity.layout },
       }];
     } catch (err: any) {
-      throw new Error(`Could not connect to inverter at ${host}: ${err?.message ?? err}`);
+      throw new Error(connectErrorMessage(host, err));
     }
 
     await safeShowView('list_devices');

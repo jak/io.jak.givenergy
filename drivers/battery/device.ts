@@ -3,6 +3,7 @@
 import Homey from 'homey';
 import { batteryValues } from '../../lib/snapshot';
 import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
+import { syncStore } from '../../lib/store';
 
 module.exports = class BatteryDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
@@ -25,6 +26,7 @@ module.exports = class BatteryDevice extends Homey.Device {
     }
 
     this.setAvailable().catch(this.error);
+    await syncStore(this, this.inverter!).catch(this.error);
 
     // Add capabilities that may not exist on devices paired before this version
     for (const cap of ['battery_charge_energy_today', 'battery_discharge_energy_today']) {

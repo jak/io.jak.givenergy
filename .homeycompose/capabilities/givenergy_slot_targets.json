@@ -1,0 +1,12 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Per-slot targets",
+    "nl": "Doelen per tijdslot",
+    "af": "Teikens per tydgleuf"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false
+}

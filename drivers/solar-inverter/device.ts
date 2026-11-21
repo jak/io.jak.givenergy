@@ -5,6 +5,8 @@ import { withRetry } from '../../lib/retry';
 import { ThresholdTracker } from '../../lib/threshold';
 import { solarInverterValues } from '../../lib/snapshot';
 import { LEGACY_PAUSE_MODES, PAUSE_MODE_TO_LEGACY } from '../../lib/legacy';
+import { featureMarkers, markerChanges } from '../../lib/features';
+import { syncStore } from '../../lib/store';
 import type {
   Inverter as GivEnergyInverter, InverterSnapshot, SinglePhaseInverter, TimeSlotInput,
 } from '../../lib/types';
@@ -23,6 +25,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private debugHandler?: (msg: string) => void;
   private thresholds?: ThresholdTracker;
   private lastSettingsSyncMs = 0;
+  private featureKey?: string;
   private chargeSnapshot?: {
     acCharge?: boolean; chargeSlot?: SlotConfig; chargePowerPercent?: number; acChargeUpperLimit?: number;
   };
@@ -61,16 +64,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
       }
     }
 
-    // Per-slot-target ("Gen3") capability for flow card filtering
-    if (this.inverter!.capabilities.perSlotTargets) {
-      if (!this.hasCapability('inverter_gen3')) {
-        await this.addCapability('inverter_gen3').catch(this.error);
-      }
-    } else {
-      if (this.hasCapability('inverter_gen3')) {
-        await this.removeCapability('inverter_gen3').catch(this.error);
-      }
-    }
+    await syncStore(this, this.inverter!).catch(this.error);
+    await this.syncFeatureMarkers();
 
     await this.setSettings({
       label_serial_number: serialNumber,
@@ -84,6 +79,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.dataHandler = (snapshot: InverterSnapshot) => {
       this.log(`Data received: solar=${snapshot.solar.power}W grid=${snapshot.grid.power}W`);
       this.updateCapabilities(snapshot);
+      // Capabilities can drop at runtime (blocks the inverter never answered), e.g. after a reconnect
+      this.syncFeatureMarkers().catch(this.error);
       if (!modelCodeSet) {
         modelCodeSet = true;
         this.setSettings({ label_model_code: String(snapshot.identity.deviceTypeCode) }).catch(this.error);
@@ -107,6 +104,18 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     } catch {
       this.log('No initial snapshot yet, waiting for first data event...');
     }
+  }
+
+  /** Add/remove the hidden capabilities that gate flow cards, when the inverter's features change. */
+  private async syncFeatureMarkers() {
+    const wanted = featureMarkers(this.inverter!);
+    const key = JSON.stringify(wanted);
+    if (key === this.featureKey) return;
+    this.featureKey = key;
+    const { add, remove } = markerChanges(wanted, this.getCapabilities());
+    for (const cap of add) await this.addCapability(cap).catch(this.error);
+    for (const cap of remove) await this.removeCapability(cap).catch(this.error);
+    if (add.length || remove.length) this.log(`Feature markers: +[${add.join(', ')}] -[${remove.join(', ')}]`);
   }
 
   getInverterSnapshot(): InverterSnapshot | null {

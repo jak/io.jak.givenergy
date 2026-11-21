@@ -4,6 +4,7 @@ import Homey from 'homey';
 import { ThresholdTracker } from '../../lib/threshold';
 import { gridMeterValues } from '../../lib/snapshot';
 import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
+import { syncStore } from '../../lib/store';
 
 module.exports = class GridMeterDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
@@ -33,6 +34,7 @@ module.exports = class GridMeterDevice extends Homey.Device {
     }
 
     this.setAvailable().catch(this.error);
+    await syncStore(this, this.inverter!).catch(this.error);
 
     // Add capabilities that may not exist on devices paired before this version
     for (const cap of ['grid_voltage', 'grid_frequency', 'grid_import_energy_today', 'grid_export_energy_today']) {

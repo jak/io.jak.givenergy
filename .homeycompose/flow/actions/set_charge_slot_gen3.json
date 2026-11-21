@@ -18,7 +18,7 @@
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_slot_targets"
     },
     {
       "type": "dropdown",

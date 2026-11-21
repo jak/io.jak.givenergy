@@ -1062,7 +1062,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_slot_targets"
           },
           {
             "type": "dropdown",
@@ -1280,7 +1280,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_slot_targets"
           },
           {
             "type": "dropdown",
@@ -2302,6 +2302,78 @@
       "decimals": 2,
       "getable": true,
       "setable": false
+    },
+    "givenergy_global_target": {
+      "type": "boolean",
+      "title": {
+        "en": "Global charge target",
+        "nl": "Algemeen laaddoel",
+        "af": "Algemene laaiteiken"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_pause": {
+      "type": "boolean",
+      "title": {
+        "en": "Battery pause",
+        "nl": "Batterijpauze",
+        "af": "Batterypouse"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_pause_mode_only": {
+      "type": "boolean",
+      "title": {
+        "en": "Battery pause mode only",
+        "nl": "Alleen batterijpauzemodus",
+        "af": "Slegs batterypouse-modus"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_pause_window": {
+      "type": "boolean",
+      "title": {
+        "en": "Battery pause window",
+        "nl": "Venster voor batterijpauze",
+        "af": "Batterypouse-venster"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_power_percent": {
+      "type": "boolean",
+      "title": {
+        "en": "Charge/discharge power %",
+        "nl": "Laad-/ontlaadvermogen %",
+        "af": "Laai-/ontlaaidrywing %"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_slot_targets": {
+      "type": "boolean",
+      "title": {
+        "en": "Per-slot targets",
+        "nl": "Doelen per tijdslot",
+        "af": "Teikens per tydgleuf"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
     },
     "grid_export_energy": {
       "type": "number",
