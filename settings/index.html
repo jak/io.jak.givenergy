@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+  <style>
+    :root {
+      --buy: #2f7de1;
+      --sell: #19a463;
+      --pause: #e6a100;
+      --use: rgba(127, 127, 127, 0.18);
+      --line: rgba(127, 127, 127, 0.25);
+      --muted: rgba(127, 127, 127, 0.9);
+    }
+    body { margin: 0; }
+    .hidden { display: none !important; }
+    .muted { color: var(--muted); font-size: 0.9em; }
+
+    /* 24-hour overview */
+    .day { margin: 4px 0 16px; }
+    .bar { position: relative; height: 22px; border-radius: 6px; background: var(--use); overflow: hidden; }
+    .bar .seg { position: absolute; top: 0; bottom: 0; }
+    .hours { display: flex; justify-content: space-between; font-size: 0.75em; color: var(--muted); margin-top: 3px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.8em; margin-top: 6px; }
+    .legend span::before {
+      content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px;
+      background: var(--c);
+    }
+
+    /* slot rows */
+    .rows { display: flex; flex-direction: column; gap: 8px; }
+    .row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px;
+      border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 8px;
+    }
+    .badge { font-weight: 600; min-width: 46px; color: var(--c); }
+    .times { display: flex; align-items: center; gap: 6px; flex: 1 1 210px; }
+    .times input { flex: 1 1 0; min-width: 0; }
+    .extra { display: flex; align-items: center; gap: 6px; flex: 1 1 150px; }
+    .extra input { width: 72px; }
+    .extra select { flex: 1 1 auto; }
+    .remove {
+      margin-left: auto; border: 0; background: none; font-size: 1.4em; line-height: 1; padding: 2px 6px; cursor: pointer;
+      color: var(--muted);
+    }
+    .empty { padding: 12px; text-align: center; border: 1px dashed var(--line); border-radius: 8px; }
+    .add { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .add button { flex: 1 1 90px; }
+    .note { margin-top: 8px; }
+    .buy { --c: var(--buy); }
+    .sell { --c: var(--sell); }
+    .pause { --c: var(--pause); }
+    .use { --c: var(--use); }
+    #save { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <header class="homey-header">
+    <h1 class="homey-title" data-i18n="schedules.title"></h1>
+    <p class="homey-subtitle" data-i18n="schedules.subtitle"></p>
+  </header>
+
+  <div id="picker-group" class="homey-form-group hidden">
+    <label class="homey-form-label" for="picker" data-i18n="schedules.inverter"></label>
+    <select class="homey-form-select" id="picker"></select>
+  </div>
+
+  <p id="message" class="hidden"></p>
+
+  <div id="content" class="hidden">
+    <div class="day">
+      <div class="bar" id="bar"></div>
+      <div class="hours"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+      <div class="legend">
+        <span class="buy" data-i18n="schedules.buy"></span>
+        <span class="sell" data-i18n="schedules.sell"></span>
+        <span class="pause" id="legend-pause" data-i18n="schedules.pause"></span>
+        <span class="use" data-i18n="schedules.use"></span>
+      </div>
+    </div>
+
+    <fieldset class="homey-form-fieldset">
+      <legend class="homey-form-legend" data-i18n="schedules.slots"></legend>
+      <div class="rows" id="rows"></div>
+      <div class="add">
+        <button class="homey-button-secondary-small buy" id="add-buy"></button>
+        <button class="homey-button-secondary-small sell" id="add-sell"></button>
+        <button class="homey-button-secondary-small pause" id="add-pause"></button>
+      </div>
+      <p class="muted note" id="use-note" data-i18n="schedules.useNote"></p>
+      <p class="muted note hidden" id="reserve-note"></p>
+    </fieldset>
+
+    <fieldset class="homey-form-fieldset">
+      <legend class="homey-form-legend" data-i18n="schedules.settings"></legend>
+      <div class="homey-form-group" id="eco-group">
+        <label class="homey-form-checkbox">
+          <input class="homey-form-checkbox-input" type="checkbox" id="eco">
+          <span class="homey-form-checkbox-checkmark"></span>
+          <span class="homey-form-checkbox-text" data-i18n="schedules.ecoMode"></span>
+        </label>
+        <p class="muted" data-i18n="schedules.ecoHint"></p>
+      </div>
+      <div class="homey-form-group hidden" id="target-group">
+        <label class="homey-form-label" for="charge-target" data-i18n="schedules.chargeTarget"></label>
+        <input class="homey-form-input" type="number" id="charge-target" min="4" max="100" step="1">
+        <p class="muted" data-i18n="schedules.chargeTargetHint"></p>
+      </div>
+      <div class="homey-form-group hidden" id="pause-mode-group">
+        <label class="homey-form-label" for="pause-mode" data-i18n="schedules.pause"></label>
+        <select class="homey-form-select" id="pause-mode"></select>
+      </div>
+    </fieldset>
+
+    <button class="homey-button-primary-full" id="save" data-i18n="schedules.save"></button>
+  </div>
+
+  <script type="text/javascript">
+    function onHomeyReady(Homey) {
+      var t = function (key, tokens) { return Homey.__('schedules.' + key, tokens); };
+      var $ = function (id) { return document.getElementById(id); };
+      var PAUSE_MODES = ['both', 'charge', 'discharge'];
+
+      var inverters = [];
+      var current = null; // the selected inverter from GET /inverters
+      var rows = []; // { type: 'buy'|'sell'|'pause', slot?, start, end, target?, mode? }
+      var saving = false;
+
+      function minutes(time) { return Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5)); }
+
+      function loadRows(schedule) {
+        rows = [];
+        schedule.buy.forEach(function (s) { rows.push({ type: 'buy', slot: s.slot, start: s.start, end: s.end, target: s.target }); });
+        schedule.sell.forEach(function (s) { rows.push({ type: 'sell', slot: s.slot, start: s.start, end: s.end, target: s.target }); });
+        if (schedule.support.pause === 'window' && schedule.pause && schedule.pause.start) {
+          rows.push({ type: 'pause', start: schedule.pause.start, end: schedule.pause.end, mode: schedule.pause.mode });
+        }
+      }
+
+      function count(type) { return rows.filter(function (r) { return r.type === type; }).length; }
+
+      function renderBar() {
+        var bar = $('bar');
+        bar.innerHTML = '';
+        rows.forEach(function (r) {
+          if (!/^\d\d:\d\d$/.test(r.start) || !/^\d\d:\d\d$/.test(r.end)) return;
+          var a = minutes(r.start);
+          var b = minutes(r.end);
+          var spans = a < b ? [[a, b]] : [[a, 1440], [0, b]];
+          spans.forEach(function (span) {
+            var seg = document.createElement('div');
+            seg.className = 'seg ' + r.type;
+            seg.style.background = 'var(--c)';
+            seg.style.left = (span[0] / 14.4) + '%';
+            seg.style.width = ((span[1] - span[0]) / 14.4) + '%';
+            bar.appendChild(seg);
+          });
+        });
+      }
+
+      function input(type, value, attrs) {
+        var el = document.createElement('input');
+        el.className = 'homey-form-input';
+        el.type = type;
+        el.value = value === undefined ? '' : value;
+        Object.keys(attrs || {}).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+        return el;
+      }
+
+      function renderRows() {
+        var support = current.schedule.support;
+        var list = $('rows');
+        list.innerHTML = '';
+        rows.sort(function (x, y) { return minutes(x.start || '00:00') - minutes(y.start || '00:00'); });
+
+        if (rows.length === 0) {
+          var empty = document.createElement('div');
+          empty.className = 'empty muted';
+          empty.textContent = t('noSlots');
+          list.appendChild(empty);
+        }
+
+        rows.forEach(function (r) {
+          var el = document.createElement('div');
+          el.className = 'row ' + r.type;
+
+          var badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = t(r.type);
+          el.appendChild(badge);
+
+          var times = document.createElement('div');
+          times.className = 'times';
+          var start = input('time', r.start, { 'aria-label': t('start') });
+          var end = input('time', r.end, { 'aria-label': t('end') });
+          start.addEventListener('change', function () { r.start = start.value; renderBar(); });
+          end.addEventListener('change', function () { r.end = end.value; renderBar(); });
+          var dash = document.createElement('span');
+          dash.textContent = '–';
+          times.appendChild(start);
+          times.appendChild(dash);
+          times.appendChild(end);
+          el.appendChild(times);
+
+          if (r.type === 'pause') {
+            var extra = document.createElement('div');
+            extra.className = 'extra';
+            var select = document.createElement('select');
+            select.className = 'homey-form-select';
+            PAUSE_MODES.forEach(function (m) {
+              var opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = t('pauseMode.' + m);
+              select.appendChild(opt);
+            });
+            select.value = r.mode || 'both';
+            select.addEventListener('change', function () { r.mode = select.value; });
+            extra.appendChild(select);
+            el.appendChild(extra);
+          } else if (support.perSlotTargets) {
+            var tgt = document.createElement('div');
+            tgt.className = 'extra';
+            var label = document.createElement('span');
+            label.className = 'muted';
+            label.textContent = t(r.type === 'buy' ? 'chargeTo' : 'stopAt');
+            // A target the inverter hasn't reported yet stays empty, and saving keeps the inverter's value
+            var target = input('number', r.target, { min: 4, max: 100, step: 1, placeholder: '–', 'aria-label': label.textContent });
+            target.addEventListener('change', function () { r.target = target.value === '' ? undefined : Number(target.value); });
+            var pct = document.createElement('span');
+            pct.textContent = '%';
+            tgt.appendChild(label);
+            tgt.appendChild(target);
+            tgt.appendChild(pct);
+            el.appendChild(tgt);
+          }
+
+          var remove = document.createElement('button');
+          remove.className = 'remove';
+          remove.textContent = '×';
+          remove.setAttribute('aria-label', t('remove'));
+          remove.addEventListener('click', function () {
+            rows.splice(rows.indexOf(r), 1);
+            render();
+          });
+          el.appendChild(remove);
+          list.appendChild(el);
+        });
+
+        $('add-buy').textContent = '+ ' + t('buy') + ' (' + count('buy') + '/' + support.buySlots + ')';
+        $('add-sell').textContent = '+ ' + t('sell') + ' (' + count('sell') + '/' + support.sellSlots + ')';
+        $('add-pause').textContent = '+ ' + t('pause');
+        $('add-buy').disabled = count('buy') >= support.buySlots;
+        $('add-sell').disabled = count('sell') >= support.sellSlots;
+        $('add-pause').classList.toggle('hidden', support.pause !== 'window');
+        $('add-pause').disabled = count('pause') >= 1;
+      }
+
+      function render() {
+        var s = current.schedule;
+        $('legend-pause').classList.toggle('hidden', s.support.pause === 'none');
+
+        $('eco-group').classList.toggle('hidden', s.ecoMode === undefined);
+        $('eco').checked = s.ecoMode === true;
+
+        $('target-group').classList.toggle('hidden', s.support.perSlotTargets);
+        $('charge-target').value = s.chargeTarget === undefined ? '' : s.chargeTarget;
+
+        var reserve = $('reserve-note');
+        reserve.classList.toggle('hidden', s.support.perSlotTargets || s.batteryReserve === undefined);
+        reserve.textContent = t('reserveNote', { reserve: s.batteryReserve });
+
+        var modeGroup = $('pause-mode-group');
+        modeGroup.classList.toggle('hidden', s.support.pause !== 'mode');
+        if (s.support.pause === 'mode') {
+          var select = $('pause-mode');
+          if (!select.options.length) {
+            ['off'].concat(PAUSE_MODES).forEach(function (m) {
+              var opt = document.createElement('option');
+              opt.value = m;
+              opt.textContent = t('pauseMode.' + m);
+              select.appendChild(opt);
+            });
+          }
+          select.value = s.pause ? s.pause.mode : 'off';
+        }
+
+        renderRows();
+        renderBar();
+      }
+
+      function addRow(type) {
+        // Start the new slot after the last one, so it doesn't overlap by default
+        var last = rows.reduce(function (m, r) { return Math.max(m, r.end ? minutes(r.end) : 0); }, 0);
+        var start = Math.min(last, 1380);
+        var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+        var hhmm = function (m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
+        var row = { type: type, start: hhmm(start), end: hhmm(start + 30) };
+        if (type === 'pause') row.mode = 'both';
+        rows.push(row);
+        render();
+      }
+
+      function showMessage(text) {
+        $('message').textContent = text;
+        $('message').classList.toggle('hidden', !text);
+      }
+
+      function select(serial) {
+        current = inverters.filter(function (i) { return i.serial === serial; })[0] || null;
+        if (!current || !current.schedule) {
+          $('content').classList.add('hidden');
+          showMessage(current ? t('notConnected', { name: current.name }) : t('noInverters'));
+          return;
+        }
+        showMessage('');
+        loadRows(current.schedule);
+        render();
+        $('content').classList.remove('hidden');
+      }
+
+      function load(serial) {
+        Homey.api('GET', '/inverters', null, function (err, result) {
+          Homey.ready();
+          if (err) {
+            showMessage(String(err.message || err));
+            return;
+          }
+          inverters = result || [];
+          var picker = $('picker');
+          picker.innerHTML = '';
+          inverters.forEach(function (i) {
+            var opt = document.createElement('option');
+            opt.value = i.serial;
+            opt.textContent = i.name + (i.model ? ' (' + i.model + ')' : '');
+            picker.appendChild(opt);
+          });
+          $('picker-group').classList.toggle('hidden', inverters.length < 2);
+          if (!inverters.length) {
+            showMessage(t('noInverters'));
+            return;
+          }
+          var chosen = serial || inverters[0].serial;
+          picker.value = chosen;
+          select(chosen);
+        });
+      }
+
+      function body() {
+        var s = current.schedule;
+        var slots = function (type) {
+          return rows.filter(function (r) { return r.type === type; }).map(function (r) {
+            var out = { start: r.start, end: r.end };
+            if (r.slot !== undefined) out.slot = r.slot;
+            if (s.support.perSlotTargets && r.target !== undefined) out.target = r.target;
+            return out;
+          });
+        };
+        var out = { buy: slots('buy'), sell: slots('sell'), pause: null };
+        if (s.support.pause === 'window') {
+          var p = rows.filter(function (r) { return r.type === 'pause'; })[0];
+          if (p) out.pause = { mode: p.mode || 'both', start: p.start, end: p.end };
+        } else if (s.support.pause === 'mode') {
+          var mode = $('pause-mode').value;
+          if (mode !== 'off') out.pause = { mode: mode };
+        }
+        if (s.ecoMode !== undefined) out.ecoMode = $('eco').checked;
+        if (!s.support.perSlotTargets && $('charge-target').value !== '') out.chargeTarget = Number($('charge-target').value);
+        return out;
+      }
+
+      function save() {
+        if (saving || !current) return;
+        var missing = rows.some(function (r) { return !r.start || !r.end; });
+        if (missing) {
+          Homey.alert(t('missingTime'));
+          return;
+        }
+        saving = true;
+        $('save').classList.add('is-loading');
+        Homey.api('PUT', '/inverters/' + encodeURIComponent(current.serial) + '/schedule', body(), function (err, schedule) {
+          saving = false;
+          $('save').classList.remove('is-loading');
+          if (err) {
+            Homey.alert(String(err.message || err));
+            return;
+          }
+          current.schedule = schedule;
+          loadRows(schedule);
+          render();
+          Homey.alert(t('saved'));
+        });
+      }
+
+      $('picker').addEventListener('change', function () { select($('picker').value); });
+      $('add-buy').addEventListener('click', function () { addRow('buy'); });
+      $('add-sell').addEventListener('click', function () { addRow('sell'); });
+      $('add-pause').addEventListener('click', function () { addRow('pause'); });
+      $('save').addEventListener('click', save);
+
+      load();
+    }
+  </script>
+</body>
+</html>

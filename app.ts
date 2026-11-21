@@ -8,8 +8,10 @@ import {
 import type { Inverter, SinglePhaseInverter } from './lib/types';
 import {
   scheduleInverter, scheduleSupport, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
-  type ScheduleInverter,
+  readSchedule, applySchedule, type ScheduleInverter, type ScheduleView,
 } from './lib/schedule';
+import { parseDesiredSchedule } from './lib/schedule-request';
+import { modelName } from './lib/device-settings';
 import { userMessage } from './lib/errors';
 
 type GivEnergyInverter = Inverter;
@@ -218,6 +220,40 @@ module.exports = class GivEnergyApp extends Homey.App {
     // means getInverter() — and therefore the flow action cards — keep working through the
     // outage and recover automatically. It also ensures releaseConnection() can still call
     // inverter.stop() on uninit, so the PollManager isn't leaked.
+  }
+
+  /** For the Schedules page: every paired inverter, with its schedule when connected. */
+  listSchedules(): { serial: string; name: string; model?: string; schedule: ScheduleView | null }[] {
+    const devices = this.homey.drivers.getDriver('solar-inverter').getDevices();
+    const names = new Map(devices.map((d) => [d.getData().id as string, d.getName()]));
+    const serials = new Set([...names.keys(), ...this.connections.keys()]);
+    return [...serials].sort().map((serial) => {
+      const inverter = this.getInverter(serial);
+      let schedule: ScheduleView | null = null;
+      try {
+        if (inverter) schedule = readSchedule(scheduleInverter(inverter));
+      } catch {
+        // No snapshot yet (still connecting)
+      }
+      return {
+        serial, name: names.get(serial) ?? serial, model: inverter && modelName(inverter.model), schedule,
+      };
+    });
+  }
+
+  /** For the Schedules page: apply a whole schedule and return what the inverter now has. */
+  async saveSchedule(serial: string, body: unknown): Promise<ScheduleView> {
+    const inverter = this.getInverter(serial);
+    if (!inverter) throw new Error('Inverter not connected');
+    const desired = parseDesiredSchedule(body);
+    const target = scheduleInverter(inverter);
+    try {
+      await withRetry(() => applySchedule(target, desired), this.log);
+    } catch (err) {
+      throw new Error(userMessage(err));
+    }
+    this.log(`[schedule] saved for ${serial}`);
+    return readSchedule(target);
   }
 
   getInverter(serialNumber: string): GivEnergyInverter | undefined {

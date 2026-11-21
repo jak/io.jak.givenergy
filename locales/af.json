@@ -1,1 +1,36 @@
-{}
+{
+  "schedules": {
+    "title": "Skedules",
+    "subtitle": "Koop-, verkoop- en pouse-tydgleuwe, soos in die GivEnergy-toep.",
+    "inverter": "Omsetter",
+    "buy": "Koop",
+    "sell": "Verkoop",
+    "pause": "Pouse",
+    "use": "Gebruik",
+    "slots": "Tydgleuwe",
+    "noSlots": "Geen tydgleuwe nie: die battery volg die hele dag eko-modus.",
+    "useNote": "Koop laai die battery van die net, Verkoop voer batterykrag uit en Pouse hou die battery stil. Enige ander tyd is Gebruik.",
+    "reserveNote": "Verkoop-tydgleuwe stop by die batteryreserwe (__reserve__%).",
+    "settings": "Instellings",
+    "ecoMode": "Eko-modus",
+    "ecoHint": "Gedurende Gebruik dek die battery die huis se verbruik en laai dit met oortollige sonkrag.",
+    "chargeTarget": "Laaiteiken (%)",
+    "chargeTargetHint": "Elke koop-tydgleuf laai tot hierdie teiken. Hierdie omsetter het een teiken vir alle tydgleuwe.",
+    "chargeTo": "Laai tot",
+    "stopAt": "Stop by",
+    "start": "Begin",
+    "end": "Einde",
+    "remove": "Verwyder tydgleuf",
+    "save": "Stoor",
+    "saved": "Skedule op die omsetter gestoor.",
+    "missingTime": "Elke tydgleuf het 'n begin- en eindtyd nodig.",
+    "notConnected": "__name__ is nie gekoppel nie. Kyk of die omsetter aanlyn is.",
+    "noInverters": "Daar is nog geen GivEnergy-omsetters gekoppel nie.",
+    "pauseMode": {
+      "off": "Af",
+      "both": "Pouseer laai en ontlaai",
+      "charge": "Pouseer laai",
+      "discharge": "Pouseer ontlaai"
+    }
+  }
+}
