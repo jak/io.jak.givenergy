@@ -169,3 +169,14 @@ Battery and grid-meter drivers have no settings and are unchanged.
 - Live write test, **only with user approval**, using windows already passed today and cleared afterwards, with register dumps
   as proof: Buy slot 2, Sell slot 1, and Pause through both a card and the Schedules page. Never touch Buy slot 1.
 - Code review (superpowers:requesting-code-review) before the PR.
+
+## Implementation notes (2026-11-21)
+
+- Tasks 1–2 were done together: the compile fixes were mostly snapshot fields, so `lib/snapshot.ts` came first.
+- Task 5 was dropped: `withRetry` already retries only timeouts, so `RangeError`/`UnsupportedSettingError` fail fast.
+- An extra marker, `givenergy_eco_mode`, gates the eco mode card and condition (three-phase has no eco mode); force
+  charge/discharge are gated on `givenergy_power_percent`, as they write the charge/discharge power %.
+- `inverter_gen3.json` stays defined so 1.x devices load before their first init removes the capability.
+- Version: left to the usual post-merge bump (the "Update Homey App Version" workflow); the PR carries the changelog.
+- Right after connecting, the library can leave a slot's target out until its register block is read; a row without a
+  target keeps the inverter's value, so the Schedules page and `applySchedule` handle it.
