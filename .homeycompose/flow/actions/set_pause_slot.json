@@ -1,0 +1,87 @@
+{
+  "title": {
+    "en": "Set Pause slot",
+    "nl": "Pauze-tijdslot instellen",
+    "af": "Stel pouse-tydgleuf"
+  },
+  "titleFormatted": {
+    "en": "[[mode]] from [[start]] to [[end]]",
+    "nl": "[[mode]] van [[start]] tot [[end]]",
+    "af": "[[mode]] van [[start]] tot [[end]]"
+  },
+  "hint": {
+    "en": "Pauses the battery in this window, like a Pause slot in the GivEnergy app. The inverter has one pause window.",
+    "nl": "Pauzeert de batterij in dit venster, zoals een Pauze-tijdslot in de GivEnergy-app. De omvormer heeft één pauzevenster.",
+    "af": "Pouseer die battery in hierdie venster, soos 'n pouse-tydgleuf in die GivEnergy-toep. Die omsetter het een pouse-venster."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_pause_window"
+    },
+    {
+      "type": "time",
+      "name": "start",
+      "title": {
+        "en": "Start",
+        "nl": "Start",
+        "af": "Begin"
+      },
+      "placeholder": {
+        "en": "18:00",
+        "nl": "18:00",
+        "af": "18:00"
+      }
+    },
+    {
+      "type": "time",
+      "name": "end",
+      "title": {
+        "en": "End",
+        "nl": "Einde",
+        "af": "Einde"
+      },
+      "placeholder": {
+        "en": "18:30",
+        "nl": "18:30",
+        "af": "18:30"
+      }
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Pause",
+        "nl": "Pauze",
+        "af": "Pouse"
+      },
+      "values": [
+        {
+          "id": "both",
+          "title": {
+            "en": "Pause charge and discharge",
+            "nl": "Laden en ontladen pauzeren",
+            "af": "Pouseer laai en ontlaai"
+          }
+        },
+        {
+          "id": "charge",
+          "title": {
+            "en": "Pause charge",
+            "nl": "Laden pauzeren",
+            "af": "Pouseer laai"
+          }
+        },
+        {
+          "id": "discharge",
+          "title": {
+            "en": "Pause discharge",
+            "nl": "Ontladen pauzeren",
+            "af": "Pouseer ontlaai"
+          }
+        }
+      ]
+    }
+  ]
+}

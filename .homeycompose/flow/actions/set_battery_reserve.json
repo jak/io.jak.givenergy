@@ -1,0 +1,37 @@
+{
+  "title": {
+    "en": "Set battery reserve",
+    "nl": "Batterijreserve instellen",
+    "af": "Stel batteryreserwe"
+  },
+  "titleFormatted": {
+    "en": "Set battery reserve to [[percent]]%",
+    "nl": "Batterijreserve instellen op [[percent]]%",
+    "af": "Stel batteryreserwe op [[percent]]%"
+  },
+  "hint": {
+    "en": "The state of charge the battery keeps in reserve; it won't discharge below this in normal use.",
+    "nl": "De laadtoestand die de batterij in reserve houdt; bij normaal gebruik wordt niet verder ontladen.",
+    "af": "Die laaitoestand wat die battery in reserwe hou; dit ontlaai nie laer as dit in normale gebruik nie."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "number",
+      "name": "percent",
+      "title": {
+        "en": "Reserve (%)",
+        "nl": "Reserve (%)",
+        "af": "Reserwe (%)"
+      },
+      "min": 4,
+      "max": 100,
+      "step": 1,
+      "value": 4
+    }
+  ]
+}

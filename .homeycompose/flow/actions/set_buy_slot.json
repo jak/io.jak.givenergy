@@ -1,0 +1,66 @@
+{
+  "title": {
+    "en": "Set Buy slot",
+    "nl": "Koop-tijdslot instellen",
+    "af": "Stel koop-tydgleuf"
+  },
+  "titleFormatted": {
+    "en": "Set Buy [[slot]] to [[start]]–[[end]]",
+    "nl": "Koop [[slot]] instellen op [[start]]–[[end]]",
+    "af": "Stel koop [[slot]] op [[start]]–[[end]]"
+  },
+  "hint": {
+    "en": "Charges the battery from the grid in this window, like a Buy slot in the GivEnergy app. Keeps the slot's existing target.",
+    "nl": "Laadt de batterij in dit venster van het net, zoals een Koop-tijdslot in de GivEnergy-app. Het bestaande doel van het tijdslot blijft behouden.",
+    "af": "Laai die battery in hierdie venster van die net, soos 'n koop-tydgleuf in die GivEnergy-toep. Die tydgleuf se bestaande teiken bly behou."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "autocomplete",
+      "name": "slot",
+      "title": {
+        "en": "Slot",
+        "nl": "Tijdslot",
+        "af": "Tydgleuf"
+      },
+      "placeholder": {
+        "en": "Slot 1",
+        "nl": "Tijdslot 1",
+        "af": "Tydgleuf 1"
+      }
+    },
+    {
+      "type": "time",
+      "name": "start",
+      "title": {
+        "en": "Start",
+        "nl": "Start",
+        "af": "Begin"
+      },
+      "placeholder": {
+        "en": "23:30",
+        "nl": "23:30",
+        "af": "23:30"
+      }
+    },
+    {
+      "type": "time",
+      "name": "end",
+      "title": {
+        "en": "End",
+        "nl": "Einde",
+        "af": "Einde"
+      },
+      "placeholder": {
+        "en": "05:30",
+        "nl": "05:30",
+        "af": "05:30"
+      }
+    }
+  ]
+}

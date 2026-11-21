@@ -1,0 +1,38 @@
+{
+  "title": {
+    "en": "Clear Buy slot",
+    "nl": "Koop-tijdslot wissen",
+    "af": "Vee koop-tydgleuf uit"
+  },
+  "titleFormatted": {
+    "en": "Clear Buy [[slot]]",
+    "nl": "Koop [[slot]] wissen",
+    "af": "Vee koop [[slot]] uit"
+  },
+  "hint": {
+    "en": "Removes the slot. Grid charging turns off when no Buy slots are left.",
+    "nl": "Verwijdert het tijdslot. Laden van het net gaat uit als er geen Koop-tijdsloten over zijn.",
+    "af": "Verwyder die tydgleuf. Laai van die net skakel af wanneer geen koop-tydgleuwe oor is nie."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "autocomplete",
+      "name": "slot",
+      "title": {
+        "en": "Slot",
+        "nl": "Tijdslot",
+        "af": "Tydgleuf"
+      },
+      "placeholder": {
+        "en": "Slot 1",
+        "nl": "Tijdslot 1",
+        "af": "Tydgleuf 1"
+      }
+    }
+  ]
+}

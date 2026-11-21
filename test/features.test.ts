@@ -27,6 +27,7 @@ test('ten-slot hybrid (Gen3 on new firmware): targets, pause window, power perce
     givenergy_pause_mode_only: false,
     givenergy_pause: true,
     givenergy_power_percent: true,
+    givenergy_eco_mode: true,
   });
 });
 
@@ -39,6 +40,7 @@ test('Gen1/AC: pause mode without a window, global target', () => {
     givenergy_pause_mode_only: true,
     givenergy_pause: true,
     givenergy_power_percent: false,
+    givenergy_eco_mode: false,
   });
 });
 
@@ -49,7 +51,7 @@ test('three-phase: no pause at all', () => {
   assert.equal(m.givenergy_pause_mode_only, false);
 });
 
-test('power percent follows supports("inverterChargePowerPercent")', () => {
+test('power percent and eco mode follow supports()', () => {
   const seen: string[] = [];
   featureMarkers({
     capabilities: NONE,
@@ -57,7 +59,7 @@ test('power percent follows supports("inverterChargePowerPercent")', () => {
       seen.push(k); return false;
     },
   });
-  assert.deepEqual(seen, ['inverterChargePowerPercent']);
+  assert.deepEqual(seen, ['inverterChargePowerPercent', 'ecoMode']);
 });
 
 test('every marker is listed in FEATURE_MARKERS', () => {

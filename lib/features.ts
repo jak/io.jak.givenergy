@@ -17,6 +17,7 @@ export const FEATURE_MARKERS = [
   'givenergy_pause_mode_only',
   'givenergy_pause',
   'givenergy_power_percent',
+  'givenergy_eco_mode',
 ] as const;
 
 export type FeatureMarker = typeof FEATURE_MARKERS[number];
@@ -26,7 +27,7 @@ const RETIRED = ['inverter_gen3'];
 
 export interface FeatureSource {
   capabilities: Capabilities;
-  supports(key: 'inverterChargePowerPercent'): boolean;
+  supports(key: 'inverterChargePowerPercent' | 'ecoMode'): boolean;
 }
 
 export function featureMarkers({ capabilities: c, supports }: FeatureSource): Record<FeatureMarker, boolean> {
@@ -37,6 +38,7 @@ export function featureMarkers({ capabilities: c, supports }: FeatureSource): Re
     givenergy_pause_mode_only: c.pauseMode && !c.pauseWindow,
     givenergy_pause: c.pauseMode,
     givenergy_power_percent: supports('inverterChargePowerPercent'),
+    givenergy_eco_mode: supports('ecoMode'),
   };
 }
 

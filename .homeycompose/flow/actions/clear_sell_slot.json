@@ -1,0 +1,38 @@
+{
+  "title": {
+    "en": "Clear Sell slot",
+    "nl": "Verkoop-tijdslot wissen",
+    "af": "Vee verkoop-tydgleuf uit"
+  },
+  "titleFormatted": {
+    "en": "Clear Sell [[slot]]",
+    "nl": "Verkoop [[slot]] wissen",
+    "af": "Vee verkoop [[slot]] uit"
+  },
+  "hint": {
+    "en": "Removes the slot. Discharging to the grid turns off when no Sell slots are left.",
+    "nl": "Verwijdert het tijdslot. Ontladen naar het net gaat uit als er geen Verkoop-tijdsloten over zijn.",
+    "af": "Verwyder die tydgleuf. Ontlaai na die net skakel af wanneer geen verkoop-tydgleuwe oor is nie."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "autocomplete",
+      "name": "slot",
+      "title": {
+        "en": "Slot",
+        "nl": "Tijdslot",
+        "af": "Tydgleuf"
+      },
+      "placeholder": {
+        "en": "Slot 1",
+        "nl": "Tijdslot 1",
+        "af": "Tydgleuf 1"
+      }
+    }
+  ]
+}

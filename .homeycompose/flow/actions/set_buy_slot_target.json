@@ -1,0 +1,79 @@
+{
+  "title": {
+    "en": "Set Buy slot with target",
+    "nl": "Koop-tijdslot met doel instellen",
+    "af": "Stel koop-tydgleuf met teiken"
+  },
+  "titleFormatted": {
+    "en": "Set Buy [[slot]] to [[start]]–[[end]], charge to [[target]]%",
+    "nl": "Koop [[slot]] instellen op [[start]]–[[end]], laden tot [[target]]%",
+    "af": "Stel koop [[slot]] op [[start]]–[[end]], laai tot [[target]]%"
+  },
+  "hint": {
+    "en": "Charges the battery from the grid in this window, up to the target.",
+    "nl": "Laadt de batterij in dit venster van het net, tot het doel.",
+    "af": "Laai die battery in hierdie venster van die net, tot by die teiken."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_slot_targets"
+    },
+    {
+      "type": "autocomplete",
+      "name": "slot",
+      "title": {
+        "en": "Slot",
+        "nl": "Tijdslot",
+        "af": "Tydgleuf"
+      },
+      "placeholder": {
+        "en": "Slot 1",
+        "nl": "Tijdslot 1",
+        "af": "Tydgleuf 1"
+      }
+    },
+    {
+      "type": "time",
+      "name": "start",
+      "title": {
+        "en": "Start",
+        "nl": "Start",
+        "af": "Begin"
+      },
+      "placeholder": {
+        "en": "23:30",
+        "nl": "23:30",
+        "af": "23:30"
+      }
+    },
+    {
+      "type": "time",
+      "name": "end",
+      "title": {
+        "en": "End",
+        "nl": "Einde",
+        "af": "Einde"
+      },
+      "placeholder": {
+        "en": "05:30",
+        "nl": "05:30",
+        "af": "05:30"
+      }
+    },
+    {
+      "type": "number",
+      "name": "target",
+      "title": {
+        "en": "Charge to (%)",
+        "nl": "Laden tot (%)",
+        "af": "Laai tot (%)"
+      },
+      "min": 4,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    }
+  ]
+}

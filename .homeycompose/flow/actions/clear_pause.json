@@ -1,0 +1,19 @@
+{
+  "title": {
+    "en": "Clear battery pause",
+    "nl": "Batterijpauze wissen",
+    "af": "Vee batterypouse uit"
+  },
+  "hint": {
+    "en": "Ends the battery pause; the battery works normally again.",
+    "nl": "Beëindigt de batterijpauze; de batterij werkt weer normaal.",
+    "af": "Beëindig die batterypouse; die battery werk weer normaal."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_pause"
+    }
+  ]
+}

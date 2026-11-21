@@ -7,6 +7,7 @@ import { solarInverterValues } from '../../lib/snapshot';
 import { LEGACY_PAUSE_MODES, PAUSE_MODE_TO_LEGACY } from '../../lib/legacy';
 import { featureMarkers, markerChanges } from '../../lib/features';
 import { syncStore } from '../../lib/store';
+import { scheduleInverter, setBuySlot, setSellSlot } from '../../lib/schedule';
 import type {
   Inverter as GivEnergyInverter, InverterSnapshot, SinglePhaseInverter, TimeSlotInput,
 } from '../../lib/types';
@@ -232,7 +233,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (!this.inverter) throw new Error('Not connected to inverter');
     const { settings, schedules } = this.inverter.getData();
 
-    this.chargeSnapshot = {
+    // Keep the first snapshot: a retry, or a second force charge, must not record the forced state
+    this.chargeSnapshot ??= {
       acCharge: settings.acCharge,
       chargeSlot: schedules.charge.find((x) => x.slot === 1),
       chargePowerPercent: settings.inverterChargePowerPercent,
@@ -240,8 +242,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     };
 
     this.log(`Force charge: target=${targetSoc}% rate=${chargeRate}%`);
-    await this.inverter.setSetting('acCharge', true);
-    await this.writeChargeSlot(1, { start: '00:00', end: '23:59', targetStateOfCharge: targetSoc });
+    await setBuySlot(scheduleInverter(this.inverter), 1, { start: '00:00', end: '23:59', target: targetSoc });
     await this.inverter.setSetting('inverterChargePowerPercent', chargeRate);
   }
 
@@ -266,7 +267,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (!this.inverter) throw new Error('Not connected to inverter');
     const { settings, schedules } = this.inverter.getData();
 
-    this.dischargeSnapshot = {
+    // Keep the first snapshot: a retry, or a second force discharge, must not record the forced state
+    this.dischargeSnapshot ??= {
       dcDischarge: settings.dcDischarge,
       dischargeSlot: schedules.discharge.find((x) => x.slot === 1),
       dischargePowerPercent: settings.inverterDischargePowerPercent,
@@ -274,8 +276,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     };
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
-    await this.inverter.setSetting('dcDischarge', true);
-    await this.inverter.setDischargeSlot(1, { start: '00:00', end: '23:59' });
+    await setSellSlot(scheduleInverter(this.inverter), 1, { start: '00:00', end: '23:59' });
     await this.inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
     await this.inverter.setSetting('batteryReserve', batteryReserve);
   }

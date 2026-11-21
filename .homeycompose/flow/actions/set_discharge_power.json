@@ -1,0 +1,37 @@
+{
+  "title": {
+    "en": "Set discharge power",
+    "nl": "Ontlaadvermogen instellen",
+    "af": "Stel ontlaaidrywing"
+  },
+  "titleFormatted": {
+    "en": "Set discharge power to [[percent]]%",
+    "nl": "Ontlaadvermogen instellen op [[percent]]%",
+    "af": "Stel ontlaaidrywing op [[percent]]%"
+  },
+  "hint": {
+    "en": "Battery discharge power as a percentage of the inverter's rating.",
+    "nl": "Ontlaadvermogen van de batterij als percentage van het vermogen van de omvormer.",
+    "af": "Batteryontlaaidrywing as persentasie van die omsetter se drywing."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_power_percent"
+    },
+    {
+      "type": "number",
+      "name": "percent",
+      "title": {
+        "en": "Discharge power (%)",
+        "nl": "Ontlaadvermogen (%)",
+        "af": "Ontlaaidrywing (%)"
+      },
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    }
+  ]
+}
