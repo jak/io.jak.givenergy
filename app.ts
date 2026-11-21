@@ -5,9 +5,16 @@ import { withRetry } from './lib/retry';
 import {
   METRICS, isAbove, roseAbove, droppedBelow, Crossing,
 } from './lib/threshold';
+import type { Inverter, SinglePhaseInverter } from './lib/types';
+import { LEGACY_PAUSE_MODES } from './lib/legacy';
 
-// Import type with resolution-mode to bridge ESM package from CJS context.
-type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
+type GivEnergyInverter = Inverter;
+
+/** Narrow to a single-phase inverter for features three-phase models don't have. */
+function requireSinglePhase(inverter: Inverter, feature: string): SinglePhaseInverter {
+  if (inverter.layout !== 'single_phase') throw new Error(`${feature} is not supported on three-phase inverters`);
+  return inverter;
+}
 
 module.exports = class GivEnergyApp extends Homey.App {
   private connections = new Map<string, { inverter: GivEnergyInverter; refCount: number }>();
@@ -22,37 +29,37 @@ module.exports = class GivEnergyApp extends Homey.App {
     this.homey.flow.getConditionCard('solar_generating')
       .registerRunListener(async (args: any) => {
         const snapshot = args.device.getInverterSnapshot();
-        return snapshot ? snapshot.solarPower > 0 : false;
+        return snapshot ? snapshot.solar.power > 0 : false;
       });
 
     this.homey.flow.getConditionCard('battery_charging')
       .registerRunListener(async (args: any) => {
         const snapshot = args.device.getInverterSnapshot();
-        return snapshot ? snapshot.batteryPower < 0 : false;
+        return snapshot ? snapshot.battery.power < 0 : false;
       });
 
     this.homey.flow.getConditionCard('battery_discharging')
       .registerRunListener(async (args: any) => {
         const snapshot = args.device.getInverterSnapshot();
-        return snapshot ? snapshot.batteryPower > 0 : false;
+        return snapshot ? snapshot.battery.power > 0 : false;
       });
 
     this.homey.flow.getConditionCard('grid_importing')
       .registerRunListener(async (args: any) => {
         const snapshot = args.device.getInverterSnapshot();
-        return snapshot ? snapshot.gridPower < 0 : false;
+        return snapshot ? snapshot.grid.power < 0 : false;
       });
 
     this.homey.flow.getConditionCard('grid_exporting')
       .registerRunListener(async (args: any) => {
         const snapshot = args.device.getInverterSnapshot();
-        return snapshot ? snapshot.gridPower > 0 : false;
+        return snapshot ? snapshot.grid.power > 0 : false;
       });
 
     this.homey.flow.getConditionCard('eco_mode_enabled')
       .registerRunListener(async (args: any) => {
         const snapshot = args.device.getInverterSnapshot();
-        return snapshot ? snapshot.ecoMode : false;
+        return snapshot?.layout === 'single_phase' ? snapshot.settings.ecoMode === true : false;
       });
 
     // Action cards — all write operations use withRetry for inverter timeout resilience
@@ -60,35 +67,37 @@ module.exports = class GivEnergyApp extends Homey.App {
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await withRetry(() => inverter.setEcoMode(args.action === 'enable'), this.log);
+        await withRetry(() => requireSinglePhase(inverter, 'Eco mode').setSetting('ecoMode', args.action === 'enable'), this.log);
       });
 
     this.homey.flow.getActionCard('toggle_timed_export')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await withRetry(() => inverter.setTimedExport(args.action === 'enable'), this.log);
+        await withRetry(() => inverter.setSetting('dcDischarge', args.action === 'enable'), this.log);
       });
 
     this.homey.flow.getActionCard('enable_charge_schedule')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await withRetry(() => inverter.setTimedCharge(args.action === 'enable'), this.log);
+        await withRetry(() => inverter.setSetting('acCharge', args.action === 'enable'), this.log);
       });
 
     this.homey.flow.getActionCard('set_charge_rate')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await withRetry(() => inverter.setChargeRate(args.watts), this.log);
+        // givenergy-modbus v3 removed watt-based rates; this card is replaced in 2.0.0.
+        throw new Error('Setting the charge rate in watts is no longer supported');
       });
 
     this.homey.flow.getActionCard('set_discharge_rate')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        await withRetry(() => inverter.setDischargeRate(args.watts), this.log);
+        // givenergy-modbus v3 removed watt-based rates; this card is replaced in 2.0.0.
+        throw new Error('Setting the discharge rate in watts is no longer supported');
       });
 
     // Gen3-specific action cards
@@ -96,27 +105,24 @@ module.exports = class GivEnergyApp extends Homey.App {
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        const { Gen3Inverter } = await import('givenergy-modbus');
-        if (!(inverter instanceof Gen3Inverter)) throw new Error('Discharge schedule is only supported on Gen3 inverters');
-        await withRetry(() => inverter.setTimedDischarge(args.action === 'enable'), this.log);
+        const sp = requireSinglePhase(inverter, 'Discharge schedule');
+        await withRetry(() => sp.setBatteryPause({ mode: args.action === 'enable' ? 'discharge' : 'off' }), this.log);
       });
 
     this.homey.flow.getActionCard('set_export_limit')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        const { Gen3Inverter } = await import('givenergy-modbus');
-        if (!(inverter instanceof Gen3Inverter)) throw new Error('Export limit is only supported on Gen3 inverters');
-        await withRetry(() => inverter.setExportLimit(args.watts), this.log);
+        // givenergy-modbus v3 made the export limit read-only; this card is removed in 2.0.0.
+        throw new Error('Setting the export limit is no longer supported');
       });
 
     this.homey.flow.getActionCard('set_battery_pause_mode')
       .registerRunListener(async (args: any) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
-        const { Gen3Inverter } = await import('givenergy-modbus');
-        if (!(inverter instanceof Gen3Inverter)) throw new Error('Battery pause mode is only supported on Gen3 inverters');
-        await withRetry(() => inverter.setBatteryPauseMode(args.mode), this.log);
+        const sp = requireSinglePhase(inverter, 'Battery pause mode');
+        await withRetry(() => sp.setBatteryPause({ mode: LEGACY_PAUSE_MODES[args.mode] }), this.log);
       });
 
     // Slot configuration action cards (Gen2 — no target SOC)

@@ -11,8 +11,8 @@ module.exports = class SolarInverterDriver extends Homey.Driver {
   }
 
   async onPair(session: any) {
-    setupPairSession(session, this, (serialNumber, generation) => {
-      return `GivEnergy ${serialNumber} (${generation})`;
+    setupPairSession(session, this, (serialNumber, model) => {
+      return `GivEnergy ${serialNumber} (${model})`;
     });
   }
 

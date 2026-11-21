@@ -18,11 +18,11 @@ module.exports = class BatteryDriver extends Homey.Driver {
     if (solarDevices.length > 0) {
       const devices = solarDevices.map((device) => {
         const { id: serialNumber } = device.getData();
-        const { host, generation } = device.getStore();
+        const { host, model, layout } = device.getStore();
         return {
           name: `GivEnergy Battery (${serialNumber})`,
           data: { id: serialNumber },
-          store: { host, generation },
+          store: { host, model, layout },
         };
       });
 

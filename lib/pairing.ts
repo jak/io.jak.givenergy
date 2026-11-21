@@ -1,6 +1,6 @@
 'use strict';
 
-type InverterIdentity = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterIdentity;
+import type { InverterIdentity } from './types';
 
 const IDENTIFY_TIMEOUT_MS = 10_000;
 const IDENTIFY_RETRIES = 1;
@@ -8,13 +8,13 @@ const IDENTIFY_RETRIES = 1;
 export interface DiscoveredDeviceEntry {
   name: string;
   data: { id: string };
-  store: { host: string; generation: string };
+  store: { host: string; model: InverterIdentity['model']; layout: InverterIdentity['layout'] };
 }
 
 export function setupPairSession(
   session: any,
   logger: { log: (...args: any[]) => void; error: (...args: any[]) => void },
-  buildDeviceName: (serialNumber: string, generation: string) => string,
+  buildDeviceName: (serialNumber: string, model: string) => string,
 ) {
   let discoveredDevices: DiscoveredDeviceEntry[] = [];
   let sessionExpired = false;
@@ -70,9 +70,9 @@ export function setupPairSession(
       }
 
       discoveredDevices = discovered.map((d) => ({
-        name: buildDeviceName(d.serialNumber, d.generation),
+        name: buildDeviceName(d.serialNumber, d.model),
         data: { id: d.serialNumber },
-        store: { host: d.host, generation: d.generation },
+        store: { host: d.host, model: d.model, layout: d.layout },
       }));
 
       if (discoveredDevices.length > 0) {
@@ -100,9 +100,9 @@ export function setupPairSession(
         retries: IDENTIFY_RETRIES,
       });
       discoveredDevices = [{
-        name: buildDeviceName(identity.serialNumber, identity.generation),
+        name: buildDeviceName(identity.serialNumber, identity.model),
         data: { id: identity.serialNumber },
-        store: { host, generation: identity.generation },
+        store: { host, model: identity.model, layout: identity.layout },
       }];
     } catch (err: any) {
       throw new Error(`Could not connect to inverter at ${host}: ${err?.message ?? err}`);
