@@ -88,23 +88,26 @@ module.exports = class GivEnergyApp extends Homey.App {
     deviceAction('stop_force_charge', (d) => d.stopForceCharge());
     deviceAction('force_discharge', (d, a) => d.forceDischarge(a.discharge_rate, a.battery_reserve));
     deviceAction('stop_force_discharge', (d) => d.stopForceDischarge());
-
-    this.announceDeprecatedCards().catch((err) => this.error('Deprecated cards notice failed:', err));
   }
 
+  private deprecatedCardsNotice?: Promise<void>;
+
   /**
-   * Once per Homey, when 2.0 first runs on an install that already has inverters (an update from
-   * 1.x, not a fresh install), tell the user on the timeline that some cards are deprecated.
+   * Tell the user on the timeline, once per Homey, that some flow cards are deprecated. Called by
+   * inverter devices paired by 1.x when they start, so updates get it and fresh installs don't.
+   * (App#onInit is too early to look at devices: drivers aren't initialised yet.)
    */
-  private async announceDeprecatedCards() {
-    if (this.homey.settings.get(DEPRECATED_CARDS_NOTICE)) return;
-    const driver = this.homey.drivers.getDriver('solar-inverter');
-    await driver.ready();
-    if (driver.getDevices().length > 0) {
+  announceDeprecatedCards(): Promise<void> {
+    this.deprecatedCardsNotice ??= (async () => {
+      if (this.homey.settings.get(DEPRECATED_CARDS_NOTICE)) return;
       await this.homey.notifications.createNotification({ excerpt: this.homey.__('notifications.deprecatedCards') });
+      this.homey.settings.set(DEPRECATED_CARDS_NOTICE, true);
       this.log('Deprecated cards notice posted to the timeline');
-    }
-    this.homey.settings.set(DEPRECATED_CARDS_NOTICE, true);
+    })().catch((err) => {
+      this.deprecatedCardsNotice = undefined; // try again on the next device start
+      this.error('Deprecated cards notice failed:', err);
+    });
+    return this.deprecatedCardsNotice;
   }
 
   /**

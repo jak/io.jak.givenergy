@@ -5,7 +5,7 @@ import { withRetry } from '../../lib/retry';
 import { ThresholdTracker } from '../../lib/threshold';
 import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
-import { syncStore } from '../../lib/store';
+import { syncStore, pairedBy1x } from '../../lib/store';
 import { scheduleInverter, setBuySlot, setSellSlot } from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
@@ -45,6 +45,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         .trigger(this, tokens, state)
         .catch(this.error);
     });
+
+    // Updated from 1.x: tell the user (once per Homey) that some flow cards are deprecated.
+    // Checked before syncStore() migrates the 1.x store.
+    if (pairedBy1x(this.getStore())) (this.homey.app as any).announceDeprecatedCards();
 
     const { host } = this.getStore();
     const { id: serialNumber } = this.getData();

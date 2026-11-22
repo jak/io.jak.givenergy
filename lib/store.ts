@@ -18,3 +18,8 @@ export async function syncStore(device: StoreDevice, inverter: { model: string; 
   if (store.layout !== inverter.layout) await device.setStoreValue('layout', inverter.layout);
   if ('generation' in store) await device.unsetStoreValue('generation');
 }
+
+/** True for a device paired by 1.x whose store hasn't been migrated yet (it still has `generation`). */
+export function pairedBy1x(store: Record<string, unknown>): boolean {
+  return 'generation' in store;
+}

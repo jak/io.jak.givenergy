@@ -200,8 +200,10 @@ recommends: hidden from the card picker, still running in existing flows. `lib/l
 - `set_export_limit` fails with an explanation: v3 makes the export limit read-only.
 - Device filters drop `capabilities=inverter_gen3`, which 2.0 removes from devices.
 - Titles end "(deprecated)"; hints say the card will be removed in version 3 of the app and name the replacement.
-- A one-time timeline notification (app setting `deprecatedCardsNotice`) tells users who update from 1.x; fresh installs,
-  with no inverters paired at first start, don't get it.
+- A one-time timeline notification (app setting `deprecatedCardsNotice`) tells users who update from 1.x. It is
+  triggered by a solar inverter device whose store still has the 1.x `generation` key (checked before `syncStore()`
+  removes it), so fresh installs and devices paired by 2.0 don't trigger it. It can't run from `App#onInit`: drivers
+  aren't initialised yet there (`Driver Not Initialized`), which is why the first attempt posted nothing.
 
 Verified live on 2026-11-22: the cards don't appear in the picker; an existing flow using `set_charge_slot_gen3` is not
 broken and wrote HR 243–245 only (HR 96 untouched); restoring it with the same card returned every register to the

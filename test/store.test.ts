@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { syncStore } from '../lib/store.ts';
+import { syncStore, pairedBy1x } from '../lib/store.ts';
 
 function fakeDevice(store: Record<string, unknown>) {
   const writes: string[] = [];
@@ -33,4 +33,12 @@ test('the model follows the inverter (e.g. firmware update to ten slots)', async
   const device = fakeDevice({ host: 'h', model: 'hybrid_gen3', layout: 'single_phase' });
   await syncStore(device, { model: 'hybrid_gen3_plus', layout: 'single_phase' });
   assert.deepEqual(device.writes, ['set model']);
+});
+
+test('pairedBy1x spots a 1.x store until it is migrated', async () => {
+  const device = fakeDevice({ host: '10.0.0.2', generation: 'gen2' });
+  assert.equal(pairedBy1x(device.store), true);
+  await syncStore(device, { model: 'hybrid_gen2', layout: 'single_phase' });
+  assert.equal(pairedBy1x(device.store), false);
+  assert.equal(pairedBy1x({ host: '10.0.0.2', model: 'hybrid_gen3', layout: 'single_phase' }), false);
 });
