@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Set discharge slot",
-    "nl": "Ontlaadslot instellen",
-    "af": "Stel ontlaaislot"
+    "en": "Set discharge slot (deprecated)",
+    "nl": "Ontlaadslot instellen (verouderd)",
+    "af": "Stel ontlaaislot (verouderd)"
   },
   "titleFormatted": {
-    "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]]",
-    "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]]",
-    "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]]"
+    "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] (deprecated)",
+    "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] (verouderd)",
+    "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] (verouderd)"
   },
   "hint": {
-    "en": "Configures a discharge schedule time window. Gen1/Gen2 inverters support slots 1-2.",
-    "nl": "Configureert het tijdvenster van het ontlaadschema. Gen1/Gen2-omvormers ondersteunen slots 1-2.",
-    "af": "Stel die ontlaaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun slots 1-2."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\"."
   },
   "args": [
     {

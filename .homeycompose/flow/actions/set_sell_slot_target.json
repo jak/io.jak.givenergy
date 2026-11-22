@@ -1,0 +1,79 @@
+{
+  "title": {
+    "en": "Set Sell slot with target",
+    "nl": "Verkoop-tijdslot met doel instellen",
+    "af": "Stel verkoop-tydgleuf met teiken"
+  },
+  "titleFormatted": {
+    "en": "Set Sell [[slot]] to [[start]]–[[end]], stop at [[target]]%",
+    "nl": "Verkoop [[slot]] instellen op [[start]]–[[end]], stoppen bij [[target]]%",
+    "af": "Stel verkoop [[slot]] op [[start]]–[[end]], stop by [[target]]%"
+  },
+  "hint": {
+    "en": "Exports battery power to the grid in this window, down to the target.",
+    "nl": "Exporteert batterijvermogen naar het net in dit venster, tot het doel.",
+    "af": "Voer batterykrag in hierdie venster na die net uit, tot by die teiken."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_slot_targets"
+    },
+    {
+      "type": "autocomplete",
+      "name": "slot",
+      "title": {
+        "en": "Slot",
+        "nl": "Tijdslot",
+        "af": "Tydgleuf"
+      },
+      "placeholder": {
+        "en": "Slot 1",
+        "nl": "Tijdslot 1",
+        "af": "Tydgleuf 1"
+      }
+    },
+    {
+      "type": "time",
+      "name": "start",
+      "title": {
+        "en": "Start",
+        "nl": "Start",
+        "af": "Begin"
+      },
+      "placeholder": {
+        "en": "16:00",
+        "nl": "16:00",
+        "af": "16:00"
+      }
+    },
+    {
+      "type": "time",
+      "name": "end",
+      "title": {
+        "en": "End",
+        "nl": "Einde",
+        "af": "Einde"
+      },
+      "placeholder": {
+        "en": "19:00",
+        "nl": "19:00",
+        "af": "19:00"
+      }
+    },
+    {
+      "type": "number",
+      "name": "target",
+      "title": {
+        "en": "Stop at (%)",
+        "nl": "Stoppen bij (%)",
+        "af": "Stop by (%)"
+      },
+      "min": 4,
+      "max": 100,
+      "step": 1,
+      "value": 4
+    }
+  ]
+}

@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Enable or disable discharge schedule",
-    "nl": "Ontlaadschema in- of uitschakelen",
-    "af": "Aktiveer of deaktiveer ontlaaiskedule"
+    "en": "Enable or disable discharge schedule (deprecated)",
+    "nl": "Ontlaadschema in- of uitschakelen (verouderd)",
+    "af": "Aktiveer of deaktiveer ontlaaiskedule (verouderd)"
   },
   "titleFormatted": {
-    "en": "[[action]] discharge schedule",
-    "nl": "[[action]] ontlaadschema",
-    "af": "[[action]] ontlaaiskedule"
+    "en": "[[action]] discharge schedule (deprecated)",
+    "nl": "[[action]] ontlaadschema (verouderd)",
+    "af": "[[action]] ontlaaiskedule (verouderd)"
   },
   "hint": {
-    "en": "Enables or disables the battery discharge schedule.",
-    "nl": "Schakelt het ontlaadschema van de batterij in of uit.",
-    "af": "Aktiveer of deaktiveer die battery se ontlaaiskedule."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause / Clear battery pause\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen / wissen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee batterypouse\"."
   },
   "args": [
     {

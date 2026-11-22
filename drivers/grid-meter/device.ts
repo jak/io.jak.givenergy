@@ -2,9 +2,9 @@
 
 import Homey from 'homey';
 import { ThresholdTracker } from '../../lib/threshold';
-
-type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
-type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
+import { gridMeterValues } from '../../lib/snapshot';
+import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
+import { syncStore } from '../../lib/store';
 
 module.exports = class GridMeterDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
@@ -34,6 +34,7 @@ module.exports = class GridMeterDevice extends Homey.Device {
     }
 
     this.setAvailable().catch(this.error);
+    await syncStore(this, this.inverter!).catch(this.error);
 
     // Add capabilities that may not exist on devices paired before this version
     for (const cap of ['grid_voltage', 'grid_frequency', 'grid_import_energy_today', 'grid_export_energy_today']) {
@@ -68,19 +69,15 @@ module.exports = class GridMeterDevice extends Homey.Device {
   private updateCapabilities(snapshot: InverterSnapshot) {
     this.setAvailable().catch(this.error);
 
-    // Library: positive = exporting, negative = importing
-    // Homey cumulative sensor: positive = consuming (importing)
-    this.setCapabilityValue('measure_power', -snapshot.gridPower).catch(this.error);
-    this.setCapabilityValue('meter_power.imported', snapshot.gridImportEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('meter_power.exported', snapshot.gridExportEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('grid_voltage', snapshot.gridVoltage).catch(this.error);
-    this.setCapabilityValue('grid_frequency', snapshot.gridFrequency).catch(this.error);
-    this.setCapabilityValue('grid_import_energy_today', snapshot.gridImportEnergyTodayKwh).catch(this.error);
-    this.setCapabilityValue('grid_export_energy_today', snapshot.gridExportEnergyTodayKwh).catch(this.error);
+    // Sign conventions are converted in lib/snapshot.ts.
+    const values = gridMeterValues(snapshot);
+    for (const [id, value] of Object.entries(values)) {
+      this.setCapabilityValue(id, value).catch(this.error);
+    }
 
     this.thresholds?.update({
-      grid_voltage: snapshot.gridVoltage,
-      grid_frequency: snapshot.gridFrequency,
+      grid_voltage: values.grid_voltage ?? undefined,
+      grid_frequency: values.grid_frequency ?? undefined,
     });
   }
 

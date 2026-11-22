@@ -1,5 +1,7 @@
 'use strict';
 
+import { connectErrorMessage } from './errors.ts';
+
 const IDENTIFY_TIMEOUT_MS = 10_000;
 const IDENTIFY_RETRIES = 1;
 
@@ -35,7 +37,7 @@ export function setupRepairSession(
         retries: IDENTIFY_RETRIES,
       });
     } catch (err: any) {
-      throw new Error(`Could not connect to inverter at ${host}: ${err?.message ?? err}`);
+      throw new Error(connectErrorMessage(host, err));
     }
 
     if (identity.serialNumber !== expectedSerial) {

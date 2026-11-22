@@ -1,0 +1,37 @@
+{
+  "title": {
+    "en": "Set charge power",
+    "nl": "Laadvermogen instellen",
+    "af": "Stel laaidrywing"
+  },
+  "titleFormatted": {
+    "en": "Set charge power to [[percent]]%",
+    "nl": "Laadvermogen instellen op [[percent]]%",
+    "af": "Stel laaidrywing op [[percent]]%"
+  },
+  "hint": {
+    "en": "Battery charge power as a percentage of the inverter's rating.",
+    "nl": "Laadvermogen van de batterij als percentage van het vermogen van de omvormer.",
+    "af": "Batterylaaidrywing as persentasie van die omsetter se drywing."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_power_percent"
+    },
+    {
+      "type": "number",
+      "name": "percent",
+      "title": {
+        "en": "Charge power (%)",
+        "nl": "Laadvermogen (%)",
+        "af": "Laaidrywing (%)"
+      },
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    }
+  ]
+}

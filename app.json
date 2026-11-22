@@ -71,6 +71,16 @@
     "name": "Jak Spalding",
     "email": "jak.spalding@gmail.com"
   },
+  "api": {
+    "getInverters": {
+      "method": "GET",
+      "path": "/inverters"
+    },
+    "putSchedule": {
+      "method": "PUT",
+      "path": "/inverters/:serial/schedule"
+    }
+  },
   "flow": {
     "triggers": [
       {
@@ -532,7 +542,7 @@
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=solar-inverter"
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_eco_mode"
           }
         ],
         "id": "eco_mode_enabled"
@@ -680,19 +690,118 @@
     "actions": [
       {
         "title": {
-          "en": "Enable or disable charge schedule",
-          "nl": "Laadschema in- of uitschakelen",
-          "af": "Aktiveer of deaktiveer laaiskedule"
+          "en": "Clear Buy slot",
+          "nl": "Koop-tijdslot wissen",
+          "af": "Vee koop-tydgleuf uit"
         },
         "titleFormatted": {
-          "en": "[[action]] charge schedule",
-          "nl": "[[action]] laadschema",
-          "af": "[[action]] laaiskedule"
+          "en": "Clear Buy [[slot]]",
+          "nl": "Koop [[slot]] wissen",
+          "af": "Vee koop [[slot]] uit"
         },
         "hint": {
-          "en": "Enables or disables the battery charge schedule.",
-          "nl": "Schakelt het laadschema van de batterij in of uit.",
-          "af": "Aktiveer of deaktiveer die battery se laaiskedule."
+          "en": "Removes the slot. Grid charging turns off when no Buy slots are left.",
+          "nl": "Verwijdert het tijdslot. Laden van het net gaat uit als er geen Koop-tijdsloten over zijn.",
+          "af": "Verwyder die tydgleuf. Laai van die net skakel af wanneer geen koop-tydgleuwe oor is nie."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "autocomplete",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Tijdslot",
+              "af": "Tydgleuf"
+            },
+            "placeholder": {
+              "en": "Slot 1",
+              "nl": "Tijdslot 1",
+              "af": "Tydgleuf 1"
+            }
+          }
+        ],
+        "id": "clear_buy_slot"
+      },
+      {
+        "title": {
+          "en": "Clear battery pause",
+          "nl": "Batterijpauze wissen",
+          "af": "Vee batterypouse uit"
+        },
+        "hint": {
+          "en": "Ends the battery pause; the battery works normally again.",
+          "nl": "Beëindigt de batterijpauze; de batterij werkt weer normaal.",
+          "af": "Beëindig die batterypouse; die battery werk weer normaal."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_pause"
+          }
+        ],
+        "id": "clear_pause"
+      },
+      {
+        "title": {
+          "en": "Clear Sell slot",
+          "nl": "Verkoop-tijdslot wissen",
+          "af": "Vee verkoop-tydgleuf uit"
+        },
+        "titleFormatted": {
+          "en": "Clear Sell [[slot]]",
+          "nl": "Verkoop [[slot]] wissen",
+          "af": "Vee verkoop [[slot]] uit"
+        },
+        "hint": {
+          "en": "Removes the slot. Discharging to the grid turns off when no Sell slots are left.",
+          "nl": "Verwijdert het tijdslot. Ontladen naar het net gaat uit als er geen Verkoop-tijdsloten over zijn.",
+          "af": "Verwyder die tydgleuf. Ontlaai na die net skakel af wanneer geen verkoop-tydgleuwe oor is nie."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "autocomplete",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Tijdslot",
+              "af": "Tydgleuf"
+            },
+            "placeholder": {
+              "en": "Slot 1",
+              "nl": "Tijdslot 1",
+              "af": "Tydgleuf 1"
+            }
+          }
+        ],
+        "id": "clear_sell_slot"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Enable or disable charge schedule (deprecated)",
+          "nl": "Laadschema in- of uitschakelen (verouderd)",
+          "af": "Aktiveer of deaktiveer laaiskedule (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "[[action]] charge schedule (deprecated)",
+          "nl": "[[action]] laadschema (verouderd)",
+          "af": "[[action]] laaiskedule (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot / Clear Buy slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen / wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee koop-tydgleuf\"."
         },
         "args": [
           {
@@ -731,20 +840,21 @@
         "id": "enable_charge_schedule"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Enable or disable discharge schedule",
-          "nl": "Ontlaadschema in- of uitschakelen",
-          "af": "Aktiveer of deaktiveer ontlaaiskedule"
+          "en": "Enable or disable discharge schedule (deprecated)",
+          "nl": "Ontlaadschema in- of uitschakelen (verouderd)",
+          "af": "Aktiveer of deaktiveer ontlaaiskedule (verouderd)"
         },
         "titleFormatted": {
-          "en": "[[action]] discharge schedule",
-          "nl": "[[action]] ontlaadschema",
-          "af": "[[action]] ontlaaiskedule"
+          "en": "[[action]] discharge schedule (deprecated)",
+          "nl": "[[action]] ontlaadschema (verouderd)",
+          "af": "[[action]] ontlaaiskedule (verouderd)"
         },
         "hint": {
-          "en": "Enables or disables the battery discharge schedule.",
-          "nl": "Schakelt het ontlaadschema van de batterij in of uit.",
-          "af": "Aktiveer of deaktiveer die battery se ontlaaiskedule."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause / Clear battery pause\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen / wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee batterypouse\"."
         },
         "args": [
           {
@@ -794,9 +904,9 @@
           "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo"
         },
         "hint": {
-          "en": "Enables timed charge with a full-day slot, forcing the battery to charge from the grid. Use 'Stop force charge' to restore previous settings.",
-          "nl": "Schakelt geforceerd laden in met een schema voor de hele dag, waardoor de batterij van het net wordt geladen. Gebruik 'Geforceerd laden stoppen' om de vorige instellingen te herstellen.",
-          "af": "Aktiveer geforseerde laai met 'n voldag-slot, wat die battery forseer om van die net te laai. Gebruik 'Stop forseer laai' om vorige instellings te herstel."
+          "en": "Sets Buy slot 1 to the whole day, charging the battery from the grid. The charge rate applies on inverters with a charge power setting. Use 'Stop force charge' to restore the previous slot and settings, even after a restart.",
+          "nl": "Stelt Koop-tijdslot 1 in op de hele dag, zodat de batterij van het net laadt. De laadsnelheid geldt op omvormers met een laadvermogen-instelling. Gebruik 'Geforceerd laden stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
+          "af": "Stel koop-tydgleuf 1 op die hele dag, sodat die battery van die net laai. Die laaitempo geld op omsetters met 'n laaidrywing-instelling. Gebruik 'Stop forseer laai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
         },
         "args": [
           {
@@ -812,7 +922,7 @@
               "nl": "Doel-SOC (%)",
               "af": "Teiken-SOC (%)"
             },
-            "min": 0,
+            "min": 4,
             "max": 100,
             "step": 1,
             "value": 100
@@ -825,7 +935,7 @@
               "nl": "Laadsnelheid (%)",
               "af": "Laaitempo (%)"
             },
-            "min": 0,
+            "min": 1,
             "max": 100,
             "step": 1,
             "value": 100
@@ -845,9 +955,9 @@
           "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]%"
         },
         "hint": {
-          "en": "Enables timed export with a full-day slot, forcing the battery to discharge to the grid. Use 'Stop force discharge' to restore previous settings.",
-          "nl": "Schakelt geplande export in met een schema voor de hele dag, waardoor de batterij naar het net wordt ontladen. Gebruik 'Geforceerd ontladen stoppen' om de vorige instellingen te herstellen.",
-          "af": "Aktiveer geskeduleerde uitvoer met 'n voldag-slot, wat die battery forseer om na die net te ontlaai. Gebruik 'Stop forseer ontlaai' om vorige instellings te herstel."
+          "en": "Sets Sell slot 1 to the whole day, exporting battery power to the grid. The discharge rate applies on inverters with a discharge power setting. Use 'Stop force discharge' to restore the previous slot and settings, even after a restart.",
+          "nl": "Stelt Verkoop-tijdslot 1 in op de hele dag, zodat batterijvermogen naar het net wordt geëxporteerd. De ontlaadsnelheid geldt op omvormers met een ontlaadvermogen-instelling. Gebruik 'Geforceerd ontladen stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
+          "af": "Stel verkoop-tydgleuf 1 op die hele dag, sodat batterykrag na die net uitgevoer word. Die ontlaaitempo geld op omsetters met 'n ontlaaidrywing-instelling. Gebruik 'Stop forseer ontlaai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
         },
         "args": [
           {
@@ -863,7 +973,7 @@
               "nl": "Ontlaadsnelheid (%)",
               "af": "Ontlaaitempo (%)"
             },
-            "min": 0,
+            "min": 1,
             "max": 100,
             "step": 1,
             "value": 100
@@ -885,20 +995,21 @@
         "id": "force_discharge"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Set battery pause mode",
-          "nl": "Batterij pauzemodus instellen",
-          "af": "Stel battery pouse-modus"
+          "en": "Set battery pause mode (deprecated)",
+          "nl": "Batterij pauzemodus instellen (verouderd)",
+          "af": "Stel battery pouse-modus (verouderd)"
         },
         "titleFormatted": {
-          "en": "Set battery pause mode to [[mode]]",
-          "nl": "Batterij pauzemodus instellen op [[mode]]",
-          "af": "Stel battery pouse-modus op [[mode]]"
+          "en": "Set battery pause mode to [[mode]] (deprecated)",
+          "nl": "Batterij pauzemodus instellen op [[mode]] (verouderd)",
+          "af": "Stel battery pouse-modus op [[mode]] (verouderd)"
         },
         "hint": {
-          "en": "Pauses battery charge, discharge, or both. Gen3 inverters only.",
-          "nl": "Pauzeert het laden, ontladen of beide van de batterij. Alleen Gen3-omvormers.",
-          "af": "Pouseer batterylaai, ontlaai, of beide. Slegs Gen3-omsetters."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel batterypouse\"."
         },
         "args": [
           {
@@ -954,19 +1065,243 @@
       },
       {
         "title": {
-          "en": "Set charge rate",
-          "nl": "Laadsnelheid instellen",
-          "af": "Stel laaitempo"
+          "en": "Set battery reserve",
+          "nl": "Batterijreserve instellen",
+          "af": "Stel batteryreserwe"
         },
         "titleFormatted": {
-          "en": "Set charge rate to [[watts]] W",
-          "nl": "Laadsnelheid instellen op [[watts]] W",
-          "af": "Stel laaitempo op [[watts]] W"
+          "en": "Set battery reserve to [[percent]]%",
+          "nl": "Batterijreserve instellen op [[percent]]%",
+          "af": "Stel batteryreserwe op [[percent]]%"
         },
         "hint": {
-          "en": "Sets the battery charge rate in watts.",
-          "nl": "Stelt de laadsnelheid van de batterij in watt in.",
-          "af": "Stel die battery se laaitempo in watt."
+          "en": "The state of charge the battery keeps in reserve; it won't discharge below this in normal use.",
+          "nl": "De laadtoestand die de batterij in reserve houdt; bij normaal gebruik wordt niet verder ontladen.",
+          "af": "Die laaitoestand wat die battery in reserwe hou; dit ontlaai nie laer as dit in normale gebruik nie."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "percent",
+            "title": {
+              "en": "Reserve (%)",
+              "nl": "Reserve (%)",
+              "af": "Reserwe (%)"
+            },
+            "min": 4,
+            "max": 100,
+            "step": 1,
+            "value": 4
+          }
+        ],
+        "id": "set_battery_reserve"
+      },
+      {
+        "title": {
+          "en": "Set Buy slot",
+          "nl": "Koop-tijdslot instellen",
+          "af": "Stel koop-tydgleuf"
+        },
+        "titleFormatted": {
+          "en": "Set Buy [[slot]] to [[start]]–[[end]]",
+          "nl": "Koop [[slot]] instellen op [[start]]–[[end]]",
+          "af": "Stel koop [[slot]] op [[start]]–[[end]]"
+        },
+        "hint": {
+          "en": "Charges the battery from the grid in this window, like a Buy slot in the GivEnergy app. Keeps the slot's existing target.",
+          "nl": "Laadt de batterij in dit venster van het net, zoals een Koop-tijdslot in de GivEnergy-app. Het bestaande doel van het tijdslot blijft behouden.",
+          "af": "Laai die battery in hierdie venster van die net, soos 'n koop-tydgleuf in die GivEnergy-toep. Die tydgleuf se bestaande teiken bly behou."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "autocomplete",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Tijdslot",
+              "af": "Tydgleuf"
+            },
+            "placeholder": {
+              "en": "Slot 1",
+              "nl": "Tijdslot 1",
+              "af": "Tydgleuf 1"
+            }
+          },
+          {
+            "type": "time",
+            "name": "start",
+            "title": {
+              "en": "Start",
+              "nl": "Start",
+              "af": "Begin"
+            },
+            "placeholder": {
+              "en": "23:30",
+              "nl": "23:30",
+              "af": "23:30"
+            }
+          },
+          {
+            "type": "time",
+            "name": "end",
+            "title": {
+              "en": "End",
+              "nl": "Einde",
+              "af": "Einde"
+            },
+            "placeholder": {
+              "en": "05:30",
+              "nl": "05:30",
+              "af": "05:30"
+            }
+          }
+        ],
+        "id": "set_buy_slot"
+      },
+      {
+        "title": {
+          "en": "Set Buy slot with target",
+          "nl": "Koop-tijdslot met doel instellen",
+          "af": "Stel koop-tydgleuf met teiken"
+        },
+        "titleFormatted": {
+          "en": "Set Buy [[slot]] to [[start]]–[[end]], charge to [[target]]%",
+          "nl": "Koop [[slot]] instellen op [[start]]–[[end]], laden tot [[target]]%",
+          "af": "Stel koop [[slot]] op [[start]]–[[end]], laai tot [[target]]%"
+        },
+        "hint": {
+          "en": "Charges the battery from the grid in this window, up to the target.",
+          "nl": "Laadt de batterij in dit venster van het net, tot het doel.",
+          "af": "Laai die battery in hierdie venster van die net, tot by die teiken."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_slot_targets"
+          },
+          {
+            "type": "autocomplete",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Tijdslot",
+              "af": "Tydgleuf"
+            },
+            "placeholder": {
+              "en": "Slot 1",
+              "nl": "Tijdslot 1",
+              "af": "Tydgleuf 1"
+            }
+          },
+          {
+            "type": "time",
+            "name": "start",
+            "title": {
+              "en": "Start",
+              "nl": "Start",
+              "af": "Begin"
+            },
+            "placeholder": {
+              "en": "23:30",
+              "nl": "23:30",
+              "af": "23:30"
+            }
+          },
+          {
+            "type": "time",
+            "name": "end",
+            "title": {
+              "en": "End",
+              "nl": "Einde",
+              "af": "Einde"
+            },
+            "placeholder": {
+              "en": "05:30",
+              "nl": "05:30",
+              "af": "05:30"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target",
+            "title": {
+              "en": "Charge to (%)",
+              "nl": "Laden tot (%)",
+              "af": "Laai tot (%)"
+            },
+            "min": 4,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "set_buy_slot_target"
+      },
+      {
+        "title": {
+          "en": "Set charge power",
+          "nl": "Laadvermogen instellen",
+          "af": "Stel laaidrywing"
+        },
+        "titleFormatted": {
+          "en": "Set charge power to [[percent]]%",
+          "nl": "Laadvermogen instellen op [[percent]]%",
+          "af": "Stel laaidrywing op [[percent]]%"
+        },
+        "hint": {
+          "en": "Battery charge power as a percentage of the inverter's rating.",
+          "nl": "Laadvermogen van de batterij als percentage van het vermogen van de omvormer.",
+          "af": "Batterylaaidrywing as persentasie van die omsetter se drywing."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_power_percent"
+          },
+          {
+            "type": "number",
+            "name": "percent",
+            "title": {
+              "en": "Charge power (%)",
+              "nl": "Laadvermogen (%)",
+              "af": "Laaidrywing (%)"
+            },
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "set_charge_power"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set charge rate (deprecated)",
+          "nl": "Laadsnelheid instellen (verouderd)",
+          "af": "Stel laaitempo (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set charge rate to [[watts]] W (deprecated)",
+          "nl": "Laadsnelheid instellen op [[watts]] W (verouderd)",
+          "af": "Stel laaitempo op [[watts]] W (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set charge power\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Laadvermogen instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel laaidrywing\"."
         },
         "args": [
           {
@@ -990,20 +1325,21 @@
         "id": "set_charge_rate"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Set charge slot",
-          "nl": "Laadslot instellen",
-          "af": "Stel laaislot"
+          "en": "Set charge slot (deprecated)",
+          "nl": "Laadslot instellen (verouderd)",
+          "af": "Stel laaislot (verouderd)"
         },
         "titleFormatted": {
-          "en": "Set charge slot 1 to [[start_time]] - [[end_time]]",
-          "nl": "Laadslot 1 instellen op [[start_time]] - [[end_time]]",
-          "af": "Stel laaislot 1 op [[start_time]] - [[end_time]]"
+          "en": "Set charge slot 1 to [[start_time]] - [[end_time]] (deprecated)",
+          "nl": "Laadslot 1 instellen op [[start_time]] - [[end_time]] (verouderd)",
+          "af": "Stel laaislot 1 op [[start_time]] - [[end_time]] (verouderd)"
         },
         "hint": {
-          "en": "Configures the charge schedule time window. Gen1/Gen2 inverters support 1 charge slot.",
-          "nl": "Configureert het tijdvenster van het laadschema. Gen1/Gen2-omvormers ondersteunen 1 laadslot.",
-          "af": "Stel die laaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun 1 laaislot."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf\"."
         },
         "args": [
           {
@@ -1043,26 +1379,27 @@
         "id": "set_charge_slot"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Set charge slot",
-          "nl": "Laadslot instellen",
-          "af": "Stel laaislot"
+          "en": "Set charge slot (deprecated)",
+          "nl": "Laadslot instellen (verouderd)",
+          "af": "Stel laaislot (verouderd)"
         },
         "titleFormatted": {
-          "en": "Set charge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%",
-          "nl": "Laadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]%",
-          "af": "Stel laaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]%"
+          "en": "Set charge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]% (deprecated)",
+          "nl": "Laadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]% (verouderd)",
+          "af": "Stel laaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]% (verouderd)"
         },
         "hint": {
-          "en": "Configures a charge schedule slot with target SOC. Gen3 inverters support slots 1-3.",
-          "nl": "Configureert een laadslot met doel-SOC. Gen3-omvormers ondersteunen slots 1-3.",
-          "af": "Stel 'n laaislot op met teiken-SOC. Gen3-omsetters ondersteun slots 1-3."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot with target\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot met doel instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf met teiken\"."
         },
         "args": [
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+            "filter": "driver_id=solar-inverter"
           },
           {
             "type": "dropdown",
@@ -1145,19 +1482,96 @@
       },
       {
         "title": {
-          "en": "Set discharge rate",
-          "nl": "Ontlaadsnelheid instellen",
-          "af": "Stel ontlaaitempo"
+          "en": "Set charge target",
+          "nl": "Laaddoel instellen",
+          "af": "Stel laaiteiken"
         },
         "titleFormatted": {
-          "en": "Set discharge rate to [[watts]] W",
-          "nl": "Ontlaadsnelheid instellen op [[watts]] W",
-          "af": "Stel ontlaaitempo op [[watts]] W"
+          "en": "Set charge target to [[target]]%",
+          "nl": "Laaddoel instellen op [[target]]%",
+          "af": "Stel laaiteiken op [[target]]%"
         },
         "hint": {
-          "en": "Sets the battery discharge rate in watts.",
-          "nl": "Stelt de ontlaadsnelheid van de batterij in watt in.",
-          "af": "Stel die battery se ontlaaitempo in watt."
+          "en": "The state of charge every Buy slot charges up to. This inverter has one target for all slots.",
+          "nl": "De laadtoestand waartoe elk Koop-tijdslot laadt. Deze omvormer heeft één doel voor alle tijdsloten.",
+          "af": "Die laaitoestand waartoe elke koop-tydgleuf laai. Hierdie omsetter het een teiken vir alle tydgleuwe."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_global_target"
+          },
+          {
+            "type": "number",
+            "name": "target",
+            "title": {
+              "en": "Charge to (%)",
+              "nl": "Laden tot (%)",
+              "af": "Laai tot (%)"
+            },
+            "min": 4,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "set_charge_target"
+      },
+      {
+        "title": {
+          "en": "Set discharge power",
+          "nl": "Ontlaadvermogen instellen",
+          "af": "Stel ontlaaidrywing"
+        },
+        "titleFormatted": {
+          "en": "Set discharge power to [[percent]]%",
+          "nl": "Ontlaadvermogen instellen op [[percent]]%",
+          "af": "Stel ontlaaidrywing op [[percent]]%"
+        },
+        "hint": {
+          "en": "Battery discharge power as a percentage of the inverter's rating.",
+          "nl": "Ontlaadvermogen van de batterij als percentage van het vermogen van de omvormer.",
+          "af": "Batteryontlaaidrywing as persentasie van die omsetter se drywing."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_power_percent"
+          },
+          {
+            "type": "number",
+            "name": "percent",
+            "title": {
+              "en": "Discharge power (%)",
+              "nl": "Ontlaadvermogen (%)",
+              "af": "Ontlaaidrywing (%)"
+            },
+            "min": 1,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "set_discharge_power"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set discharge rate (deprecated)",
+          "nl": "Ontlaadsnelheid instellen (verouderd)",
+          "af": "Stel ontlaaitempo (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set discharge rate to [[watts]] W (deprecated)",
+          "nl": "Ontlaadsnelheid instellen op [[watts]] W (verouderd)",
+          "af": "Stel ontlaaitempo op [[watts]] W (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set discharge power\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Ontlaadvermogen instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel ontlaaidrywing\"."
         },
         "args": [
           {
@@ -1181,20 +1595,21 @@
         "id": "set_discharge_rate"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Set discharge slot",
-          "nl": "Ontlaadslot instellen",
-          "af": "Stel ontlaaislot"
+          "en": "Set discharge slot (deprecated)",
+          "nl": "Ontlaadslot instellen (verouderd)",
+          "af": "Stel ontlaaislot (verouderd)"
         },
         "titleFormatted": {
-          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]]",
-          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]]",
-          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]]"
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] (deprecated)",
+          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] (verouderd)",
+          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] (verouderd)"
         },
         "hint": {
-          "en": "Configures a discharge schedule time window. Gen1/Gen2 inverters support slots 1-2.",
-          "nl": "Configureert het tijdvenster van het ontlaadschema. Gen1/Gen2-omvormers ondersteunen slots 1-2.",
-          "af": "Stel die ontlaaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun slots 1-2."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\"."
         },
         "args": [
           {
@@ -1261,26 +1676,27 @@
         "id": "set_discharge_slot"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Set discharge slot",
-          "nl": "Ontlaadslot instellen",
-          "af": "Stel ontlaaislot"
+          "en": "Set discharge slot (deprecated)",
+          "nl": "Ontlaadslot instellen (verouderd)",
+          "af": "Stel ontlaaislot (verouderd)"
         },
         "titleFormatted": {
-          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]%",
-          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]%",
-          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]%"
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]% (deprecated)",
+          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]% (verouderd)",
+          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]% (verouderd)"
         },
         "hint": {
-          "en": "Configures a discharge schedule slot with target SOC. Gen3 inverters support slots 1-3.",
-          "nl": "Configureert een ontlaadslot met doel-SOC. Gen3-omvormers ondersteunen slots 1-3.",
-          "af": "Stel 'n ontlaaislot op met teiken-SOC. Gen3-omsetters ondersteun slots 1-3."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot with target\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot met doel instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf met teiken\"."
         },
         "args": [
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=solar-inverter&capabilities=inverter_gen3"
+            "filter": "driver_id=solar-inverter"
           },
           {
             "type": "dropdown",
@@ -1362,20 +1778,21 @@
         "id": "set_discharge_slot_gen3"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Set export limit",
-          "nl": "Exportlimiet instellen",
-          "af": "Stel uitvoerlimiet"
+          "en": "Set export limit (deprecated)",
+          "nl": "Exportlimiet instellen (verouderd)",
+          "af": "Stel uitvoerlimiet (verouderd)"
         },
         "titleFormatted": {
-          "en": "Set export limit to [[watts]] W",
-          "nl": "Exportlimiet instellen op [[watts]] W",
-          "af": "Stel uitvoerlimiet op [[watts]] W"
+          "en": "Set export limit to [[watts]] W (deprecated)",
+          "nl": "Exportlimiet instellen op [[watts]] W (verouderd)",
+          "af": "Stel uitvoerlimiet op [[watts]] W (verouderd)"
         },
         "hint": {
-          "en": "Sets the grid export limit in watts. Gen3 inverters only.",
-          "nl": "Stelt de exportlimiet naar het net in watt in. Alleen Gen3-omvormers.",
-          "af": "Stel die netuitvoerlimiet in watt. Slegs Gen3-omsetters."
+          "en": "Deprecated: this card will be removed in version 3 of the app. The export limit can no longer be changed from Homey; it is set by your installer.",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. De exportlimiet kan niet meer vanuit Homey worden gewijzigd; uw installateur stelt deze in.",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Die uitvoerlimiet kan nie meer vanaf Homey verander word nie; u installeerder stel dit."
         },
         "args": [
           {
@@ -1397,6 +1814,301 @@
           }
         ],
         "id": "set_export_limit"
+      },
+      {
+        "title": {
+          "en": "Set battery pause",
+          "nl": "Batterijpauze instellen",
+          "af": "Stel batterypouse"
+        },
+        "titleFormatted": {
+          "en": "Set battery pause to [[mode]]",
+          "nl": "Batterijpauze instellen op [[mode]]",
+          "af": "Stel batterypouse op [[mode]]"
+        },
+        "hint": {
+          "en": "Pauses battery charging, discharging or both until changed. This inverter has no pause window.",
+          "nl": "Pauzeert het laden, ontladen of beide van de batterij tot dit wordt gewijzigd. Deze omvormer heeft geen pauzevenster.",
+          "af": "Pouseer batterylaai, -ontlaai of albei totdat dit verander word. Hierdie omsetter het geen pouse-venster nie."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_pause_mode_only"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Pause",
+              "nl": "Pauze",
+              "af": "Pouse"
+            },
+            "values": [
+              {
+                "id": "both",
+                "title": {
+                  "en": "Pause charge and discharge",
+                  "nl": "Laden en ontladen pauzeren",
+                  "af": "Pouseer laai en ontlaai"
+                }
+              },
+              {
+                "id": "charge",
+                "title": {
+                  "en": "Pause charge",
+                  "nl": "Laden pauzeren",
+                  "af": "Pouseer laai"
+                }
+              },
+              {
+                "id": "discharge",
+                "title": {
+                  "en": "Pause discharge",
+                  "nl": "Ontladen pauzeren",
+                  "af": "Pouseer ontlaai"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set_pause_mode"
+      },
+      {
+        "title": {
+          "en": "Set Pause slot",
+          "nl": "Pauze-tijdslot instellen",
+          "af": "Stel pouse-tydgleuf"
+        },
+        "titleFormatted": {
+          "en": "[[mode]] from [[start]] to [[end]]",
+          "nl": "[[mode]] van [[start]] tot [[end]]",
+          "af": "[[mode]] van [[start]] tot [[end]]"
+        },
+        "hint": {
+          "en": "Pauses the battery in this window, like a Pause slot in the GivEnergy app. The inverter has one pause window.",
+          "nl": "Pauzeert de batterij in dit venster, zoals een Pauze-tijdslot in de GivEnergy-app. De omvormer heeft één pauzevenster.",
+          "af": "Pouseer die battery in hierdie venster, soos 'n pouse-tydgleuf in die GivEnergy-toep. Die omsetter het een pouse-venster."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_pause_window"
+          },
+          {
+            "type": "time",
+            "name": "start",
+            "title": {
+              "en": "Start",
+              "nl": "Start",
+              "af": "Begin"
+            },
+            "placeholder": {
+              "en": "18:00",
+              "nl": "18:00",
+              "af": "18:00"
+            }
+          },
+          {
+            "type": "time",
+            "name": "end",
+            "title": {
+              "en": "End",
+              "nl": "Einde",
+              "af": "Einde"
+            },
+            "placeholder": {
+              "en": "18:30",
+              "nl": "18:30",
+              "af": "18:30"
+            }
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Pause",
+              "nl": "Pauze",
+              "af": "Pouse"
+            },
+            "values": [
+              {
+                "id": "both",
+                "title": {
+                  "en": "Pause charge and discharge",
+                  "nl": "Laden en ontladen pauzeren",
+                  "af": "Pouseer laai en ontlaai"
+                }
+              },
+              {
+                "id": "charge",
+                "title": {
+                  "en": "Pause charge",
+                  "nl": "Laden pauzeren",
+                  "af": "Pouseer laai"
+                }
+              },
+              {
+                "id": "discharge",
+                "title": {
+                  "en": "Pause discharge",
+                  "nl": "Ontladen pauzeren",
+                  "af": "Pouseer ontlaai"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set_pause_slot"
+      },
+      {
+        "title": {
+          "en": "Set Sell slot",
+          "nl": "Verkoop-tijdslot instellen",
+          "af": "Stel verkoop-tydgleuf"
+        },
+        "titleFormatted": {
+          "en": "Set Sell [[slot]] to [[start]]–[[end]]",
+          "nl": "Verkoop [[slot]] instellen op [[start]]–[[end]]",
+          "af": "Stel verkoop [[slot]] op [[start]]–[[end]]"
+        },
+        "hint": {
+          "en": "Exports battery power to the grid in this window, like a Sell slot in the GivEnergy app. Stops at the battery reserve.",
+          "nl": "Exporteert batterijvermogen naar het net in dit venster, zoals een Verkoop-tijdslot in de GivEnergy-app. Stopt bij de batterijreserve.",
+          "af": "Voer batterykrag in hierdie venster na die net uit, soos 'n verkoop-tydgleuf in die GivEnergy-toep. Stop by die batteryreserwe."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "autocomplete",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Tijdslot",
+              "af": "Tydgleuf"
+            },
+            "placeholder": {
+              "en": "Slot 1",
+              "nl": "Tijdslot 1",
+              "af": "Tydgleuf 1"
+            }
+          },
+          {
+            "type": "time",
+            "name": "start",
+            "title": {
+              "en": "Start",
+              "nl": "Start",
+              "af": "Begin"
+            },
+            "placeholder": {
+              "en": "16:00",
+              "nl": "16:00",
+              "af": "16:00"
+            }
+          },
+          {
+            "type": "time",
+            "name": "end",
+            "title": {
+              "en": "End",
+              "nl": "Einde",
+              "af": "Einde"
+            },
+            "placeholder": {
+              "en": "19:00",
+              "nl": "19:00",
+              "af": "19:00"
+            }
+          }
+        ],
+        "id": "set_sell_slot"
+      },
+      {
+        "title": {
+          "en": "Set Sell slot with target",
+          "nl": "Verkoop-tijdslot met doel instellen",
+          "af": "Stel verkoop-tydgleuf met teiken"
+        },
+        "titleFormatted": {
+          "en": "Set Sell [[slot]] to [[start]]–[[end]], stop at [[target]]%",
+          "nl": "Verkoop [[slot]] instellen op [[start]]–[[end]], stoppen bij [[target]]%",
+          "af": "Stel verkoop [[slot]] op [[start]]–[[end]], stop by [[target]]%"
+        },
+        "hint": {
+          "en": "Exports battery power to the grid in this window, down to the target.",
+          "nl": "Exporteert batterijvermogen naar het net in dit venster, tot het doel.",
+          "af": "Voer batterykrag in hierdie venster na die net uit, tot by die teiken."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_slot_targets"
+          },
+          {
+            "type": "autocomplete",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Tijdslot",
+              "af": "Tydgleuf"
+            },
+            "placeholder": {
+              "en": "Slot 1",
+              "nl": "Tijdslot 1",
+              "af": "Tydgleuf 1"
+            }
+          },
+          {
+            "type": "time",
+            "name": "start",
+            "title": {
+              "en": "Start",
+              "nl": "Start",
+              "af": "Begin"
+            },
+            "placeholder": {
+              "en": "16:00",
+              "nl": "16:00",
+              "af": "16:00"
+            }
+          },
+          {
+            "type": "time",
+            "name": "end",
+            "title": {
+              "en": "End",
+              "nl": "Einde",
+              "af": "Einde"
+            },
+            "placeholder": {
+              "en": "19:00",
+              "nl": "19:00",
+              "af": "19:00"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target",
+            "title": {
+              "en": "Stop at (%)",
+              "nl": "Stoppen bij (%)",
+              "af": "Stop by (%)"
+            },
+            "min": 4,
+            "max": 100,
+            "step": 1,
+            "value": 4
+          }
+        ],
+        "id": "set_sell_slot_target"
       },
       {
         "title": {
@@ -1450,15 +2162,15 @@
           "af": "[[action]] eko-modus"
         },
         "hint": {
-          "en": "Enables or disables eco mode (HR27). Independent of timed export.",
-          "nl": "Schakelt eco-modus in of uit (HR27). Onafhankelijk van geplande export.",
-          "af": "Aktiveer of deaktiveer eko-modus (HR27). Onafhanklik van geskeduleerde uitvoer."
+          "en": "Eco mode decides what time outside Buy, Sell and Pause slots does: with it on, the battery covers the house load.",
+          "nl": "Eco-modus bepaalt wat er buiten Koop-, Verkoop- en Pauze-tijdsloten gebeurt: als het aan staat, dekt de batterij het huisverbruik.",
+          "af": "Eko-modus bepaal wat buite koop-, verkoop- en pouse-tydgleuwe gebeur: as dit aan is, dek die battery die huis se verbruik."
         },
         "args": [
           {
             "type": "device",
             "name": "device",
-            "filter": "driver_id=solar-inverter"
+            "filter": "driver_id=solar-inverter&capabilities=givenergy_eco_mode"
           },
           {
             "type": "dropdown",
@@ -1491,20 +2203,21 @@
         "id": "toggle_eco_mode"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Toggle timed export",
-          "nl": "Geplande export schakelen",
-          "af": "Wissel geskeduleerde uitvoer"
+          "en": "Toggle timed export (deprecated)",
+          "nl": "Geplande export schakelen (verouderd)",
+          "af": "Wissel geskeduleerde uitvoer (verouderd)"
         },
         "titleFormatted": {
-          "en": "[[action]] timed export",
-          "nl": "[[action]] geplande export",
-          "af": "[[action]] geskeduleerde uitvoer"
+          "en": "[[action]] timed export (deprecated)",
+          "nl": "[[action]] geplande export (verouderd)",
+          "af": "[[action]] geskeduleerde uitvoer (verouderd)"
         },
         "hint": {
-          "en": "Enables or disables timed export (HR59). Independent of eco mode.",
-          "nl": "Schakelt geplande export in of uit (HR59). Onafhankelijk van eco-modus.",
-          "af": "Aktiveer of deaktiveer geskeduleerde uitvoer (HR59). Onafhanklik van eko-modus."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot / Clear Sell slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen / wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee verkoop-tydgleuf\"."
         },
         "args": [
           {
@@ -1807,28 +2520,28 @@
         {
           "type": "group",
           "label": {
-            "en": "Device Info",
-            "nl": "Apparaatinfo",
-            "af": "Toestelinligting"
+            "en": "Inverter",
+            "nl": "Omvormer",
+            "af": "Omsetter"
           },
           "children": [
             {
-              "id": "label_serial_number",
+              "id": "label_model",
               "type": "label",
               "label": {
-                "en": "Serial Number",
-                "nl": "Serienummer",
-                "af": "Reeksnommer"
+                "en": "Model",
+                "nl": "Model",
+                "af": "Model"
               },
               "value": "-"
             },
             {
-              "id": "label_generation",
+              "id": "label_serial_number",
               "type": "label",
               "label": {
-                "en": "Generation",
-                "nl": "Generatie",
-                "af": "Generasie"
+                "en": "Serial number",
+                "nl": "Serienummer",
+                "af": "Reeksnommer"
               },
               "value": "-"
             },
@@ -1836,393 +2549,131 @@
               "id": "label_ip_address",
               "type": "label",
               "label": {
-                "en": "IP Address",
+                "en": "IP address",
                 "nl": "IP-adres",
                 "af": "IP-adres"
               },
               "value": "-"
             },
             {
-              "id": "label_model_code",
+              "id": "label_firmware",
               "type": "label",
               "label": {
-                "en": "Model Code",
-                "nl": "Modelcode",
-                "af": "Modelkode"
+                "en": "Firmware",
+                "nl": "Firmware",
+                "af": "Firmware"
               },
               "value": "-"
+            },
+            {
+              "id": "label_schedule_support",
+              "type": "label",
+              "label": {
+                "en": "Schedule slots",
+                "nl": "Tijdsloten",
+                "af": "Tydgleuwe"
+              },
+              "value": "-",
+              "hint": {
+                "en": "Set Buy, Sell and Pause slots on the Schedules page: Apps → GivEnergy → Configure, or with flow cards.",
+                "nl": "Stel Koop-, Verkoop- en Pauze-tijdsloten in op de pagina Schema's: Apps → GivEnergy → Configureren, of met flowkaarten.",
+                "af": "Stel koop-, verkoop- en pouse-tydgleuwe op die Skedules-bladsy: Toepe → GivEnergy → Konfigureer, of met vloeikaarte."
+              }
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Inverter Toggles",
-            "nl": "Omvormerinstellingen",
-            "af": "Omsetter-instellings"
+            "en": "Battery",
+            "nl": "Batterij",
+            "af": "Battery"
+          },
+          "children": [
+            {
+              "id": "battery_reserve",
+              "type": "number",
+              "label": {
+                "en": "Battery reserve",
+                "nl": "Batterijreserve",
+                "af": "Batteryreserwe"
+              },
+              "value": 4,
+              "min": 4,
+              "max": 100,
+              "units": {
+                "en": "%"
+              },
+              "hint": {
+                "en": "The battery won't discharge below this in normal use.",
+                "nl": "De batterij ontlaadt bij normaal gebruik niet verder dan dit.",
+                "af": "Die battery ontlaai nie laer as dit in normale gebruik nie."
+              }
+            },
+            {
+              "id": "charge_power",
+              "type": "number",
+              "label": {
+                "en": "Charge power",
+                "nl": "Laadvermogen",
+                "af": "Laaidrywing"
+              },
+              "value": 100,
+              "min": 1,
+              "max": 100,
+              "units": {
+                "en": "%"
+              },
+              "hint": {
+                "en": "Battery charge power as a percentage of the inverter's rating.",
+                "nl": "Laadvermogen van de batterij als percentage van het vermogen van de omvormer.",
+                "af": "Batterylaaidrywing as persentasie van die omsetter se drywing."
+              }
+            },
+            {
+              "id": "discharge_power",
+              "type": "number",
+              "label": {
+                "en": "Discharge power",
+                "nl": "Ontlaadvermogen",
+                "af": "Ontlaaidrywing"
+              },
+              "value": 100,
+              "min": 1,
+              "max": 100,
+              "units": {
+                "en": "%"
+              },
+              "hint": {
+                "en": "Battery discharge power as a percentage of the inverter's rating.",
+                "nl": "Ontlaadvermogen van de batterij als percentage van het vermogen van de omvormer.",
+                "af": "Batteryontlaaidrywing as persentasie van die omsetter se drywing."
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Mode",
+            "nl": "Modus",
+            "af": "Modus"
           },
           "children": [
             {
               "id": "eco_mode",
               "type": "checkbox",
               "label": {
-                "en": "Eco Mode",
+                "en": "Eco mode",
                 "nl": "Eco-modus",
                 "af": "Eko-modus"
               },
+              "value": true,
               "hint": {
-                "en": "Battery charges from solar only and discharges to meet load (HR27).",
-                "nl": "Batterij laadt alleen van zonne-energie en ontlaadt om de belasting te dekken (HR27).",
-                "af": "Battery laai slegs van sonkrag en ontlaai om die las te dek (HR27)."
-              },
-              "value": true
-            },
-            {
-              "id": "timed_export",
-              "type": "checkbox",
-              "label": {
-                "en": "Timed Export",
-                "nl": "Geplande export",
-                "af": "Geskeduleerde uitvoer"
-              },
-              "hint": {
-                "en": "Battery discharges to grid on schedule (HR59). Independent of eco mode.",
-                "nl": "Batterij ontlaadt naar het net volgens schema (HR59). Onafhankelijk van eco-modus.",
-                "af": "Battery ontlaai na die net volgens skedule (HR59). Onafhanklik van eko-modus."
-              },
-              "value": false
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
-            "en": "Charge Schedule",
-            "nl": "Laadschema",
-            "af": "Laaiskedule"
-          },
-          "children": [
-            {
-              "id": "charge_schedule_enabled",
-              "type": "checkbox",
-              "label": {
-                "en": "Enable Charge Schedule",
-                "nl": "Laadschema inschakelen",
-                "af": "Aktiveer laaiskedule"
-              },
-              "value": false
-            },
-            {
-              "id": "charge_slot1_start",
-              "type": "text",
-              "label": {
-                "en": "Charge Slot 1 Start (HH:MM)",
-                "nl": "Laadslot 1 start (UU:MM)",
-                "af": "Laaislot 1 begin (UU:MM)"
-              },
-              "value": "00:30"
-            },
-            {
-              "id": "charge_slot1_end",
-              "type": "text",
-              "label": {
-                "en": "Charge Slot 1 End (HH:MM)",
-                "nl": "Laadslot 1 einde (UU:MM)",
-                "af": "Laaislot 1 einde (UU:MM)"
-              },
-              "value": "04:30"
-            },
-            {
-              "id": "charge_slot1_target_soc",
-              "type": "number",
-              "label": {
-                "en": "Charge Slot 1 Target SOC (%)",
-                "nl": "Laadslot 1 doel-SOC (%)",
-                "af": "Laaislot 1 teiken-SOC (%)"
-              },
-              "value": 100,
-              "min": 0,
-              "max": 100
-            },
-            {
-              "id": "charge_rate",
-              "type": "number",
-              "label": {
-                "en": "Charge Rate (%)",
-                "nl": "Laadsnelheid (%)",
-                "af": "Laaitempo (%)"
-              },
-              "value": 100,
-              "min": 0,
-              "max": 100
-            },
-            {
-              "id": "charge_slot2_start",
-              "type": "text",
-              "label": {
-                "en": "Charge Slot 2 Start (HH:MM)",
-                "nl": "Laadslot 2 start (UU:MM)",
-                "af": "Laaislot 2 begin (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "charge_slot2_end",
-              "type": "text",
-              "label": {
-                "en": "Charge Slot 2 End (HH:MM)",
-                "nl": "Laadslot 2 einde (UU:MM)",
-                "af": "Laaislot 2 einde (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "charge_slot2_target_soc",
-              "type": "number",
-              "label": {
-                "en": "Charge Slot 2 Target SOC (%) — Gen3 only",
-                "nl": "Laadslot 2 doel-SOC (%) — alleen Gen3",
-                "af": "Laaislot 2 teiken-SOC (%) — slegs Gen3"
-              },
-              "value": 100,
-              "min": 0,
-              "max": 100
-            },
-            {
-              "id": "charge_slot3_start",
-              "type": "text",
-              "label": {
-                "en": "Charge Slot 3 Start (HH:MM)",
-                "nl": "Laadslot 3 start (UU:MM)",
-                "af": "Laaislot 3 begin (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "charge_slot3_end",
-              "type": "text",
-              "label": {
-                "en": "Charge Slot 3 End (HH:MM)",
-                "nl": "Laadslot 3 einde (UU:MM)",
-                "af": "Laaislot 3 einde (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "charge_slot3_target_soc",
-              "type": "number",
-              "label": {
-                "en": "Charge Slot 3 Target SOC (%) — Gen3 only",
-                "nl": "Laadslot 3 doel-SOC (%) — alleen Gen3",
-                "af": "Laaislot 3 teiken-SOC (%) — slegs Gen3"
-              },
-              "value": 100,
-              "min": 0,
-              "max": 100
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
-            "en": "Discharge Schedule",
-            "nl": "Ontlaadschema",
-            "af": "Ontlaaiskedule"
-          },
-          "children": [
-            {
-              "id": "discharge_schedule_enabled",
-              "type": "checkbox",
-              "label": {
-                "en": "Enable Discharge Schedule",
-                "nl": "Ontlaadschema inschakelen",
-                "af": "Aktiveer ontlaaiskedule"
-              },
-              "value": false
-            },
-            {
-              "id": "discharge_slot1_start",
-              "type": "text",
-              "label": {
-                "en": "Discharge Slot 1 Start (HH:MM)",
-                "nl": "Ontlaadslot 1 start (UU:MM)",
-                "af": "Ontlaaislot 1 begin (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "discharge_slot1_end",
-              "type": "text",
-              "label": {
-                "en": "Discharge Slot 1 End (HH:MM)",
-                "nl": "Ontlaadslot 1 einde (UU:MM)",
-                "af": "Ontlaaislot 1 einde (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "discharge_slot1_target_soc",
-              "type": "number",
-              "label": {
-                "en": "Discharge Slot 1 Target SOC (%)",
-                "nl": "Ontlaadslot 1 doel-SOC (%)",
-                "af": "Ontlaaislot 1 teiken-SOC (%)"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 100
-            },
-            {
-              "id": "discharge_rate",
-              "type": "number",
-              "label": {
-                "en": "Discharge Rate (%)",
-                "nl": "Ontlaadsnelheid (%)",
-                "af": "Ontlaaitempo (%)"
-              },
-              "value": 100,
-              "min": 0,
-              "max": 100
-            },
-            {
-              "id": "discharge_slot2_start",
-              "type": "text",
-              "label": {
-                "en": "Discharge Slot 2 Start (HH:MM)",
-                "nl": "Ontlaadslot 2 start (UU:MM)",
-                "af": "Ontlaaislot 2 begin (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "discharge_slot2_end",
-              "type": "text",
-              "label": {
-                "en": "Discharge Slot 2 End (HH:MM)",
-                "nl": "Ontlaadslot 2 einde (UU:MM)",
-                "af": "Ontlaaislot 2 einde (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "discharge_slot2_target_soc",
-              "type": "number",
-              "label": {
-                "en": "Discharge Slot 2 Target SOC (%) — Gen3 only",
-                "nl": "Ontlaadslot 2 doel-SOC (%) — alleen Gen3",
-                "af": "Ontlaaislot 2 teiken-SOC (%) — slegs Gen3"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 100
-            },
-            {
-              "id": "discharge_slot3_start",
-              "type": "text",
-              "label": {
-                "en": "Discharge Slot 3 Start (HH:MM)",
-                "nl": "Ontlaadslot 3 start (UU:MM)",
-                "af": "Ontlaaislot 3 begin (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "discharge_slot3_end",
-              "type": "text",
-              "label": {
-                "en": "Discharge Slot 3 End (HH:MM)",
-                "nl": "Ontlaadslot 3 einde (UU:MM)",
-                "af": "Ontlaaislot 3 einde (UU:MM)"
-              },
-              "value": "00:00"
-            },
-            {
-              "id": "discharge_slot3_target_soc",
-              "type": "number",
-              "label": {
-                "en": "Discharge Slot 3 Target SOC (%) — Gen3 only",
-                "nl": "Ontlaadslot 3 doel-SOC (%) — alleen Gen3",
-                "af": "Ontlaaislot 3 teiken-SOC (%) — slegs Gen3"
-              },
-              "value": 0,
-              "min": 0,
-              "max": 100
-            }
-          ]
-        },
-        {
-          "type": "group",
-          "label": {
-            "en": "Gen3 Features",
-            "nl": "Gen3-functies",
-            "af": "Gen3-kenmerke"
-          },
-          "children": [
-            {
-              "id": "export_limit",
-              "type": "number",
-              "label": {
-                "en": "Export Limit (W)",
-                "nl": "Exportlimiet (W)",
-                "af": "Uitvoerlimiet (W)"
-              },
-              "hint": {
-                "en": "Grid export limit in watts. Gen3 inverters only.",
-                "nl": "Exportlimiet naar het net in watt. Alleen Gen3-omvormers.",
-                "af": "Netuitvoerlimiet in watt. Slegs Gen3-omsetters."
-              },
-              "value": 10000,
-              "min": 0,
-              "max": 10000
-            },
-            {
-              "id": "battery_pause_mode",
-              "type": "dropdown",
-              "label": {
-                "en": "Battery Pause Mode",
-                "nl": "Batterij pauzemodus",
-                "af": "Battery pouse-modus"
-              },
-              "hint": {
-                "en": "Pause battery charge/discharge. Gen3 inverters only.",
-                "nl": "Pauzeer het laden/ontladen van de batterij. Alleen Gen3-omvormers.",
-                "af": "Pouseer batterylaai/ontlaai. Slegs Gen3-omsetters."
-              },
-              "value": "disabled",
-              "values": [
-                {
-                  "id": "disabled",
-                  "label": {
-                    "en": "Disabled (normal)",
-                    "nl": "Uitgeschakeld (normaal)",
-                    "af": "Gedeaktiveer (normaal)"
-                  }
-                },
-                {
-                  "id": "pause_charge",
-                  "label": {
-                    "en": "Pause Charge",
-                    "nl": "Laden pauzeren",
-                    "af": "Pouseer laai"
-                  }
-                },
-                {
-                  "id": "pause_discharge",
-                  "label": {
-                    "en": "Pause Discharge",
-                    "nl": "Ontladen pauzeren",
-                    "af": "Pouseer ontlaai"
-                  }
-                },
-                {
-                  "id": "pause_both",
-                  "label": {
-                    "en": "Pause Both",
-                    "nl": "Beide pauzeren",
-                    "af": "Pouseer beide"
-                  }
-                }
-              ]
+                "en": "What the battery does outside Buy, Sell and Pause slots: with eco mode on, it covers the house load from the battery and charges from surplus solar.",
+                "nl": "Wat de batterij buiten Koop-, Verkoop- en Pauze-tijdsloten doet: met eco-modus aan dekt de batterij het huisverbruik en laadt ze met overschot aan zonne-energie.",
+                "af": "Wat die battery buite koop-, verkoop- en pouse-tydgleuwe doen: met eko-modus aan dek dit die huis se verbruik uit die battery en laai dit met oortollige sonkrag."
+              }
             }
           ]
         }
@@ -2302,6 +2753,90 @@
       "decimals": 2,
       "getable": true,
       "setable": false
+    },
+    "givenergy_eco_mode": {
+      "type": "boolean",
+      "title": {
+        "en": "Eco mode",
+        "nl": "Eco-modus",
+        "af": "Eko-modus"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_global_target": {
+      "type": "boolean",
+      "title": {
+        "en": "Global charge target",
+        "nl": "Algemeen laaddoel",
+        "af": "Algemene laaiteiken"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_pause": {
+      "type": "boolean",
+      "title": {
+        "en": "Battery pause",
+        "nl": "Batterijpauze",
+        "af": "Batterypouse"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_pause_mode_only": {
+      "type": "boolean",
+      "title": {
+        "en": "Battery pause mode only",
+        "nl": "Alleen batterijpauzemodus",
+        "af": "Slegs batterypouse-modus"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_pause_window": {
+      "type": "boolean",
+      "title": {
+        "en": "Battery pause window",
+        "nl": "Venster voor batterijpauze",
+        "af": "Batterypouse-venster"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_power_percent": {
+      "type": "boolean",
+      "title": {
+        "en": "Charge/discharge power %",
+        "nl": "Laad-/ontlaadvermogen %",
+        "af": "Laai-/ontlaaidrywing %"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
+    },
+    "givenergy_slot_targets": {
+      "type": "boolean",
+      "title": {
+        "en": "Per-slot targets",
+        "nl": "Doelen per tijdslot",
+        "af": "Teikens per tydgleuf"
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false
     },
     "grid_export_energy": {
       "type": "number",

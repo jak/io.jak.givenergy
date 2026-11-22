@@ -1,0 +1,12 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Eco mode",
+    "nl": "Eco-modus",
+    "af": "Eko-modus"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false
+}

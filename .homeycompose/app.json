@@ -69,5 +69,15 @@
   "author": {
     "name": "Jak Spalding",
     "email": "jak.spalding@gmail.com"
+  },
+  "api": {
+    "getInverters": {
+      "method": "GET",
+      "path": "/inverters"
+    },
+    "putSchedule": {
+      "method": "PUT",
+      "path": "/inverters/:serial/schedule"
+    }
   }
 }

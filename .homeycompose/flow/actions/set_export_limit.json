@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Set export limit",
-    "nl": "Exportlimiet instellen",
-    "af": "Stel uitvoerlimiet"
+    "en": "Set export limit (deprecated)",
+    "nl": "Exportlimiet instellen (verouderd)",
+    "af": "Stel uitvoerlimiet (verouderd)"
   },
   "titleFormatted": {
-    "en": "Set export limit to [[watts]] W",
-    "nl": "Exportlimiet instellen op [[watts]] W",
-    "af": "Stel uitvoerlimiet op [[watts]] W"
+    "en": "Set export limit to [[watts]] W (deprecated)",
+    "nl": "Exportlimiet instellen op [[watts]] W (verouderd)",
+    "af": "Stel uitvoerlimiet op [[watts]] W (verouderd)"
   },
   "hint": {
-    "en": "Sets the grid export limit in watts. Gen3 inverters only.",
-    "nl": "Stelt de exportlimiet naar het net in watt in. Alleen Gen3-omvormers.",
-    "af": "Stel die netuitvoerlimiet in watt. Slegs Gen3-omsetters."
+    "en": "Deprecated: this card will be removed in version 3 of the app. The export limit can no longer be changed from Homey; it is set by your installer.",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. De exportlimiet kan niet meer vanuit Homey worden gewijzigd; uw installateur stelt deze in.",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Die uitvoerlimiet kan nie meer vanaf Homey verander word nie; u installeerder stel dit."
   },
   "args": [
     {

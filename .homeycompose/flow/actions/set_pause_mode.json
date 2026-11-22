@@ -1,0 +1,59 @@
+{
+  "title": {
+    "en": "Set battery pause",
+    "nl": "Batterijpauze instellen",
+    "af": "Stel batterypouse"
+  },
+  "titleFormatted": {
+    "en": "Set battery pause to [[mode]]",
+    "nl": "Batterijpauze instellen op [[mode]]",
+    "af": "Stel batterypouse op [[mode]]"
+  },
+  "hint": {
+    "en": "Pauses battery charging, discharging or both until changed. This inverter has no pause window.",
+    "nl": "Pauzeert het laden, ontladen of beide van de batterij tot dit wordt gewijzigd. Deze omvormer heeft geen pauzevenster.",
+    "af": "Pouseer batterylaai, -ontlaai of albei totdat dit verander word. Hierdie omsetter het geen pouse-venster nie."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_pause_mode_only"
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Pause",
+        "nl": "Pauze",
+        "af": "Pouse"
+      },
+      "values": [
+        {
+          "id": "both",
+          "title": {
+            "en": "Pause charge and discharge",
+            "nl": "Laden en ontladen pauzeren",
+            "af": "Pouseer laai en ontlaai"
+          }
+        },
+        {
+          "id": "charge",
+          "title": {
+            "en": "Pause charge",
+            "nl": "Laden pauzeren",
+            "af": "Pouseer laai"
+          }
+        },
+        {
+          "id": "discharge",
+          "title": {
+            "en": "Pause discharge",
+            "nl": "Ontladen pauzeren",
+            "af": "Pouseer ontlaai"
+          }
+        }
+      ]
+    }
+  ]
+}

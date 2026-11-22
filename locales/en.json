@@ -1,1 +1,41 @@
-{}
+{
+  "schedules": {
+    "title": "Schedules",
+    "subtitle": "Buy, Sell and Pause slots, like the GivEnergy app.",
+    "inverter": "Inverter",
+    "buy": "Buy",
+    "sell": "Sell",
+    "pause": "Pause",
+    "use": "Use",
+    "slots": "Slots",
+    "noSlots": "No slots: the battery follows eco mode all day.",
+    "useNote": "Buy charges the battery from the grid, Sell exports battery power, and Pause holds the battery. Any other time is Use.",
+    "reserveNote": "Sell slots stop at the battery reserve (__reserve__%).",
+    "settings": "Settings",
+    "ecoMode": "Eco mode",
+    "ecoHint": "During Use time, the battery covers the house load and charges from surplus solar.",
+    "chargeTarget": "Charge target (%)",
+    "chargeTargetHint": "Every Buy slot charges up to this. This inverter has one target for all slots.",
+    "chargeTo": "Charge to",
+    "stopAt": "Stop at",
+    "start": "Start",
+    "end": "End",
+    "remove": "Remove slot",
+    "save": "Save",
+    "saved": "Schedule saved to the inverter.",
+    "missingTime": "Every slot needs a start and an end time.",
+    "notConnected": "__name__ is not connected. Check that the inverter is online.",
+    "noInverters": "No GivEnergy inverters are paired yet.",
+    "pauseMode": {
+      "off": "Off",
+      "both": "Pause charge and discharge",
+      "charge": "Pause charge",
+      "discharge": "Pause discharge"
+    },
+    "limitNote": "Charging also stops at the inverter's global AC charge limit (__limit__%).",
+    "pauseKept": "Battery pause (__mode__) is on without a window this page can show; saving keeps it as it is."
+  },
+  "notifications": {
+    "deprecatedCards": "GivEnergy 2.0: some flow cards are now **deprecated** and will be removed in version 3 of the app. Your flows still work. Look for cards marked **(deprecated)** and replace them with the new Buy, Sell and Pause cards; each card's hint names its replacement."
+  }
+}

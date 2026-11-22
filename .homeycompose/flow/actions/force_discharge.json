@@ -10,9 +10,9 @@
     "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]%"
   },
   "hint": {
-    "en": "Enables timed export with a full-day slot, forcing the battery to discharge to the grid. Use 'Stop force discharge' to restore previous settings.",
-    "nl": "Schakelt geplande export in met een schema voor de hele dag, waardoor de batterij naar het net wordt ontladen. Gebruik 'Geforceerd ontladen stoppen' om de vorige instellingen te herstellen.",
-    "af": "Aktiveer geskeduleerde uitvoer met 'n voldag-slot, wat die battery forseer om na die net te ontlaai. Gebruik 'Stop forseer ontlaai' om vorige instellings te herstel."
+    "en": "Sets Sell slot 1 to the whole day, exporting battery power to the grid. The discharge rate applies on inverters with a discharge power setting. Use 'Stop force discharge' to restore the previous slot and settings, even after a restart.",
+    "nl": "Stelt Verkoop-tijdslot 1 in op de hele dag, zodat batterijvermogen naar het net wordt geëxporteerd. De ontlaadsnelheid geldt op omvormers met een ontlaadvermogen-instelling. Gebruik 'Geforceerd ontladen stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
+    "af": "Stel verkoop-tydgleuf 1 op die hele dag, sodat batterykrag na die net uitgevoer word. Die ontlaaitempo geld op omsetters met 'n ontlaaidrywing-instelling. Gebruik 'Stop forseer ontlaai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
   },
   "args": [
     {
@@ -28,7 +28,7 @@
         "nl": "Ontlaadsnelheid (%)",
         "af": "Ontlaaitempo (%)"
       },
-      "min": 0,
+      "min": 1,
       "max": 100,
       "step": 1,
       "value": 100

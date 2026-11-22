@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Set battery pause mode",
-    "nl": "Batterij pauzemodus instellen",
-    "af": "Stel battery pouse-modus"
+    "en": "Set battery pause mode (deprecated)",
+    "nl": "Batterij pauzemodus instellen (verouderd)",
+    "af": "Stel battery pouse-modus (verouderd)"
   },
   "titleFormatted": {
-    "en": "Set battery pause mode to [[mode]]",
-    "nl": "Batterij pauzemodus instellen op [[mode]]",
-    "af": "Stel battery pouse-modus op [[mode]]"
+    "en": "Set battery pause mode to [[mode]] (deprecated)",
+    "nl": "Batterij pauzemodus instellen op [[mode]] (verouderd)",
+    "af": "Stel battery pouse-modus op [[mode]] (verouderd)"
   },
   "hint": {
-    "en": "Pauses battery charge, discharge, or both. Gen3 inverters only.",
-    "nl": "Pauzeert het laden, ontladen of beide van de batterij. Alleen Gen3-omvormers.",
-    "af": "Pouseer batterylaai, ontlaai, of beide. Slegs Gen3-omsetters."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel batterypouse\"."
   },
   "args": [
     {

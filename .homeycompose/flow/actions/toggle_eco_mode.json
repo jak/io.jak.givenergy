@@ -10,15 +10,15 @@
     "af": "[[action]] eko-modus"
   },
   "hint": {
-    "en": "Enables or disables eco mode (HR27). Independent of timed export.",
-    "nl": "Schakelt eco-modus in of uit (HR27). Onafhankelijk van geplande export.",
-    "af": "Aktiveer of deaktiveer eko-modus (HR27). Onafhanklik van geskeduleerde uitvoer."
+    "en": "Eco mode decides what time outside Buy, Sell and Pause slots does: with it on, the battery covers the house load.",
+    "nl": "Eco-modus bepaalt wat er buiten Koop-, Verkoop- en Pauze-tijdsloten gebeurt: als het aan staat, dekt de batterij het huisverbruik.",
+    "af": "Eko-modus bepaal wat buite koop-, verkoop- en pouse-tydgleuwe gebeur: as dit aan is, dek die battery die huis se verbruik."
   },
   "args": [
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=solar-inverter"
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_eco_mode"
     },
     {
       "type": "dropdown",

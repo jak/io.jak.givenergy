@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Enable or disable charge schedule",
-    "nl": "Laadschema in- of uitschakelen",
-    "af": "Aktiveer of deaktiveer laaiskedule"
+    "en": "Enable or disable charge schedule (deprecated)",
+    "nl": "Laadschema in- of uitschakelen (verouderd)",
+    "af": "Aktiveer of deaktiveer laaiskedule (verouderd)"
   },
   "titleFormatted": {
-    "en": "[[action]] charge schedule",
-    "nl": "[[action]] laadschema",
-    "af": "[[action]] laaiskedule"
+    "en": "[[action]] charge schedule (deprecated)",
+    "nl": "[[action]] laadschema (verouderd)",
+    "af": "[[action]] laaiskedule (verouderd)"
   },
   "hint": {
-    "en": "Enables or disables the battery charge schedule.",
-    "nl": "Schakelt het laadschema van de batterij in of uit.",
-    "af": "Aktiveer of deaktiveer die battery se laaiskedule."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot / Clear Buy slot\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen / wissen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee koop-tydgleuf\"."
   },
   "args": [
     {

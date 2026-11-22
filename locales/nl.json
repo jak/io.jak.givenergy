@@ -1,1 +1,41 @@
-{}
+{
+  "schedules": {
+    "title": "Schema's",
+    "subtitle": "Koop-, Verkoop- en Pauze-tijdsloten, zoals in de GivEnergy-app.",
+    "inverter": "Omvormer",
+    "buy": "Koop",
+    "sell": "Verkoop",
+    "pause": "Pauze",
+    "use": "Gebruik",
+    "slots": "Tijdsloten",
+    "noSlots": "Geen tijdsloten: de batterij volgt de hele dag de eco-modus.",
+    "useNote": "Koop laadt de batterij van het net, Verkoop exporteert batterijvermogen en Pauze houdt de batterij stil. Alle andere tijd is Gebruik.",
+    "reserveNote": "Verkoop-tijdsloten stoppen bij de batterijreserve (__reserve__%).",
+    "settings": "Instellingen",
+    "ecoMode": "Eco-modus",
+    "ecoHint": "Tijdens Gebruik dekt de batterij het huisverbruik en laadt ze met overschot aan zonne-energie.",
+    "chargeTarget": "Laaddoel (%)",
+    "chargeTargetHint": "Elk Koop-tijdslot laadt tot dit doel. Deze omvormer heeft één doel voor alle tijdsloten.",
+    "chargeTo": "Laden tot",
+    "stopAt": "Stoppen bij",
+    "start": "Start",
+    "end": "Einde",
+    "remove": "Tijdslot verwijderen",
+    "save": "Opslaan",
+    "saved": "Schema opgeslagen op de omvormer.",
+    "missingTime": "Elk tijdslot heeft een begin- en eindtijd nodig.",
+    "notConnected": "__name__ is niet verbonden. Controleer of de omvormer online is.",
+    "noInverters": "Er zijn nog geen GivEnergy-omvormers gekoppeld.",
+    "pauseMode": {
+      "off": "Uit",
+      "both": "Laden en ontladen pauzeren",
+      "charge": "Laden pauzeren",
+      "discharge": "Ontladen pauzeren"
+    },
+    "limitNote": "Laden stopt ook bij de algemene AC-laadlimiet van de omvormer (__limit__%).",
+    "pauseKept": "Batterijpauze (__mode__) staat aan zonder een venster dat deze pagina kan tonen; opslaan laat het ongewijzigd."
+  },
+  "notifications": {
+    "deprecatedCards": "GivEnergy 2.0: sommige flowkaarten zijn nu **verouderd** en worden verwijderd in versie 3 van de app. Je flows blijven werken. Zoek kaarten met **(verouderd)** en vervang ze door de nieuwe Koop-, Verkoop- en Pauzekaarten; de hint van elke kaart noemt de vervanger."
+  }
+}

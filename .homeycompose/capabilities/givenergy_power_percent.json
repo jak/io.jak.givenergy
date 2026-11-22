@@ -1,0 +1,12 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Charge/discharge power %",
+    "nl": "Laad-/ontlaadvermogen %",
+    "af": "Laai-/ontlaaidrywing %"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false
+}

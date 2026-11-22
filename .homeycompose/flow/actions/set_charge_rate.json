@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Set charge rate",
-    "nl": "Laadsnelheid instellen",
-    "af": "Stel laaitempo"
+    "en": "Set charge rate (deprecated)",
+    "nl": "Laadsnelheid instellen (verouderd)",
+    "af": "Stel laaitempo (verouderd)"
   },
   "titleFormatted": {
-    "en": "Set charge rate to [[watts]] W",
-    "nl": "Laadsnelheid instellen op [[watts]] W",
-    "af": "Stel laaitempo op [[watts]] W"
+    "en": "Set charge rate to [[watts]] W (deprecated)",
+    "nl": "Laadsnelheid instellen op [[watts]] W (verouderd)",
+    "af": "Stel laaitempo op [[watts]] W (verouderd)"
   },
   "hint": {
-    "en": "Sets the battery charge rate in watts.",
-    "nl": "Stelt de laadsnelheid van de batterij in watt in.",
-    "af": "Stel die battery se laaitempo in watt."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set charge power\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Laadvermogen instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel laaidrywing\"."
   },
   "args": [
     {

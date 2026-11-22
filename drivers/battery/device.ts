@@ -1,15 +1,14 @@
 'use strict';
 
 import Homey from 'homey';
-
-type GivEnergyInverter = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).GivEnergyInverter;
-type InverterSnapshot = import('givenergy-modbus', { with: { 'resolution-mode': 'import' } }).InverterSnapshot;
+import { batteryValues } from '../../lib/snapshot';
+import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
+import { syncStore } from '../../lib/store';
 
 module.exports = class BatteryDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
   private lostHandler?: (err: any) => void;
-
 
   async onInit() {
     const { host } = this.getStore();
@@ -27,6 +26,7 @@ module.exports = class BatteryDevice extends Homey.Device {
     }
 
     this.setAvailable().catch(this.error);
+    await syncStore(this, this.inverter!).catch(this.error);
 
     // Add capabilities that may not exist on devices paired before this version
     for (const cap of ['battery_charge_energy_today', 'battery_discharge_energy_today']) {
@@ -38,7 +38,7 @@ module.exports = class BatteryDevice extends Homey.Device {
     const inverter = this.inverter!;
 
     this.dataHandler = (snapshot: InverterSnapshot) => {
-      this.log(`Data received: battery=${snapshot.batteryPower}W soc=${snapshot.stateOfCharge}%`);
+      this.log(`Data received: battery=${snapshot.battery.power}W soc=${snapshot.battery.stateOfCharge}%`);
       this.updateCapabilities(snapshot);
     };
 
@@ -70,14 +70,9 @@ module.exports = class BatteryDevice extends Homey.Device {
   private updateCapabilities(snapshot: InverterSnapshot) {
     this.setAvailable().catch(this.error);
 
-    this.setCapabilityValue('measure_power', -snapshot.batteryPower).catch(this.error);
-    this.setCapabilityValue('measure_battery', snapshot.stateOfCharge).catch(this.error);
-    this.setCapabilityValue('meter_power.charged', snapshot.batteryChargeEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('meter_power.discharged', snapshot.batteryDischargeEnergyTotalKwh).catch(this.error);
-    this.setCapabilityValue('measure_temperature', snapshot.batteryTemperature).catch(this.error);
-    this.setCapabilityValue('battery_charge_energy_today', snapshot.batteryChargeEnergyTodayKwh).catch(this.error);
-    this.setCapabilityValue('battery_discharge_energy_today', snapshot.batteryDischargeEnergyTodayKwh).catch(this.error);
-
+    for (const [id, value] of Object.entries(batteryValues(snapshot))) {
+      this.setCapabilityValue(id, value).catch(this.error);
+    }
   }
 
   async onUninit() {

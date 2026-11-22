@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Set charge slot",
-    "nl": "Laadslot instellen",
-    "af": "Stel laaislot"
+    "en": "Set charge slot (deprecated)",
+    "nl": "Laadslot instellen (verouderd)",
+    "af": "Stel laaislot (verouderd)"
   },
   "titleFormatted": {
-    "en": "Set charge slot 1 to [[start_time]] - [[end_time]]",
-    "nl": "Laadslot 1 instellen op [[start_time]] - [[end_time]]",
-    "af": "Stel laaislot 1 op [[start_time]] - [[end_time]]"
+    "en": "Set charge slot 1 to [[start_time]] - [[end_time]] (deprecated)",
+    "nl": "Laadslot 1 instellen op [[start_time]] - [[end_time]] (verouderd)",
+    "af": "Stel laaislot 1 op [[start_time]] - [[end_time]] (verouderd)"
   },
   "hint": {
-    "en": "Configures the charge schedule time window. Gen1/Gen2 inverters support 1 charge slot.",
-    "nl": "Configureert het tijdvenster van het laadschema. Gen1/Gen2-omvormers ondersteunen 1 laadslot.",
-    "af": "Stel die laaiskedule se tydvenster op. Gen1/Gen2-omsetters ondersteun 1 laaislot."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf\"."
   },
   "args": [
     {

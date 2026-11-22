@@ -1,0 +1,12 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Battery pause window",
+    "nl": "Venster voor batterijpauze",
+    "af": "Batterypouse-venster"
+  },
+  "getable": true,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false
+}

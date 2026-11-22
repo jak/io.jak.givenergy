@@ -13,7 +13,8 @@ This is an unofficial community app and is not affiliated with, endorsed by, or 
 
 - Real-time solar, battery, and grid power monitoring
 - Battery and grid energy tracking in Homey's Energy tab
-- Flow cards for inverter mode, charge/discharge schedules, and rates
+- Buy, Sell and Pause slots like the GivEnergy app, from flow cards or the Schedules page (Apps → GivEnergy → Configure)
+- Flow cards for eco mode, battery reserve, charge/discharge power and force charge/discharge, offered only where your inverter supports them
 - Direct local connection via Modbus TCP — no cloud dependency
 
 ## Support

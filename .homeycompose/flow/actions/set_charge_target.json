@@ -1,0 +1,37 @@
+{
+  "title": {
+    "en": "Set charge target",
+    "nl": "Laaddoel instellen",
+    "af": "Stel laaiteiken"
+  },
+  "titleFormatted": {
+    "en": "Set charge target to [[target]]%",
+    "nl": "Laaddoel instellen op [[target]]%",
+    "af": "Stel laaiteiken op [[target]]%"
+  },
+  "hint": {
+    "en": "The state of charge every Buy slot charges up to. This inverter has one target for all slots.",
+    "nl": "De laadtoestand waartoe elk Koop-tijdslot laadt. Deze omvormer heeft één doel voor alle tijdsloten.",
+    "af": "Die laaitoestand waartoe elke koop-tydgleuf laai. Hierdie omsetter het een teiken vir alle tydgleuwe."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter&capabilities=givenergy_global_target"
+    },
+    {
+      "type": "number",
+      "name": "target",
+      "title": {
+        "en": "Charge to (%)",
+        "nl": "Laden tot (%)",
+        "af": "Laai tot (%)"
+      },
+      "min": 4,
+      "max": 100,
+      "step": 1,
+      "value": 100
+    }
+  ]
+}
