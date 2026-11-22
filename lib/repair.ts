@@ -1,28 +1,20 @@
 'use strict';
 
+import type Homey from 'homey';
 import { connectErrorMessage } from './errors.ts';
+import type { PairSession } from './types.ts';
 
 const IDENTIFY_TIMEOUT_MS = 10_000;
 const IDENTIFY_RETRIES = 1;
 
-export function setupRepairSession(
-  session: any,
-  driver: {
-    log: (...args: any[]) => void;
-    error: (...args: any[]) => void;
-    homey: any;
-  },
-) {
-  session.setHandler('get_current_ip', async () => {
-    const device = session.getDevice();
-    return device.getStore().host ?? '';
-  });
+/** `device` is the device being repaired, as Homey passes it to `Driver#onRepair`. */
+export function setupRepairSession(session: PairSession, device: Homey.Device, driver: Homey.Driver) {
+  session.setHandler('get_current_ip', async () => device.getStore().host ?? '');
 
   session.setHandler('manual_connect', async (data: { host: string }) => {
     const host = data.host?.trim();
     if (!host) throw new Error('Please enter an IP address');
 
-    const device = session.getDevice();
     const expectedSerial = device.getData().id;
 
     driver.log(`Repair: verifying inverter at ${host} (expecting ${expectedSerial})...`);
@@ -36,7 +28,7 @@ export function setupRepairSession(
         timeout: IDENTIFY_TIMEOUT_MS,
         retries: IDENTIFY_RETRIES,
       });
-    } catch (err: any) {
+    } catch (err) {
       throw new Error(connectErrorMessage(host, err));
     }
 
