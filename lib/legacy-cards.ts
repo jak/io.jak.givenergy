@@ -25,7 +25,7 @@ export interface LegacyInverter {
   setBatteryPause?(pause: { mode: 'off' | 'charge' | 'discharge' | 'both' }): Promise<void>;
 }
 
-export type LegacyHandler = (inverter: LegacyInverter, args: Record<string, any>) => Promise<void>;
+export type LegacyHandler = (inverter: LegacyInverter, args: Record<string, unknown>) => Promise<void>;
 
 const PAUSE_MODES: Record<string, 'off' | 'charge' | 'discharge' | 'both'> = {
   disabled: 'off', pause_charge: 'charge', pause_discharge: 'discharge', pause_both: 'both',
@@ -38,7 +38,7 @@ const targetOf = (inverter: LegacyInverter, slot: number, value: unknown): numbe
   return Math.max(4, Math.min(100, Math.round(Number(value))));
 };
 
-const slotWindow = (inverter: LegacyInverter, slot: number, args: Record<string, any>): SlotConfig => {
+const slotWindow = (inverter: LegacyInverter, slot: number, args: Record<string, unknown>): SlotConfig => {
   const config: SlotConfig = { start: String(args.start_time).trim(), end: String(args.end_time).trim() };
   const target = targetOf(inverter, slot, args.target_soc);
   if (target !== undefined) config.targetStateOfCharge = target;
@@ -64,7 +64,7 @@ const rate = (inverter: LegacyInverter, direction: 'Charge' | 'Discharge', watts
   return inverter.setSetting(`battery${direction}Rate`, Math.min(50, Math.round(watts / 100)));
 };
 
-const enabled = (args: Record<string, any>) => args.action === 'enable';
+const enabled = (args: Record<string, unknown>) => args.action === 'enable';
 
 export const LEGACY_CARDS: Record<string, LegacyHandler> = {
   set_charge_slot: (inv, a) => inv.setChargeSlot(1, slotWindow(inv, 1, { ...a, target_soc: undefined })),
@@ -76,7 +76,7 @@ export const LEGACY_CARDS: Record<string, LegacyHandler> = {
   // In 1.x this card set the battery pause to "pause discharge" (or off), not the discharge slots
   enable_discharge_schedule: (inv, a) => pause(inv, enabled(a) ? 'discharge' : 'off'),
   set_battery_pause_mode: (inv, a) => {
-    const mode = PAUSE_MODES[a.mode];
+    const mode = PAUSE_MODES[String(a.mode)];
     if (!mode) throw new Error(`Unknown pause mode: ${a.mode}`);
     return pause(inv, mode);
   },

@@ -5,7 +5,9 @@ import { withRetry } from './lib/retry';
 import {
   METRICS, isAbove, roseAbove, droppedBelow, Crossing,
 } from './lib/threshold';
-import type { Inverter, SinglePhaseInverter } from './lib/types';
+import type {
+  Inverter, SinglePhaseInverter, GivEnergyAppApi, CardArgs, ForceControlDevice,
+} from './lib/types';
 import {
   scheduleInverter, scheduleSupport, slotHasTarget, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
   readSchedule, applySchedule, type ScheduleInverter, type ScheduleView,
@@ -26,7 +28,7 @@ function requireSinglePhase(inverter: Inverter, feature: string): SinglePhaseInv
   return inverter;
 }
 
-module.exports = class GivEnergyApp extends Homey.App {
+module.exports = class GivEnergyApp extends Homey.App implements GivEnergyAppApi {
   private connections = new Map<string, { inverter: GivEnergyInverter; refCount: number }>();
   private pending = new Map<string, Promise<GivEnergyInverter>>();
 
@@ -37,48 +39,48 @@ module.exports = class GivEnergyApp extends Homey.App {
 
     // Condition cards
     this.homey.flow.getConditionCard('solar_generating')
-      .registerRunListener(async (args: any) => {
-        const snapshot = args.device.getInverterSnapshot();
+      .registerRunListener(async (args: CardArgs) => {
+        const snapshot = args.device.getInverterSnapshot?.();
         return snapshot ? snapshot.solar.power > 0 : false;
       });
 
     this.homey.flow.getConditionCard('battery_charging')
-      .registerRunListener(async (args: any) => {
-        const snapshot = args.device.getInverterSnapshot();
+      .registerRunListener(async (args: CardArgs) => {
+        const snapshot = args.device.getInverterSnapshot?.();
         return snapshot ? snapshot.battery.power < 0 : false;
       });
 
     this.homey.flow.getConditionCard('battery_discharging')
-      .registerRunListener(async (args: any) => {
-        const snapshot = args.device.getInverterSnapshot();
+      .registerRunListener(async (args: CardArgs) => {
+        const snapshot = args.device.getInverterSnapshot?.();
         return snapshot ? snapshot.battery.power > 0 : false;
       });
 
     this.homey.flow.getConditionCard('grid_importing')
-      .registerRunListener(async (args: any) => {
-        const snapshot = args.device.getInverterSnapshot();
+      .registerRunListener(async (args: CardArgs) => {
+        const snapshot = args.device.getInverterSnapshot?.();
         return snapshot ? snapshot.grid.power < 0 : false;
       });
 
     this.homey.flow.getConditionCard('grid_exporting')
-      .registerRunListener(async (args: any) => {
-        const snapshot = args.device.getInverterSnapshot();
+      .registerRunListener(async (args: CardArgs) => {
+        const snapshot = args.device.getInverterSnapshot?.();
         return snapshot ? snapshot.grid.power > 0 : false;
       });
 
     this.homey.flow.getConditionCard('eco_mode_enabled')
-      .registerRunListener(async (args: any) => {
-        const snapshot = args.device.getInverterSnapshot();
+      .registerRunListener(async (args: CardArgs) => {
+        const snapshot = args.device.getInverterSnapshot?.();
         return snapshot?.layout === 'single_phase' ? snapshot.settings.ecoMode === true : false;
       });
 
     this.registerActionCards();
 
     // Force charge/discharge: the device remembers and restores the slot and settings they replace
-    const deviceAction = (id: string, run: (device: any, args: any) => Promise<unknown>) => {
-      this.homey.flow.getActionCard(id).registerRunListener(async (args: any) => {
+    const deviceAction = (id: string, run: (device: ForceControlDevice, args: CardArgs) => Promise<unknown>) => {
+      this.homey.flow.getActionCard(id).registerRunListener(async (args: CardArgs) => {
         try {
-          await withRetry(() => run(args.device, args), this.log);
+          await withRetry(() => run(args.device as ForceControlDevice, args), { homey: this.homey, log: this.log });
         } catch (err) {
           throw new Error(userMessage(err));
         }
@@ -116,19 +118,19 @@ module.exports = class GivEnergyApp extends Homey.App {
    * Writes are retried on inverter timeouts; rejected writes surface as readable flow errors.
    */
   private registerActionCards() {
-    const action = (id: string, run: (inverter: Inverter, args: any) => Promise<unknown>) => {
-      this.homey.flow.getActionCard(id).registerRunListener(async (args: any) => {
+    const action = (id: string, run: (inverter: Inverter, args: CardArgs) => Promise<unknown>) => {
+      this.homey.flow.getActionCard(id).registerRunListener(async (args: CardArgs) => {
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
         try {
-          await withRetry(() => run(inverter, args), this.log);
+          await withRetry(() => run(inverter, args), { homey: this.homey, log: this.log });
         } catch (err) {
           throw new Error(userMessage(err));
         }
       });
     };
     const sched = (inverter: Inverter): ScheduleInverter => scheduleInverter(inverter);
-    const slotOf = (args: any): number => Number(args.slot?.id);
+    const slotOf = (args: CardArgs): number => Number(args.slot?.id);
 
     // Slot number autocomplete: exactly the slots this inverter has
     // [card, slot kind, label, only slots with a target register]
@@ -138,7 +140,7 @@ module.exports = class GivEnergyApp extends Homey.App {
       ['set_sell_slot_target', 'sellSlots', 'Sell', true], ['clear_sell_slot', 'sellSlots', 'Sell', false],
     ];
     for (const [id, kind, label, needsTarget] of slotCards) {
-      this.homey.flow.getActionCard(id).registerArgumentAutocompleteListener('slot', async (query: string, args: any) => {
+      this.homey.flow.getActionCard(id).registerArgumentAutocompleteListener('slot', async (query: string, args: Partial<CardArgs>) => {
         const inverter = args.device ? this.getInverter(args.device.getData().id) : undefined;
         if (!inverter) return [];
         const support = scheduleSupport(inverter.capabilities, inverter.layout);
@@ -187,16 +189,16 @@ module.exports = class GivEnergyApp extends Homey.App {
   private registerThresholdCards() {
     for (const { id, argName, hasCondition } of METRICS) {
       this.homey.flow.getDeviceTriggerCard(`${id}_rose_above`)
-        .registerRunListener(async (args: any, state: Crossing) => roseAbove(state, args[argName]));
+        .registerRunListener(async (args: CardArgs, state: Crossing) => roseAbove(state, Number(args[argName])));
 
       this.homey.flow.getDeviceTriggerCard(`${id}_dropped_below`)
-        .registerRunListener(async (args: any, state: Crossing) => droppedBelow(state, args[argName]));
+        .registerRunListener(async (args: CardArgs, state: Crossing) => droppedBelow(state, Number(args[argName])));
 
       if (hasCondition) {
         this.homey.flow.getConditionCard(`${id}_above`)
-          .registerRunListener(async (args: any) => {
+          .registerRunListener(async (args: CardArgs) => {
             const value = args.device.getCapabilityValue(id);
-            return typeof value === 'number' && isAbove(value, args[argName]);
+            return typeof value === 'number' && isAbove(value, Number(args[argName]));
           });
       }
     }
@@ -288,7 +290,7 @@ module.exports = class GivEnergyApp extends Homey.App {
     const desired = parseDesiredSchedule(body);
     const target = scheduleInverter(inverter);
     try {
-      await withRetry(() => applySchedule(target, desired), this.log);
+      await withRetry(() => applySchedule(target, desired), { homey: this.homey, log: this.log });
     } catch (err) {
       throw new Error(userMessage(err));
     }

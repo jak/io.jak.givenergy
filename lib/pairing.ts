@@ -1,8 +1,8 @@
 'use strict';
 
-import { connectErrorMessage } from './errors.ts';
+import { connectErrorMessage, userMessage } from './errors.ts';
 
-import type { InverterIdentity } from './types';
+import type { InverterIdentity, PairSession } from './types';
 
 const IDENTIFY_TIMEOUT_MS = 10_000;
 const IDENTIFY_RETRIES = 1;
@@ -14,8 +14,8 @@ export interface DiscoveredDeviceEntry {
 }
 
 export function setupPairSession(
-  session: any,
-  logger: { log: (...args: any[]) => void; error: (...args: any[]) => void },
+  session: PairSession,
+  logger: { log: (...args: unknown[]) => void; error: (...args: unknown[]) => void },
   buildDeviceName: (serialNumber: string, model: string) => string,
 ) {
   let discoveredDevices: DiscoveredDeviceEntry[] = [];
@@ -30,9 +30,11 @@ export function setupPairSession(
     }
   }
 
-  function safeEmit(event: string, data: any) {
+  function safeEmit(event: string, data: unknown) {
     if (sessionExpired) return;
-    session.emit(event, data).catch(() => { sessionExpired = true; });
+    session.emit(event, data).catch(() => {
+      sessionExpired = true;
+    });
   }
 
   session.setHandler('start_discover', async () => {
@@ -44,8 +46,8 @@ export function setupPairSession(
       try {
         subnet = getLocalSubnet();
         logger.log(`Detected local subnet: ${subnet}`);
-      } catch (err: any) {
-        logger.error('Could not detect local subnet:', err?.message ?? err);
+      } catch (err) {
+        logger.error('Could not detect local subnet:', userMessage(err));
         safeEmit('discover_complete', { found: false });
         return;
       }
@@ -82,8 +84,8 @@ export function setupPairSession(
       } else {
         safeEmit('discover_complete', { found: false });
       }
-    } catch (err: any) {
-      logger.error('Discovery failed:', err?.message ?? err);
+    } catch (err) {
+      logger.error('Discovery failed:', userMessage(err));
       safeEmit('discover_complete', { found: false });
     }
   });
@@ -106,7 +108,7 @@ export function setupPairSession(
         data: { id: identity.serialNumber },
         store: { host, model: identity.model, layout: identity.layout },
       }];
-    } catch (err: any) {
+    } catch (err) {
       throw new Error(connectErrorMessage(host, err));
     }
 
