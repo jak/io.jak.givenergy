@@ -1,0 +1,101 @@
+{
+  "deprecated": true,
+  "title": {
+    "en": "Set discharge slot (deprecated)",
+    "nl": "Ontlaadslot instellen (verouderd)",
+    "af": "Stel ontlaaislot (verouderd)"
+  },
+  "titleFormatted": {
+    "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]% (deprecated)",
+    "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]% (verouderd)",
+    "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]% (verouderd)"
+  },
+  "hint": {
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot with target\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot met doel instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf met teiken\"."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "slot",
+      "title": {
+        "en": "Slot",
+        "nl": "Slot",
+        "af": "Slot"
+      },
+      "values": [
+        {
+          "id": "1",
+          "label": {
+            "en": "Slot 1",
+            "nl": "Slot 1",
+            "af": "Slot 1"
+          }
+        },
+        {
+          "id": "2",
+          "label": {
+            "en": "Slot 2",
+            "nl": "Slot 2",
+            "af": "Slot 2"
+          }
+        },
+        {
+          "id": "3",
+          "label": {
+            "en": "Slot 3",
+            "nl": "Slot 3",
+            "af": "Slot 3"
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "start_time",
+      "title": {
+        "en": "Start Time (HH:MM)",
+        "nl": "Starttijd (UU:MM)",
+        "af": "Begintyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "16:00",
+        "nl": "16:00",
+        "af": "16:00"
+      }
+    },
+    {
+      "type": "text",
+      "name": "end_time",
+      "title": {
+        "en": "End Time (HH:MM)",
+        "nl": "Eindtijd (UU:MM)",
+        "af": "Eindtyd (UU:MM)"
+      },
+      "placeholder": {
+        "en": "19:00",
+        "nl": "19:00",
+        "af": "19:00"
+      }
+    },
+    {
+      "type": "number",
+      "name": "target_soc",
+      "title": {
+        "en": "Target SOC (%)",
+        "nl": "Doel-SOC (%)",
+        "af": "Teiken-SOC (%)"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "value": 0
+    }
+  ]
+}

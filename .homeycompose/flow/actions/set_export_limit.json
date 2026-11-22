@@ -1,0 +1,37 @@
+{
+  "deprecated": true,
+  "title": {
+    "en": "Set export limit (deprecated)",
+    "nl": "Exportlimiet instellen (verouderd)",
+    "af": "Stel uitvoerlimiet (verouderd)"
+  },
+  "titleFormatted": {
+    "en": "Set export limit to [[watts]] W (deprecated)",
+    "nl": "Exportlimiet instellen op [[watts]] W (verouderd)",
+    "af": "Stel uitvoerlimiet op [[watts]] W (verouderd)"
+  },
+  "hint": {
+    "en": "Deprecated: this card will be removed in version 3 of the app. The export limit can no longer be changed from Homey; it is set by your installer.",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. De exportlimiet kan niet meer vanuit Homey worden gewijzigd; uw installateur stelt deze in.",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Die uitvoerlimiet kan nie meer vanaf Homey verander word nie; u installeerder stel dit."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "number",
+      "name": "watts",
+      "title": {
+        "en": "Watts",
+        "nl": "Watt",
+        "af": "Watt"
+      },
+      "min": 0,
+      "max": 10000,
+      "step": 100
+    }
+  ]
+}

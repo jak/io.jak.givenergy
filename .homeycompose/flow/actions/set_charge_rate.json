@@ -1,0 +1,37 @@
+{
+  "deprecated": true,
+  "title": {
+    "en": "Set charge rate (deprecated)",
+    "nl": "Laadsnelheid instellen (verouderd)",
+    "af": "Stel laaitempo (verouderd)"
+  },
+  "titleFormatted": {
+    "en": "Set charge rate to [[watts]] W (deprecated)",
+    "nl": "Laadsnelheid instellen op [[watts]] W (verouderd)",
+    "af": "Stel laaitempo op [[watts]] W (verouderd)"
+  },
+  "hint": {
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set charge power\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Laadvermogen instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel laaidrywing\"."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "number",
+      "name": "watts",
+      "title": {
+        "en": "Watts",
+        "nl": "Watt",
+        "af": "Watt"
+      },
+      "min": 0,
+      "max": 10000,
+      "step": 100
+    }
+  ]
+}

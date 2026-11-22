@@ -13,8 +13,12 @@ import {
 import { parseDesiredSchedule } from './lib/schedule-request';
 import { modelName } from './lib/device-settings';
 import { userMessage } from './lib/errors';
+import { LEGACY_CARDS, type LegacyInverter } from './lib/legacy-cards';
 
 type GivEnergyInverter = Inverter;
+
+/** App setting recording that the 2.0 deprecated-cards notice was handled on this Homey. */
+const DEPRECATED_CARDS_NOTICE = 'deprecatedCardsNotice';
 
 /** Narrow to a single-phase inverter for features three-phase models don't have. */
 function requireSinglePhase(inverter: Inverter, feature: string): SinglePhaseInverter {
@@ -84,6 +88,23 @@ module.exports = class GivEnergyApp extends Homey.App {
     deviceAction('stop_force_charge', (d) => d.stopForceCharge());
     deviceAction('force_discharge', (d, a) => d.forceDischarge(a.discharge_rate, a.battery_reserve));
     deviceAction('stop_force_discharge', (d) => d.stopForceDischarge());
+
+    this.announceDeprecatedCards().catch((err) => this.error('Deprecated cards notice failed:', err));
+  }
+
+  /**
+   * Once per Homey, when 2.0 first runs on an install that already has inverters (an update from
+   * 1.x, not a fresh install), tell the user on the timeline that some cards are deprecated.
+   */
+  private async announceDeprecatedCards() {
+    if (this.homey.settings.get(DEPRECATED_CARDS_NOTICE)) return;
+    const driver = this.homey.drivers.getDriver('solar-inverter');
+    await driver.ready();
+    if (driver.getDevices().length > 0) {
+      await this.homey.notifications.createNotification({ excerpt: this.homey.__('notifications.deprecatedCards') });
+      this.log('Deprecated cards notice posted to the timeline');
+    }
+    this.homey.settings.set(DEPRECATED_CARDS_NOTICE, true);
   }
 
   /**
@@ -149,6 +170,11 @@ module.exports = class GivEnergyApp extends Homey.App {
     action('set_discharge_power', (inv, a) => inv.setSetting('inverterDischargePowerPercent', a.percent));
     action('set_battery_reserve', (inv, a) => inv.setSetting('batteryReserve', a.percent));
     action('toggle_eco_mode', (inv, a) => requireSinglePhase(inv, 'Eco mode').setSetting('ecoMode', a.action === 'enable'));
+
+    // Deprecated 1.x cards: hidden from new flows, still run in existing ones (lib/legacy-cards.ts)
+    for (const [id, run] of Object.entries(LEGACY_CARDS)) {
+      action(id, (inv, a) => run(inv as unknown as LegacyInverter, a));
+    }
   }
 
   /**

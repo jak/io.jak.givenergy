@@ -787,6 +787,112 @@
         "id": "clear_sell_slot"
       },
       {
+        "deprecated": true,
+        "title": {
+          "en": "Enable or disable charge schedule (deprecated)",
+          "nl": "Laadschema in- of uitschakelen (verouderd)",
+          "af": "Aktiveer of deaktiveer laaiskedule (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "[[action]] charge schedule (deprecated)",
+          "nl": "[[action]] laadschema (verouderd)",
+          "af": "[[action]] laaiskedule (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot / Clear Buy slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen / wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee koop-tydgleuf\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie",
+              "af": "Aksie"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable",
+                  "nl": "Inschakelen",
+                  "af": "Aktiveer"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable",
+                  "nl": "Uitschakelen",
+                  "af": "Deaktiveer"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "enable_charge_schedule"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Enable or disable discharge schedule (deprecated)",
+          "nl": "Ontlaadschema in- of uitschakelen (verouderd)",
+          "af": "Aktiveer of deaktiveer ontlaaiskedule (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "[[action]] discharge schedule (deprecated)",
+          "nl": "[[action]] ontlaadschema (verouderd)",
+          "af": "[[action]] ontlaaiskedule (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause / Clear battery pause\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen / wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee batterypouse\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie",
+              "af": "Aksie"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable",
+                  "nl": "Inschakelen",
+                  "af": "Aktiveer"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable",
+                  "nl": "Uitschakelen",
+                  "af": "Deaktiveer"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "enable_discharge_schedule"
+      },
+      {
         "title": {
           "en": "Force charge from grid",
           "nl": "Geforceerd laden van het net",
@@ -887,6 +993,75 @@
           }
         ],
         "id": "force_discharge"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set battery pause mode (deprecated)",
+          "nl": "Batterij pauzemodus instellen (verouderd)",
+          "af": "Stel battery pouse-modus (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set battery pause mode to [[mode]] (deprecated)",
+          "nl": "Batterij pauzemodus instellen op [[mode]] (verouderd)",
+          "af": "Stel battery pouse-modus op [[mode]] (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel batterypouse\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Mode",
+              "nl": "Modus",
+              "af": "Modus"
+            },
+            "values": [
+              {
+                "id": "disabled",
+                "title": {
+                  "en": "Disabled (normal)",
+                  "nl": "Uitgeschakeld (normaal)",
+                  "af": "Gedeaktiveer (normaal)"
+                }
+              },
+              {
+                "id": "pause_charge",
+                "title": {
+                  "en": "Pause Charge",
+                  "nl": "Laden pauzeren",
+                  "af": "Pouseer laai"
+                }
+              },
+              {
+                "id": "pause_discharge",
+                "title": {
+                  "en": "Pause Discharge",
+                  "nl": "Ontladen pauzeren",
+                  "af": "Pouseer ontlaai"
+                }
+              },
+              {
+                "id": "pause_both",
+                "title": {
+                  "en": "Pause Both",
+                  "nl": "Beide pauzeren",
+                  "af": "Pouseer beide"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "set_battery_pause_mode"
       },
       {
         "title": {
@@ -1112,6 +1287,200 @@
         "id": "set_charge_power"
       },
       {
+        "deprecated": true,
+        "title": {
+          "en": "Set charge rate (deprecated)",
+          "nl": "Laadsnelheid instellen (verouderd)",
+          "af": "Stel laaitempo (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set charge rate to [[watts]] W (deprecated)",
+          "nl": "Laadsnelheid instellen op [[watts]] W (verouderd)",
+          "af": "Stel laaitempo op [[watts]] W (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set charge power\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Laadvermogen instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel laaidrywing\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts",
+              "nl": "Watt",
+              "af": "Watt"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_charge_rate"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set charge slot (deprecated)",
+          "nl": "Laadslot instellen (verouderd)",
+          "af": "Stel laaislot (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set charge slot 1 to [[start_time]] - [[end_time]] (deprecated)",
+          "nl": "Laadslot 1 instellen op [[start_time]] - [[end_time]] (verouderd)",
+          "af": "Stel laaislot 1 op [[start_time]] - [[end_time]] (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "00:30",
+              "nl": "00:30",
+              "af": "00:30"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "04:30",
+              "nl": "04:30",
+              "af": "04:30"
+            }
+          }
+        ],
+        "id": "set_charge_slot"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set charge slot (deprecated)",
+          "nl": "Laadslot instellen (verouderd)",
+          "af": "Stel laaislot (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set charge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]% (deprecated)",
+          "nl": "Laadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]% (verouderd)",
+          "af": "Stel laaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]% (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot with target\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot met doel instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf met teiken\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Slot",
+              "af": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1",
+                  "nl": "Slot 1",
+                  "af": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2",
+                  "nl": "Slot 2",
+                  "af": "Slot 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Slot 3",
+                  "nl": "Slot 3",
+                  "af": "Slot 3"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "00:30",
+              "nl": "00:30",
+              "af": "00:30"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "04:30",
+              "nl": "04:30",
+              "af": "04:30"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)",
+              "nl": "Doel-SOC (%)",
+              "af": "Teiken-SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 100
+          }
+        ],
+        "id": "set_charge_slot_gen3"
+      },
+      {
         "title": {
           "en": "Set charge target",
           "nl": "Laaddoel instellen",
@@ -1186,6 +1555,265 @@
           }
         ],
         "id": "set_discharge_power"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set discharge rate (deprecated)",
+          "nl": "Ontlaadsnelheid instellen (verouderd)",
+          "af": "Stel ontlaaitempo (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set discharge rate to [[watts]] W (deprecated)",
+          "nl": "Ontlaadsnelheid instellen op [[watts]] W (verouderd)",
+          "af": "Stel ontlaaitempo op [[watts]] W (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set discharge power\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Ontlaadvermogen instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel ontlaaidrywing\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts",
+              "nl": "Watt",
+              "af": "Watt"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_discharge_rate"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set discharge slot (deprecated)",
+          "nl": "Ontlaadslot instellen (verouderd)",
+          "af": "Stel ontlaaislot (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] (deprecated)",
+          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] (verouderd)",
+          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Slot",
+              "af": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1",
+                  "nl": "Slot 1",
+                  "af": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2",
+                  "nl": "Slot 2",
+                  "af": "Slot 2"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "16:00",
+              "nl": "16:00",
+              "af": "16:00"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "19:00",
+              "nl": "19:00",
+              "af": "19:00"
+            }
+          }
+        ],
+        "id": "set_discharge_slot"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set discharge slot (deprecated)",
+          "nl": "Ontlaadslot instellen (verouderd)",
+          "af": "Stel ontlaaislot (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set discharge slot [[slot]] to [[start_time]] - [[end_time]] at [[target_soc]]% (deprecated)",
+          "nl": "Ontlaadslot [[slot]] instellen op [[start_time]] - [[end_time]] bij [[target_soc]]% (verouderd)",
+          "af": "Stel ontlaaislot [[slot]] op [[start_time]] - [[end_time]] teen [[target_soc]]% (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot with target\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot met doel instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf met teiken\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "slot",
+            "title": {
+              "en": "Slot",
+              "nl": "Slot",
+              "af": "Slot"
+            },
+            "values": [
+              {
+                "id": "1",
+                "label": {
+                  "en": "Slot 1",
+                  "nl": "Slot 1",
+                  "af": "Slot 1"
+                }
+              },
+              {
+                "id": "2",
+                "label": {
+                  "en": "Slot 2",
+                  "nl": "Slot 2",
+                  "af": "Slot 2"
+                }
+              },
+              {
+                "id": "3",
+                "label": {
+                  "en": "Slot 3",
+                  "nl": "Slot 3",
+                  "af": "Slot 3"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "name": "start_time",
+            "title": {
+              "en": "Start Time (HH:MM)",
+              "nl": "Starttijd (UU:MM)",
+              "af": "Begintyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "16:00",
+              "nl": "16:00",
+              "af": "16:00"
+            }
+          },
+          {
+            "type": "text",
+            "name": "end_time",
+            "title": {
+              "en": "End Time (HH:MM)",
+              "nl": "Eindtijd (UU:MM)",
+              "af": "Eindtyd (UU:MM)"
+            },
+            "placeholder": {
+              "en": "19:00",
+              "nl": "19:00",
+              "af": "19:00"
+            }
+          },
+          {
+            "type": "number",
+            "name": "target_soc",
+            "title": {
+              "en": "Target SOC (%)",
+              "nl": "Doel-SOC (%)",
+              "af": "Teiken-SOC (%)"
+            },
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "value": 0
+          }
+        ],
+        "id": "set_discharge_slot_gen3"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Set export limit (deprecated)",
+          "nl": "Exportlimiet instellen (verouderd)",
+          "af": "Stel uitvoerlimiet (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "Set export limit to [[watts]] W (deprecated)",
+          "nl": "Exportlimiet instellen op [[watts]] W (verouderd)",
+          "af": "Stel uitvoerlimiet op [[watts]] W (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. The export limit can no longer be changed from Homey; it is set by your installer.",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. De exportlimiet kan niet meer vanuit Homey worden gewijzigd; uw installateur stelt deze in.",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Die uitvoerlimiet kan nie meer vanaf Homey verander word nie; u installeerder stel dit."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "number",
+            "name": "watts",
+            "title": {
+              "en": "Watts",
+              "nl": "Watt",
+              "af": "Watt"
+            },
+            "min": 0,
+            "max": 10000,
+            "step": 100
+          }
+        ],
+        "id": "set_export_limit"
       },
       {
         "title": {
@@ -1573,6 +2201,59 @@
           }
         ],
         "id": "toggle_eco_mode"
+      },
+      {
+        "deprecated": true,
+        "title": {
+          "en": "Toggle timed export (deprecated)",
+          "nl": "Geplande export schakelen (verouderd)",
+          "af": "Wissel geskeduleerde uitvoer (verouderd)"
+        },
+        "titleFormatted": {
+          "en": "[[action]] timed export (deprecated)",
+          "nl": "[[action]] geplande export (verouderd)",
+          "af": "[[action]] geskeduleerde uitvoer (verouderd)"
+        },
+        "hint": {
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot / Clear Sell slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen / wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee verkoop-tydgleuf\"."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=solar-inverter"
+          },
+          {
+            "type": "dropdown",
+            "name": "action",
+            "title": {
+              "en": "Action",
+              "nl": "Actie",
+              "af": "Aksie"
+            },
+            "values": [
+              {
+                "id": "enable",
+                "title": {
+                  "en": "Enable",
+                  "nl": "Inschakelen",
+                  "af": "Aktiveer"
+                }
+              },
+              {
+                "id": "disable",
+                "title": {
+                  "en": "Disable",
+                  "nl": "Uitschakelen",
+                  "af": "Deaktiveer"
+                }
+              }
+            ]
+          }
+        ],
+        "id": "toggle_timed_export"
       }
     ]
   },

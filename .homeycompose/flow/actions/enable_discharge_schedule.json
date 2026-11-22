@@ -1,0 +1,52 @@
+{
+  "deprecated": true,
+  "title": {
+    "en": "Enable or disable discharge schedule (deprecated)",
+    "nl": "Ontlaadschema in- of uitschakelen (verouderd)",
+    "af": "Aktiveer of deaktiveer ontlaaiskedule (verouderd)"
+  },
+  "titleFormatted": {
+    "en": "[[action]] discharge schedule (deprecated)",
+    "nl": "[[action]] ontlaadschema (verouderd)",
+    "af": "[[action]] ontlaaiskedule (verouderd)"
+  },
+  "hint": {
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause / Clear battery pause\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen / wissen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee batterypouse\"."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "action",
+      "title": {
+        "en": "Action",
+        "nl": "Actie",
+        "af": "Aksie"
+      },
+      "values": [
+        {
+          "id": "enable",
+          "title": {
+            "en": "Enable",
+            "nl": "Inschakelen",
+            "af": "Aktiveer"
+          }
+        },
+        {
+          "id": "disable",
+          "title": {
+            "en": "Disable",
+            "nl": "Uitschakelen",
+            "af": "Deaktiveer"
+          }
+        }
+      ]
+    }
+  ]
+}

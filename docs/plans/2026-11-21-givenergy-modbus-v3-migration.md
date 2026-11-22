@@ -86,9 +86,9 @@ writes it per-slot or globally depending on the model.
 **Kept:** `toggle_eco_mode`, `force_charge` / `stop_force_charge`, `force_discharge` / `stop_force_discharge`
 (ported: force = Buy/Sell slot 1 00:00–23:59 via `lib/schedule.ts`, restored on stop), all conditions and threshold triggers.
 
-**Removed:** `set_charge_rate`, `set_discharge_rate`, `set_export_limit`, `set_battery_pause_mode`,
+**Deprecated (see below; originally planned as removed):** `set_charge_rate`, `set_discharge_rate`, `set_export_limit`, `set_battery_pause_mode`,
 `enable_discharge_schedule`, `enable_charge_schedule`, `toggle_timed_export`, `set_charge_slot`, `set_charge_slot_gen3`,
-`set_discharge_slot`, `set_discharge_slot_gen3`. The `inverter_gen3` capability is removed from devices on init and deleted.
+`set_discharge_slot`, `set_discharge_slot_gen3`. The `inverter_gen3` marker is removed from devices on init.
 
 ## App settings page: "Schedules" (`settings/index.html` + `api.ts`)
 
@@ -186,3 +186,23 @@ Battery and grid-meter drivers have no settings and are unchanged.
   HV, PV and Polar); the rate is written only where `supports()` allows it. Their restore state lives in the device store.
 - Lint: `main` is not lint-clean (the Athom JS config can't resolve `.ts` imports); this branch adds no new rule
   violations beyond that import-resolution noise. Fixing the ESLint setup is left for its own PR.
+
+## Deprecated 1.x cards (added 2026-11-22)
+
+Instead of removing the 11 old cards, 2.0 keeps them with `"deprecated": true`, as Athom's breaking-changes guide
+recommends: hidden from the card picker, still running in existing flows. `lib/legacy-cards.ts` runs each one as 1.x did
+(the registers v2 wrote, no automatic flag changes):
+
+- Slot cards write the slot only; a target is passed where the slot has one (v2 ignored it elsewhere), raised to v3's 4%.
+- `enable_charge_schedule` → `acCharge`; `toggle_timed_export` → `dcDischarge`; `enable_discharge_schedule` → pause
+  "discharge"/off (what 1.x's Gen3 code did); `set_battery_pause_mode` → pause mode only.
+- Watt rates use v2's conversion: single-phase `batteryChargeRate` = W/100 (max 50), three-phase power % = W/50.
+- `set_export_limit` fails with an explanation: v3 makes the export limit read-only.
+- Device filters drop `capabilities=inverter_gen3`, which 2.0 removes from devices.
+- Titles end "(deprecated)"; hints say the card will be removed in version 3 of the app and name the replacement.
+- A one-time timeline notification (app setting `deprecatedCardsNotice`) tells users who update from 1.x; fresh installs,
+  with no inverters paired at first start, don't get it.
+
+Verified live on 2026-11-22: the cards don't appear in the picker; an existing flow using `set_charge_slot_gen3` is not
+broken and wrote HR 243–245 only (HR 96 untouched); restoring it with the same card returned every register to the
+pre-test dump.

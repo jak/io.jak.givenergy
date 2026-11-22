@@ -34,5 +34,8 @@
     },
     "limitNote": "Charging also stops at the inverter's global AC charge limit (__limit__%).",
     "pauseKept": "Battery pause (__mode__) is on without a window this page can show; saving keeps it as it is."
+  },
+  "notifications": {
+    "deprecatedCards": "GivEnergy 2.0: some flow cards are now **deprecated** and will be removed in version 3 of the app. Your flows still work. Look for cards marked **(deprecated)** and replace them with the new Buy, Sell and Pause cards; each card's hint names its replacement."
   }
 }

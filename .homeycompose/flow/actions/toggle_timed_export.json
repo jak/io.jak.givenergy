@@ -1,0 +1,52 @@
+{
+  "deprecated": true,
+  "title": {
+    "en": "Toggle timed export (deprecated)",
+    "nl": "Geplande export schakelen (verouderd)",
+    "af": "Wissel geskeduleerde uitvoer (verouderd)"
+  },
+  "titleFormatted": {
+    "en": "[[action]] timed export (deprecated)",
+    "nl": "[[action]] geplande export (verouderd)",
+    "af": "[[action]] geskeduleerde uitvoer (verouderd)"
+  },
+  "hint": {
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot / Clear Sell slot\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen / wissen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee verkoop-tydgleuf\"."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "action",
+      "title": {
+        "en": "Action",
+        "nl": "Actie",
+        "af": "Aksie"
+      },
+      "values": [
+        {
+          "id": "enable",
+          "title": {
+            "en": "Enable",
+            "nl": "Inschakelen",
+            "af": "Aktiveer"
+          }
+        },
+        {
+          "id": "disable",
+          "title": {
+            "en": "Disable",
+            "nl": "Uitschakelen",
+            "af": "Deaktiveer"
+          }
+        }
+      ]
+    }
+  ]
+}

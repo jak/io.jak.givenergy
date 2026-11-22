@@ -34,5 +34,8 @@
     },
     "limitNote": "Laden stopt ook bij de algemene AC-laadlimiet van de omvormer (__limit__%).",
     "pauseKept": "Batterijpauze (__mode__) staat aan zonder een venster dat deze pagina kan tonen; opslaan laat het ongewijzigd."
+  },
+  "notifications": {
+    "deprecatedCards": "GivEnergy 2.0: sommige flowkaarten zijn nu **verouderd** en worden verwijderd in versie 3 van de app. Je flows blijven werken. Zoek kaarten met **(verouderd)** en vervang ze door de nieuwe Koop-, Verkoop- en Pauzekaarten; de hint van elke kaart noemt de vervanger."
   }
 }

@@ -1,0 +1,68 @@
+{
+  "deprecated": true,
+  "title": {
+    "en": "Set battery pause mode (deprecated)",
+    "nl": "Batterij pauzemodus instellen (verouderd)",
+    "af": "Stel battery pouse-modus (verouderd)"
+  },
+  "titleFormatted": {
+    "en": "Set battery pause mode to [[mode]] (deprecated)",
+    "nl": "Batterij pauzemodus instellen op [[mode]] (verouderd)",
+    "af": "Stel battery pouse-modus op [[mode]] (verouderd)"
+  },
+  "hint": {
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set battery pause\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Batterijpauze instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel batterypouse\"."
+  },
+  "args": [
+    {
+      "type": "device",
+      "name": "device",
+      "filter": "driver_id=solar-inverter"
+    },
+    {
+      "type": "dropdown",
+      "name": "mode",
+      "title": {
+        "en": "Mode",
+        "nl": "Modus",
+        "af": "Modus"
+      },
+      "values": [
+        {
+          "id": "disabled",
+          "title": {
+            "en": "Disabled (normal)",
+            "nl": "Uitgeschakeld (normaal)",
+            "af": "Gedeaktiveer (normaal)"
+          }
+        },
+        {
+          "id": "pause_charge",
+          "title": {
+            "en": "Pause Charge",
+            "nl": "Laden pauzeren",
+            "af": "Pouseer laai"
+          }
+        },
+        {
+          "id": "pause_discharge",
+          "title": {
+            "en": "Pause Discharge",
+            "nl": "Ontladen pauzeren",
+            "af": "Pouseer ontlaai"
+          }
+        },
+        {
+          "id": "pause_both",
+          "title": {
+            "en": "Pause Both",
+            "nl": "Beide pauzeren",
+            "af": "Pouseer beide"
+          }
+        }
+      ]
+    }
+  ]
+}
