@@ -33,7 +33,8 @@
       "discharge": "Pouseer ontlaai"
     },
     "limitNote": "Laai stop ook by die omsetter se algemene WS-laaigrens (__limit__%).",
-    "pauseKept": "Batterypouse (__mode__) is aan sonder 'n venster wat hierdie bladsy kan wys; stoor hou dit soos dit is."
+    "pauseKept": "Batterypouse (__mode__) is aan sonder 'n venster wat hierdie bladsy kan wys. Stoor hou dit, tensy jy dit afskakel.",
+    "pauseKeptClear": "Skakel af"
   },
   "notifications": {
     "deprecatedCards": "GivEnergy 2.0: sommige vloeikaarte is nou **verouderd** en word in weergawe 3 van die app verwyder. Jou vloeie werk steeds. Soek kaarte gemerk **(verouderd)** en vervang hulle met die nuwe Koop-, Verkoop- en Pouse-kaarte; elke kaart se wenk noem die plaasvervanger."

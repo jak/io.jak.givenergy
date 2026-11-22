@@ -91,7 +91,10 @@
       <p class="muted note" id="use-note" data-i18n="schedules.useNote"></p>
       <p class="muted note hidden" id="reserve-note"></p>
       <p class="muted note hidden" id="limit-note"></p>
-      <p class="muted note hidden" id="pause-kept-note"></p>
+      <p class="muted note hidden" id="pause-kept">
+        <span id="pause-kept-note"></span>
+        <button type="button" class="homey-button-secondary-small" id="pause-kept-clear" data-i18n="schedules.pauseKeptClear"></button>
+      </p>
     </fieldset>
 
     <fieldset class="homey-form-fieldset">
@@ -286,9 +289,8 @@
         limit.classList.toggle('hidden', s.globalChargeLimit === undefined);
         limit.textContent = t('limitNote', { limit: s.globalChargeLimit });
 
-        var kept = $('pause-kept-note');
-        kept.classList.toggle('hidden', keptPause === null);
-        if (keptPause) kept.textContent = t('pauseKept', { mode: t('pauseMode.' + keptPause.mode) });
+        $('pause-kept').classList.toggle('hidden', keptPause === null);
+        if (keptPause) $('pause-kept-note').textContent = t('pauseKept', { mode: t('pauseMode.' + keptPause.mode) });
 
         $('pause-mode-group').classList.toggle('hidden', s.support.pause !== 'mode');
 
@@ -314,13 +316,30 @@
         select.value = s.pause ? s.pause.mode : 'off';
       }
 
+      // Whether minute m (0-1439) is inside a row; a window past midnight wraps
+      function taken(m) {
+        return rows.some(function (r) {
+          if (!r.start || !r.end) return false;
+          var a = minutes(r.start);
+          var b = minutes(r.end);
+          return a < b ? m >= a && m < b : m >= a || m < b;
+        });
+      }
+
       function addRow(type) {
-        // Start the new slot after the last one, so it doesn't overlap by default
+        // The first free half hour from the end of the latest row, so the new slot doesn't overlap
         var last = rows.reduce(function (m, r) { return Math.max(m, r.end ? minutes(r.end) : 0); }, 0);
-        var start = Math.min(last, 1380);
         var pad = function (n) { return (n < 10 ? '0' : '') + n; };
         var hhmm = function (m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
-        var row = { type: type, start: hhmm(start), end: hhmm(start + 30) };
+        var start = null;
+        for (var i = 0; i < 48 && start === null; i++) {
+          var s = (Math.ceil(last / 30) * 30 + i * 30) % 1440;
+          var free = true;
+          for (var m = s; m < s + 30; m++) if (taken(m)) free = false;
+          if (free) start = s;
+        }
+        if (start === null) start = Math.min(last, 1380);
+        var row = { type: type, start: hhmm(start), end: start + 30 >= 1440 ? '23:59' : hhmm(start + 30) };
         if (type === 'pause') row.mode = 'both';
         if (type === 'buy' && current.schedule.support.perSlotTargets) row.target = 100;
         rows.push(row);
@@ -430,6 +449,11 @@
       $('add-sell').addEventListener('click', function () { addRow('sell'); });
       $('add-pause').addEventListener('click', function () { addRow('pause'); });
       $('save').addEventListener('click', save);
+      // Turn off a pause the page can't show: Save then sends no pause, which clears it
+      $('pause-kept-clear').addEventListener('click', function () {
+        keptPause = null;
+        render();
+      });
 
       load();
     }
