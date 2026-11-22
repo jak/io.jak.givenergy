@@ -23,6 +23,7 @@ interface ForceChargeRestore {
   chargeSlot: SlotConfig;
   chargePowerPercent?: number;
   acChargeUpperLimit?: number;
+  acChargeUpperLimitEnabled?: boolean;
 }
 
 interface ForceDischargeRestore {
@@ -185,6 +186,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         chargeSlot,
         chargePowerPercent: settings.inverterChargePowerPercent,
         acChargeUpperLimit: settings.acChargeUpperLimit,
+        acChargeUpperLimitEnabled: settings.acChargeUpperLimitEnabled,
       };
       await this.setStoreValue(FORCE_CHARGE_KEY, saved);
     }
@@ -193,6 +195,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     const { slot } = saved.chargeSlot;
     this.log(`Force charge: slot=${slot} target=${targetSoc}% rate=${chargeRate}%`);
     await setBuySlot(scheduleInverter(inverter), slot, { start: '00:00', end: '23:59', target: targetSoc });
+    // With per-slot targets an enabled global limit still caps charging (the lower of the two applies)
+    if (inverter.capabilities.perSlotTargets && inverter.getData().settings.acChargeUpperLimitEnabled === true) {
+      await inverter.setSetting('acChargeUpperLimitEnabled', false);
+    }
     if (inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', chargeRate);
     }
@@ -208,6 +214,9 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     await inverter.setChargeSlot(saved.chargeSlot);
     if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
       await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
+    }
+    if (saved.acChargeUpperLimitEnabled === true && inverter.getData().settings.acChargeUpperLimitEnabled === false) {
+      await inverter.setSetting('acChargeUpperLimitEnabled', true);
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', saved.chargePowerPercent);
