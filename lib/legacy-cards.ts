@@ -3,7 +3,9 @@
 /**
  * Deprecated 1.x flow cards. They are hidden from new flows (`"deprecated": true`) but keep working
  * in existing ones, doing what they did in 1.x: they write the registers v2 of givenergy-modbus
- * wrote, and never switch grid charging or discharging on or off as a side effect.
+ * wrote, and never switch grid charging or discharging on or off as a side effect. One exception:
+ * "timed export" uses v3's dcDischarge, because v2 wrote HR 59 on three-phase too, where it is a
+ * different register.
  * To be removed in version 3 of the app.
  */
 
@@ -71,7 +73,11 @@ export const LEGACY_CARDS: Record<string, LegacyHandler> = {
   set_charge_slot_gen3: (inv, a) => inv.setChargeSlot(Number(a.slot), slotWindow(inv, Number(a.slot), a)),
   set_discharge_slot: (inv, a) => inv.setDischargeSlot(Number(a.slot), slotWindow(inv, Number(a.slot), { ...a, target_soc: undefined })),
   set_discharge_slot_gen3: (inv, a) => inv.setDischargeSlot(Number(a.slot), slotWindow(inv, Number(a.slot), a)),
-  enable_charge_schedule: (inv, a) => inv.setSetting('acCharge', enabled(a)),
+  enable_charge_schedule: async (inv, a) => {
+    await inv.setSetting('acCharge', enabled(a));
+    // 1.x also set force charge (HR 1123) on three-phase
+    if (inv.layout === 'three_phase') await inv.setSetting('forceCharge', enabled(a));
+  },
   toggle_timed_export: (inv, a) => inv.setSetting('dcDischarge', enabled(a)),
   // In 1.x this card set the battery pause to "pause discharge" (or off), not the discharge slots
   enable_discharge_schedule: (inv, a) => pause(inv, enabled(a) ? 'discharge' : 'off'),

@@ -130,3 +130,9 @@ test('export limit explains it can no longer be set', async () => {
   await assert.rejects(run('set_export_limit', { watts: 3600 }, inv), /installer/);
   assert.deepEqual(writes, []);
 });
+
+test('three-phase charge schedule also sets force charge, as 1.x did', async () => {
+  const { inv, writes } = recorder(GEN3, 'three_phase');
+  await run('enable_charge_schedule', { action: 'enable' }, inv);
+  assert.deepEqual(writes, [['setSetting', 'acCharge', true], ['setSetting', 'forceCharge', true]]);
+});
