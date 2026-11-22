@@ -10,15 +10,15 @@
     "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo"
   },
   "hint": {
-    "en": "Sets Buy slot 1 to the whole day, charging the battery from the grid. Use 'Stop force charge' to restore the previous slot and settings.",
-    "nl": "Stelt Koop-tijdslot 1 in op de hele dag, zodat de batterij van het net laadt. Gebruik 'Geforceerd laden stoppen' om het vorige tijdslot en de instellingen te herstellen.",
-    "af": "Stel koop-tydgleuf 1 op die hele dag, sodat die battery van die net laai. Gebruik 'Stop forseer laai' om die vorige tydgleuf en instellings te herstel."
+    "en": "Sets Buy slot 1 to the whole day, charging the battery from the grid. The charge rate applies on inverters with a charge power setting. Use 'Stop force charge' to restore the previous slot and settings, even after a restart.",
+    "nl": "Stelt Koop-tijdslot 1 in op de hele dag, zodat de batterij van het net laadt. De laadsnelheid geldt op omvormers met een laadvermogen-instelling. Gebruik 'Geforceerd laden stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
+    "af": "Stel koop-tydgleuf 1 op die hele dag, sodat die battery van die net laai. Die laaitempo geld op omsetters met 'n laaidrywing-instelling. Gebruik 'Stop forseer laai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
   },
   "args": [
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=solar-inverter&capabilities=givenergy_power_percent"
+      "filter": "driver_id=solar-inverter"
     },
     {
       "type": "number",

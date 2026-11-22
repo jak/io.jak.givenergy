@@ -10,15 +10,15 @@
     "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]%"
   },
   "hint": {
-    "en": "Sets Sell slot 1 to the whole day, exporting battery power to the grid. Use 'Stop force discharge' to restore the previous slot and settings.",
-    "nl": "Stelt Verkoop-tijdslot 1 in op de hele dag, zodat batterijvermogen naar het net wordt geëxporteerd. Gebruik 'Geforceerd ontladen stoppen' om het vorige tijdslot en de instellingen te herstellen.",
-    "af": "Stel verkoop-tydgleuf 1 op die hele dag, sodat batterykrag na die net uitgevoer word. Gebruik 'Stop forseer ontlaai' om die vorige tydgleuf en instellings te herstel."
+    "en": "Sets Sell slot 1 to the whole day, exporting battery power to the grid. The discharge rate applies on inverters with a discharge power setting. Use 'Stop force discharge' to restore the previous slot and settings, even after a restart.",
+    "nl": "Stelt Verkoop-tijdslot 1 in op de hele dag, zodat batterijvermogen naar het net wordt geëxporteerd. De ontlaadsnelheid geldt op omvormers met een ontlaadvermogen-instelling. Gebruik 'Geforceerd ontladen stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
+    "af": "Stel verkoop-tydgleuf 1 op die hele dag, sodat batterykrag na die net uitgevoer word. Die ontlaaitempo geld op omsetters met 'n ontlaaidrywing-instelling. Gebruik 'Stop forseer ontlaai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
   },
   "args": [
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=solar-inverter&capabilities=givenergy_power_percent"
+      "filter": "driver_id=solar-inverter"
     },
     {
       "type": "number",

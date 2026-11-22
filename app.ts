@@ -7,7 +7,7 @@ import {
 } from './lib/threshold';
 import type { Inverter, SinglePhaseInverter } from './lib/types';
 import {
-  scheduleInverter, scheduleSupport, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
+  scheduleInverter, scheduleSupport, slotHasTarget, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
   readSchedule, applySchedule, type ScheduleInverter, type ScheduleView,
 } from './lib/schedule';
 import { parseDesiredSchedule } from './lib/schedule-request';
@@ -107,20 +107,31 @@ module.exports = class GivEnergyApp extends Homey.App {
     const slotOf = (args: any): number => Number(args.slot?.id);
 
     // Slot number autocomplete: exactly the slots this inverter has
-    const slotCards: [string, 'buySlots' | 'sellSlots', string][] = [
-      ['set_buy_slot', 'buySlots', 'Buy'], ['set_buy_slot_target', 'buySlots', 'Buy'], ['clear_buy_slot', 'buySlots', 'Buy'],
-      ['set_sell_slot', 'sellSlots', 'Sell'], ['set_sell_slot_target', 'sellSlots', 'Sell'], ['clear_sell_slot', 'sellSlots', 'Sell'],
+    // [card, slot kind, label, only slots with a target register]
+    const slotCards: [string, 'buySlots' | 'sellSlots', string, boolean][] = [
+      ['set_buy_slot', 'buySlots', 'Buy', false], ['set_buy_slot_target', 'buySlots', 'Buy', true],
+      ['clear_buy_slot', 'buySlots', 'Buy', false], ['set_sell_slot', 'sellSlots', 'Sell', false],
+      ['set_sell_slot_target', 'sellSlots', 'Sell', true], ['clear_sell_slot', 'sellSlots', 'Sell', false],
     ];
-    for (const [id, kind, label] of slotCards) {
+    for (const [id, kind, label, needsTarget] of slotCards) {
       this.homey.flow.getActionCard(id).registerArgumentAutocompleteListener('slot', async (query: string, args: any) => {
         const inverter = args.device ? this.getInverter(args.device.getData().id) : undefined;
-        const count = inverter ? scheduleSupport(inverter.capabilities, inverter.layout)[kind] : 2;
-        const current = inverter?.getData().schedules[kind === 'buySlots' ? 'charge' : 'discharge'] ?? [];
-        return Array.from({ length: count }, (_, i) => {
-          const s = current.find((c) => c.slot === i + 1);
-          const used = s && !(s.start === '00:00' && s.end === '00:00');
-          return { id: i + 1, name: `${label} slot ${i + 1}`, description: used ? `${s.start}–${s.end}` : 'Empty' };
-        }).filter((r) => r.name.toLowerCase().includes(query.toLowerCase()));
+        if (!inverter) return [];
+        const support = scheduleSupport(inverter.capabilities, inverter.layout);
+        let current: { slot: number; start: string; end: string }[] = [];
+        try {
+          current = inverter.getData().schedules[kind === 'buySlots' ? 'charge' : 'discharge'];
+        } catch {
+          // No snapshot yet: list the slots without their contents
+        }
+        return Array.from({ length: support[kind] }, (_, i) => i + 1)
+          .filter((n) => !needsTarget || slotHasTarget(support, n))
+          .map((n) => {
+            const s = current.find((c) => c.slot === n);
+            const used = s && !(s.start === '00:00' && s.end === '00:00');
+            return { id: n, name: `${label} slot ${n}`, description: used ? `${s.start}–${s.end}` : 'Empty' };
+          })
+          .filter((r) => r.name.toLowerCase().includes(query.toLowerCase()));
       });
     }
 

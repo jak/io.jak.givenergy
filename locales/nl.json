@@ -31,6 +31,8 @@
       "both": "Laden en ontladen pauzeren",
       "charge": "Laden pauzeren",
       "discharge": "Ontladen pauzeren"
-    }
+    },
+    "limitNote": "Laden stopt ook bij de algemene AC-laadlimiet van de omvormer (__limit__%).",
+    "pauseKept": "Batterijpauze (__mode__) staat aan zonder een venster dat deze pagina kan tonen; opslaan laat het ongewijzigd."
   }
 }

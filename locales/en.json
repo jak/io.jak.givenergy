@@ -31,6 +31,8 @@
       "both": "Pause charge and discharge",
       "charge": "Pause charge",
       "discharge": "Pause discharge"
-    }
+    },
+    "limitNote": "Charging also stops at the inverter's global AC charge limit (__limit__%).",
+    "pauseKept": "Battery pause (__mode__) is on without a window this page can show; saving keeps it as it is."
   }
 }

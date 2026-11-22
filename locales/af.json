@@ -31,6 +31,8 @@
       "both": "Pouseer laai en ontlaai",
       "charge": "Pouseer laai",
       "discharge": "Pouseer ontlaai"
-    }
+    },
+    "limitNote": "Laai stop ook by die omsetter se algemene WS-laaigrens (__limit__%).",
+    "pauseKept": "Batterypouse (__mode__) is aan sonder 'n venster wat hierdie bladsy kan wys; stoor hou dit soos dit is."
   }
 }

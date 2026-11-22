@@ -13,6 +13,23 @@ import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/
 
 type SlotConfig = InverterSnapshot['schedules']['charge'][number];
 
+const FORCE_CHARGE_KEY = 'forceChargeRestore';
+const FORCE_DISCHARGE_KEY = 'forceDischargeRestore';
+
+interface ForceChargeRestore {
+  acCharge?: boolean;
+  chargeSlot: SlotConfig;
+  chargePowerPercent?: number;
+  acChargeUpperLimit?: number;
+}
+
+interface ForceDischargeRestore {
+  dcDischarge?: boolean;
+  dischargeSlot: SlotConfig;
+  dischargePowerPercent?: number;
+  batteryReserve?: number;
+}
+
 module.exports = class SolarInverterDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
@@ -21,14 +38,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private thresholds?: ThresholdTracker;
   private lastSettingsSyncMs = 0;
   private featureKey?: string;
-  private chargeSnapshot?: {
-    acCharge?: boolean; chargeSlot?: SlotConfig; chargePowerPercent?: number; acChargeUpperLimit?: number;
-  };
-
-  private dischargeSnapshot?: {
-    dcDischarge?: boolean; dischargeSlot?: SlotConfig; dischargePowerPercent?: number; batteryReserve?: number;
-  };
-
+  private syncingFeatures = false;
   async onInit() {
     this.thresholds = new ThresholdTracker((cardId, tokens, state) => {
       this.homey.flow.getDeviceTriggerCard(cardId)
@@ -99,12 +109,20 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   private async syncFeatureMarkers() {
     const wanted = featureMarkers(this.inverter!);
     const key = JSON.stringify(wanted);
-    if (key === this.featureKey) return;
-    this.featureKey = key;
-    const { add, remove } = markerChanges(wanted, this.getCapabilities());
-    for (const cap of add) await this.addCapability(cap).catch(this.error);
-    for (const cap of remove) await this.removeCapability(cap).catch(this.error);
-    if (add.length || remove.length) this.log(`Feature markers: +[${add.join(', ')}] -[${remove.join(', ')}]`);
+    if (key === this.featureKey || this.syncingFeatures) return;
+    this.syncingFeatures = true;
+    try {
+      const { add, remove } = markerChanges(wanted, this.getCapabilities());
+      for (const cap of add) await this.addCapability(cap);
+      for (const cap of remove) await this.removeCapability(cap);
+      if (add.length || remove.length) this.log(`Feature markers: +[${add.join(', ')}] -[${remove.join(', ')}]`);
+      // Only remember the result once it's applied, so a failed change is retried on the next poll
+      this.featureKey = key;
+    } catch (err) {
+      this.error('Could not update feature markers:', err);
+    } finally {
+      this.syncingFeatures = false;
+    }
   }
 
   getInverterSnapshot(): InverterSnapshot | null {
@@ -141,73 +159,92 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.setSettings(settingsFromSnapshot(snapshot)).catch(this.error);
   }
 
-  async forceCharge(targetSoc: number, chargeRate: number) {
-    if (!this.inverter) throw new Error('Not connected to inverter');
-    const { settings, schedules } = this.inverter.getData();
+  /*
+   * Force charge/discharge take over Buy/Sell slot 1 for the whole day. What they replace is kept
+   * in the device store, so "stop" restores it even after an app restart or update. A second
+   * force, or a retry after a timeout, keeps the first saved state.
+   */
 
-    // Keep the first snapshot: a retry, or a second force charge, must not record the forced state
-    this.chargeSnapshot ??= {
-      acCharge: settings.acCharge,
-      chargeSlot: schedules.charge.find((x) => x.slot === 1),
-      chargePowerPercent: settings.inverterChargePowerPercent,
-      acChargeUpperLimit: settings.acChargeUpperLimit,
-    };
+  async forceCharge(targetSoc: number, chargeRate: number) {
+    const inverter = this.connected();
+    if (!this.getStoreValue(FORCE_CHARGE_KEY)) {
+      const { settings, schedules } = inverter.getData();
+      const chargeSlot = schedules.charge.find((x) => x.slot === 1);
+      if (!chargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
+      const saved: ForceChargeRestore = {
+        acCharge: settings.acCharge,
+        chargeSlot,
+        chargePowerPercent: settings.inverterChargePowerPercent,
+        acChargeUpperLimit: settings.acChargeUpperLimit,
+      };
+      await this.setStoreValue(FORCE_CHARGE_KEY, saved);
+    }
 
     this.log(`Force charge: target=${targetSoc}% rate=${chargeRate}%`);
-    await setBuySlot(scheduleInverter(this.inverter), 1, { start: '00:00', end: '23:59', target: targetSoc });
-    await this.inverter.setSetting('inverterChargePowerPercent', chargeRate);
+    await setBuySlot(scheduleInverter(inverter), 1, { start: '00:00', end: '23:59', target: targetSoc });
+    if (inverter.supports('inverterChargePowerPercent')) {
+      await inverter.setSetting('inverterChargePowerPercent', chargeRate);
+    }
   }
 
   async stopForceCharge() {
-    if (!this.inverter) throw new Error('Not connected to inverter');
-    if (!this.chargeSnapshot) throw new Error('No force charge in progress');
+    const inverter = this.connected();
+    const saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
+    if (!saved) throw new Error('No force charge in progress');
 
-    const {
-      acCharge, chargeSlot, chargePowerPercent, acChargeUpperLimit,
-    } = this.chargeSnapshot;
     this.log('Restoring charge settings');
-    if (acCharge !== undefined) await this.inverter.setSetting('acCharge', acCharge);
-    if (chargeSlot) await this.inverter.setChargeSlot(chargeSlot);
-    if (!this.inverter.capabilities.perSlotTargets && acChargeUpperLimit !== undefined) {
-      await this.inverter.setSetting('acChargeUpperLimit', acChargeUpperLimit);
+    if (saved.acCharge !== undefined) await inverter.setSetting('acCharge', saved.acCharge);
+    await inverter.setChargeSlot(saved.chargeSlot);
+    if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
+      await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
     }
-    if (chargePowerPercent !== undefined) await this.inverter.setSetting('inverterChargePowerPercent', chargePowerPercent);
-    this.chargeSnapshot = undefined;
+    if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
+      await inverter.setSetting('inverterChargePowerPercent', saved.chargePowerPercent);
+    }
+    await this.unsetStoreValue(FORCE_CHARGE_KEY);
   }
 
   async forceDischarge(dischargeRate: number, batteryReserve: number) {
-    if (!this.inverter) throw new Error('Not connected to inverter');
-    const { settings, schedules } = this.inverter.getData();
-
-    // Keep the first snapshot: a retry, or a second force discharge, must not record the forced state
-    this.dischargeSnapshot ??= {
-      dcDischarge: settings.dcDischarge,
-      dischargeSlot: schedules.discharge.find((x) => x.slot === 1),
-      dischargePowerPercent: settings.inverterDischargePowerPercent,
-      batteryReserve: settings.batteryReserve,
-    };
+    const inverter = this.connected();
+    if (!this.getStoreValue(FORCE_DISCHARGE_KEY)) {
+      const { settings, schedules } = inverter.getData();
+      const dischargeSlot = schedules.discharge.find((x) => x.slot === 1);
+      if (!dischargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
+      const saved: ForceDischargeRestore = {
+        dcDischarge: settings.dcDischarge,
+        dischargeSlot,
+        dischargePowerPercent: settings.inverterDischargePowerPercent,
+        batteryReserve: settings.batteryReserve,
+      };
+      await this.setStoreValue(FORCE_DISCHARGE_KEY, saved);
+    }
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
-    await setSellSlot(scheduleInverter(this.inverter), 1, { start: '00:00', end: '23:59' });
-    await this.inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
-    await this.inverter.setSetting('batteryReserve', batteryReserve);
+    await setSellSlot(scheduleInverter(inverter), 1, { start: '00:00', end: '23:59' });
+    if (inverter.supports('inverterDischargePowerPercent')) {
+      await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
+    }
+    await inverter.setSetting('batteryReserve', batteryReserve);
   }
 
   async stopForceDischarge() {
-    if (!this.inverter) throw new Error('Not connected to inverter');
-    if (!this.dischargeSnapshot) throw new Error('No force discharge in progress');
+    const inverter = this.connected();
+    const saved = this.getStoreValue(FORCE_DISCHARGE_KEY) as ForceDischargeRestore | null;
+    if (!saved) throw new Error('No force discharge in progress');
 
-    const {
-      dcDischarge, dischargeSlot, dischargePowerPercent, batteryReserve,
-    } = this.dischargeSnapshot;
     this.log('Restoring discharge settings');
-    if (dcDischarge !== undefined) await this.inverter.setSetting('dcDischarge', dcDischarge);
-    if (dischargeSlot) await this.inverter.setDischargeSlot(dischargeSlot);
-    if (dischargePowerPercent !== undefined) {
-      await this.inverter.setSetting('inverterDischargePowerPercent', dischargePowerPercent);
+    if (saved.dcDischarge !== undefined) await inverter.setSetting('dcDischarge', saved.dcDischarge);
+    await inverter.setDischargeSlot(saved.dischargeSlot);
+    if (saved.dischargePowerPercent !== undefined && inverter.supports('inverterDischargePowerPercent')) {
+      await inverter.setSetting('inverterDischargePowerPercent', saved.dischargePowerPercent);
     }
-    if (batteryReserve !== undefined) await this.inverter.setSetting('batteryReserve', batteryReserve);
-    this.dischargeSnapshot = undefined;
+    if (saved.batteryReserve !== undefined) await inverter.setSetting('batteryReserve', saved.batteryReserve);
+    await this.unsetStoreValue(FORCE_DISCHARGE_KEY);
+  }
+
+  private connected(): GivEnergyInverter {
+    if (!this.inverter) throw new Error('Not connected to inverter');
+    return this.inverter;
   }
 
   async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {

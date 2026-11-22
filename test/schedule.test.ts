@@ -30,11 +30,15 @@ function fakeInverter(opts: {
   discharge?: Slot[];
   settings?: Record<string, unknown>;
   pause?: { mode: string; start?: string; end?: string };
+  /** Slots the library hasn't read yet: left out of the snapshot. */
+  unread?: number[];
 } = {}) {
   const caps = opts.caps ?? GEN3;
   const count = caps.tenSlots ? 10 : 2;
+  // Three-phase slots 1/2 have no target register (library: slotRegistersFor)
+  const hasTarget = (n: number) => caps.perSlotTargets && !(opts.layout === 'three_phase' && n <= 2);
   const empty = (n: number): Slot => ({
-    slot: n, start: '00:00', end: '00:00', ...(caps.perSlotTargets ? { targetStateOfCharge: 100 } : {}),
+    slot: n, start: '00:00', end: '00:00', ...(hasTarget(n) ? { targetStateOfCharge: 100 } : {}),
   });
   const fill = (given: Slot[] = []) => Array.from({ length: count }, (_, i) => ({
     ...empty(i + 1), ...given.find((s) => s.slot === i + 1),
@@ -50,7 +54,7 @@ function fakeInverter(opts: {
   const writes: string[] = [];
   const writeSlot = (list: Slot[], kind: string) => (slot: number, cfg: Omit<Slot, 'slot'>) => {
     if (slot < 1 || slot > count) throw new RangeError(`slot must be 1-${count}, got ${slot}`);
-    if (cfg.targetStateOfCharge !== undefined && !caps.perSlotTargets) {
+    if (cfg.targetStateOfCharge !== undefined && !hasTarget(slot)) {
       throw Object.assign(new Error('no target'), { name: 'UnsupportedSettingError', model: 'hybrid_gen2' });
     }
     writes.push(`${kind}${slot} ${cfg.start}-${cfg.end}${cfg.targetStateOfCharge !== undefined ? ` @${cfg.targetStateOfCharge}` : ''}`);
@@ -62,8 +66,8 @@ function fakeInverter(opts: {
     capabilities: caps,
     getData: () => ({
       schedules: {
-        charge: state.charge.map((s) => ({ ...s })),
-        discharge: state.discharge.map((s) => ({ ...s })),
+        charge: state.charge.filter((s) => !opts.unread?.includes(s.slot)).map((s) => ({ ...s })),
+        discharge: state.discharge.filter((s) => !opts.unread?.includes(s.slot)).map((s) => ({ ...s })),
         ...(opts.layout === 'three_phase' ? {} : { batteryPause: { ...state.pause } }),
       },
       settings: { ...state.settings },
@@ -86,10 +90,10 @@ function fakeInverter(opts: {
 
 test('scheduleSupport follows capabilities and layout', () => {
   assert.deepEqual(scheduleSupport(GEN3, 'single_phase'), {
-    buySlots: 10, sellSlots: 10, perSlotTargets: true, pause: 'window',
+    buySlots: 10, sellSlots: 10, perSlotTargets: true, noTargetSlots: [], pause: 'window',
   });
   assert.deepEqual(scheduleSupport(GEN2, 'single_phase'), {
-    buySlots: 2, sellSlots: 2, perSlotTargets: false, pause: 'window',
+    buySlots: 2, sellSlots: 2, perSlotTargets: false, noTargetSlots: [], pause: 'window',
   });
   assert.equal(scheduleSupport({ ...BASE, pauseMode: true }, 'single_phase').pause, 'mode');
   assert.equal(scheduleSupport(BASE, 'three_phase').pause, 'none');
@@ -104,7 +108,12 @@ test('setting a Buy slot writes it, then turns AC charge on', async () => {
 });
 
 test('AC charge is not rewritten when already on', async () => {
-  const inv = fakeInverter({ settings: { acCharge: true } });
+  const inv = fakeInverter({
+    settings: { acCharge: true },
+    charge: [{
+      slot: 2, start: '01:00', end: '02:00', targetStateOfCharge: 80,
+    }],
+  });
   await setBuySlot(inv, 2, { start: '17:00', end: '17:30' });
   assert.deepEqual(inv.writes, ['buy2 17:00-17:30']);
 });
@@ -273,4 +282,85 @@ test('applySchedule writes eco mode and the global charge target when they chang
     buy: [], sell: [], pause: null, ecoMode: false, chargeTarget: 90,
   });
   assert.deepEqual(inv.writes, ['ecoMode=false', 'acChargeUpperLimit=90']);
+});
+
+// --- review fixes ---
+
+const THREE_PHASE: Capabilities = { ...BASE, tenSlots: true, perSlotTargets: true };
+
+test('three-phase has ten slots, but slots 1-2 have no target', () => {
+  const support = scheduleSupport(THREE_PHASE, 'three_phase');
+  assert.equal(support.buySlots, 10);
+  assert.deepEqual(support.noTargetSlots, [1, 2]);
+  assert.deepEqual(scheduleSupport(GEN3, 'single_phase').noTargetSlots, []);
+});
+
+test('a target on a slot without a target register is rejected before writing', async () => {
+  const inv = fakeInverter({ caps: THREE_PHASE, layout: 'three_phase' });
+  await assert.rejects(setBuySlot(inv, 1, { start: '01:00', end: '02:00', target: 80 }), /Buy slot 1 has no target/);
+  assert.deepEqual(inv.writes, []);
+});
+
+test('applySchedule puts new rows with a target into slots that have one (three-phase)', async () => {
+  const inv = fakeInverter({ caps: THREE_PHASE, layout: 'three_phase' });
+  await applySchedule(inv, {
+    buy: [{ start: '01:00', end: '02:00', target: 80 }, { start: '03:00', end: '04:00' }], sell: [], pause: null,
+  });
+  assert.deepEqual(inv.writes, ['buy1 03:00-04:00', 'buy3 01:00-02:00 @80', 'acCharge=true']);
+});
+
+test('targets must be whole numbers from 4 to 100, checked before any write', async () => {
+  for (const target of [2, 101, 55.5]) {
+    const inv = fakeInverter();
+    await assert.rejects(setBuySlot(inv, 2, { start: '01:00', end: '02:00', target }), /4 and 100/);
+    await assert.rejects(applySchedule(inv, {
+      buy: [{ start: '01:00', end: '02:00' }], sell: [{ start: '05:00', end: '06:00', target }], pause: null, ecoMode: false,
+    }), /4 and 100/);
+    assert.deepEqual(inv.writes, [], `target ${target}`);
+  }
+  const gen2 = fakeInverter({ caps: GEN2 });
+  await assert.rejects(applySchedule(gen2, {
+    buy: [], sell: [], pause: null, chargeTarget: 3,
+  }), /4 and 100/);
+  await assert.rejects(setBuySlot(gen2, 1, { start: '01:00', end: '02:00', target: 0 }), /4 and 100/);
+  assert.deepEqual(gen2.writes, []);
+});
+
+test('a new Buy slot without a target charges to 100%, not an old leftover target', async () => {
+  const inv = fakeInverter({
+    charge: [{
+      slot: 2, start: '00:00', end: '00:00', targetStateOfCharge: 20,
+    }],
+  });
+  await setBuySlot(inv, 2, { start: '13:00', end: '14:00' });
+  await applySchedule(inv, { buy: [{ slot: 2, start: '13:00', end: '14:00' }, { start: '15:00', end: '16:00' }], sell: [], pause: null });
+  assert.deepEqual(inv.writes, ['buy2 13:00-14:00 @100', 'acCharge=true', 'buy1 15:00-16:00 @100']);
+});
+
+test('clearing a slot keeps the flag on while other slots are still unread', async () => {
+  const inv = fakeInverter({ charge: [{ slot: 1, start: '23:30', end: '05:30' }], settings: { acCharge: true }, unread: [3, 4] });
+  await clearBuySlot(inv, 1);
+  assert.deepEqual(inv.writes, ['buy1 00:00-00:00']);
+});
+
+test('applySchedule waits until every slot has been read', async () => {
+  const inv = fakeInverter({ unread: [7] });
+  await assert.rejects(applySchedule(inv, { buy: [], sell: [], pause: null }), /still loading/);
+  assert.deepEqual(inv.writes, []);
+});
+
+test('an active pause whose window is 00:00-00:00 or unread reads as mode only, and is kept on save', async () => {
+  for (const pause of [{ mode: 'both', start: '00:00', end: '00:00' }, { mode: 'discharge' }]) {
+    const inv = fakeInverter({ pause });
+    const read = readSchedule(inv).pause;
+    assert.deepEqual(read, { mode: pause.mode });
+    await applySchedule(inv, { buy: [], sell: [], pause: read });
+    assert.deepEqual(inv.writes, []);
+  }
+});
+
+test('readSchedule reports an enabled global AC charge limit on per-slot models', () => {
+  const capped = fakeInverter({ settings: { acChargeUpperLimitEnabled: true, acChargeUpperLimit: 80 } });
+  assert.equal(readSchedule(capped).globalChargeLimit, 80);
+  assert.equal(readSchedule(fakeInverter({ settings: { acChargeUpperLimit: 80 } })).globalChargeLimit, undefined);
 });

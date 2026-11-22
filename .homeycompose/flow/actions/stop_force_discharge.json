@@ -13,7 +13,7 @@
     {
       "type": "device",
       "name": "device",
-      "filter": "driver_id=solar-inverter&capabilities=givenergy_power_percent"
+      "filter": "driver_id=solar-inverter"
     }
   ]
 }

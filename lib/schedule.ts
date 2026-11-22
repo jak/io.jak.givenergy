@@ -30,7 +30,8 @@ export interface ScheduleInverter {
   getData(): {
     schedules: { charge: TimeSlotConfig[]; discharge: TimeSlotConfig[]; batteryPause?: BatteryPause };
     settings: {
-      acCharge?: boolean; dcDischarge?: boolean; acChargeUpperLimit?: number; batteryReserve?: number; ecoMode?: boolean;
+      acCharge?: boolean; dcDischarge?: boolean; acChargeUpperLimit?: number; acChargeUpperLimitEnabled?: boolean;
+      batteryReserve?: number; ecoMode?: boolean;
     };
   };
   setChargeSlot(slot: number, config: { start: string; end: string; targetStateOfCharge?: number }): Promise<void>;
@@ -52,6 +53,8 @@ export interface ScheduleSupport {
   buySlots: number;
   sellSlots: number;
   perSlotTargets: boolean;
+  /** Slots with no target register even with per-slot targets: three-phase slots 1/2. */
+  noTargetSlots: number[];
   /** `window`: start/end + mode; `mode`: mode only (Gen1, AC); `none`: three-phase. */
   pause: 'window' | 'mode' | 'none';
 }
@@ -61,8 +64,16 @@ export function scheduleSupport(capabilities: Capabilities, layout: Layout): Sch
   let pause: ScheduleSupport['pause'] = 'none';
   if (layout === 'single_phase' && capabilities.pauseMode) pause = capabilities.pauseWindow ? 'window' : 'mode';
   return {
-    buySlots: slots, sellSlots: slots, perSlotTargets: capabilities.perSlotTargets, pause,
+    buySlots: slots,
+    sellSlots: slots,
+    perSlotTargets: capabilities.perSlotTargets,
+    noTargetSlots: layout === 'three_phase' && capabilities.perSlotTargets ? [1, 2] : [],
+    pause,
   };
+}
+
+export function slotHasTarget(support: ScheduleSupport, slot: number): boolean {
+  return support.perSlotTargets && !support.noTargetSlots.includes(slot);
 }
 
 export interface SlotWindow {
@@ -90,6 +101,15 @@ function notSupported(what: string): Error {
   return new Error(`${what} is not supported on this inverter`);
 }
 
+function checkTarget(target: number | undefined) {
+  if (target !== undefined && !(Number.isInteger(target) && target >= 4 && target <= 100)) {
+    throw new RangeError(`Targets must be whole numbers between 4 and 100, got ${target}`);
+  }
+}
+
+/** A Buy slot that was empty gets a 100% target, not whatever an old slot left in its register. */
+const NEW_BUY_TARGET = 100;
+
 function checkWindow(w: { start: string; end: string }) {
   for (const t of [w.start, w.end]) {
     if (!TIME.test(t)) throw new RangeError(`Times must be HH:MM, got "${t}"`);
@@ -103,10 +123,25 @@ async function setFlag(inv: ScheduleInverter, key: 'acCharge' | 'dcDischarge', o
   if (inv.getData().settings[key] !== on) await inv.setSetting(key, on);
 }
 
-/** Turn the flag off when no slot of the kind has a window left (like the official app). */
+/**
+ * Turn the flag off when no slot of the kind has a window left (like the official app). Only when
+ * every slot has been read: right after connecting, unread slots are missing from the snapshot.
+ */
 async function clearFlagIfLast(inv: ScheduleInverter, kind: 'charge' | 'discharge') {
+  const support = scheduleSupport(inv.capabilities, inv.layout);
   const slots = inv.getData().schedules[kind];
-  if (slots.every(isEmpty)) await setFlag(inv, kind === 'charge' ? 'acCharge' : 'dcDischarge', false);
+  const count = kind === 'charge' ? support.buySlots : support.sellSlots;
+  if (slots.length === count && slots.every(isEmpty)) await setFlag(inv, kind === 'charge' ? 'acCharge' : 'dcDischarge', false);
+}
+
+/** Check a single-slot target before writing anything. */
+function slotTarget(inv: ScheduleInverter, kind: 'Buy' | 'Sell', slot: number, target: number | undefined) {
+  checkTarget(target);
+  const support = scheduleSupport(inv.capabilities, inv.layout);
+  if (target !== undefined && support.perSlotTargets && !slotHasTarget(support, slot)) {
+    throw notSupported(`${kind} slot ${slot} has no target on this inverter; a per-slot target`);
+  }
+  return support;
 }
 
 /**
@@ -115,9 +150,14 @@ async function clearFlagIfLast(inv: ScheduleInverter, kind: 'charge' | 'discharg
  */
 export async function setBuySlot(inv: ScheduleInverter, slot: number, { start, end, target }: SlotWindow) {
   checkWindow({ start, end });
-  const perSlot = inv.capabilities.perSlotTargets;
-  await inv.setChargeSlot(slot, perSlot && target !== undefined ? { start, end, targetStateOfCharge: target } : { start, end });
-  if (!perSlot && target !== undefined) await inv.setSetting('acChargeUpperLimit', target);
+  const support = slotTarget(inv, 'Buy', slot, target);
+  let slotTargetValue: number | undefined;
+  if (slotHasTarget(support, slot)) {
+    const current = inv.getData().schedules.charge.find((s) => s.slot === slot);
+    slotTargetValue = target ?? (!current || isEmpty(current) ? NEW_BUY_TARGET : undefined);
+  }
+  await inv.setChargeSlot(slot, slotTargetValue !== undefined ? { start, end, targetStateOfCharge: slotTargetValue } : { start, end });
+  if (!support.perSlotTargets && target !== undefined) await inv.setSetting('acChargeUpperLimit', target);
   await setFlag(inv, 'acCharge', true);
 }
 
@@ -129,7 +169,8 @@ export async function clearBuySlot(inv: ScheduleInverter, slot: number) {
 /** Write a Sell slot and turn DC discharge on. Eco mode is left as it is (the app does the same). */
 export async function setSellSlot(inv: ScheduleInverter, slot: number, { start, end, target }: SlotWindow) {
   checkWindow({ start, end });
-  if (target !== undefined && !inv.capabilities.perSlotTargets) throw notSupported('A per-slot discharge target');
+  const support = slotTarget(inv, 'Sell', slot, target);
+  if (target !== undefined && !support.perSlotTargets) throw notSupported('A per-slot discharge target');
   await inv.setDischargeSlot(slot, target !== undefined ? { start, end, targetStateOfCharge: target } : { start, end });
   await setFlag(inv, 'dcDischarge', true);
 }
@@ -168,24 +209,32 @@ export interface ScheduleView {
   ecoMode?: boolean;
   /** Global AC charge upper limit; only reported without per-slot targets. */
   chargeTarget?: number;
+  /**
+   * With per-slot targets: the global AC charge limit when it is enabled, as charging also stops
+   * there (on ten-slot firmware, at the lower of it and the slot 1 target).
+   */
+  globalChargeLimit?: number;
   batteryReserve?: number;
 }
 
-function toRow(s: TimeSlotConfig, perSlot: boolean): NumberedSlot {
+function toRow(s: TimeSlotConfig, support: ScheduleSupport): NumberedSlot {
   const row: NumberedSlot = { slot: s.slot, start: s.start, end: s.end };
-  if (perSlot && s.targetStateOfCharge !== undefined) row.target = s.targetStateOfCharge;
+  if (slotHasTarget(support, s.slot) && s.targetStateOfCharge !== undefined) row.target = s.targetStateOfCharge;
   return row;
 }
 
 export function readSchedule(inv: ScheduleInverter): ScheduleView {
   const support = scheduleSupport(inv.capabilities, inv.layout);
   const { schedules, settings } = inv.getData();
-  const rows = (list: TimeSlotConfig[]) => list.filter((s) => !isEmpty(s)).map((s) => toRow(s, support.perSlotTargets));
+  const rows = (list: TimeSlotConfig[]) => list.filter((s) => !isEmpty(s)).map((s) => toRow(s, support));
   const p = schedules.batteryPause;
   let pause: PauseWindow | null = null;
   if (support.pause !== 'none' && p && p.mode !== 'off' && p.mode !== 'unknown') {
     pause = { mode: p.mode };
-    if (support.pause === 'window' && p.start !== undefined && p.end !== undefined) Object.assign(pause, { start: p.start, end: p.end });
+    // A window that is unread, or 00:00-00:00, is reported as mode only, so a save keeps it as it is
+    if (support.pause === 'window' && p.start !== undefined && p.end !== undefined && p.start !== p.end) {
+      Object.assign(pause, { start: p.start, end: p.end });
+    }
   }
   return {
     support,
@@ -194,6 +243,8 @@ export function readSchedule(inv: ScheduleInverter): ScheduleView {
     pause,
     ecoMode: settings.ecoMode,
     chargeTarget: support.perSlotTargets ? undefined : settings.acChargeUpperLimit,
+    globalChargeLimit: support.perSlotTargets && settings.acChargeUpperLimitEnabled === true
+      ? settings.acChargeUpperLimit : undefined,
     batteryReserve: settings.batteryReserve,
   };
 }
@@ -234,20 +285,35 @@ export interface DesiredSchedule {
   chargeTarget?: number;
 }
 
-function assignSlots(rows: DesiredSchedule['buy'], count: number, label: string): Map<number, SlotWindow> {
+/**
+ * Rows keep their slot numbers; new rows take the lowest free slots, and new rows with a target
+ * take slots that have a target register (three-phase slots 1/2 don't).
+ */
+function assignSlots(rows: DesiredSchedule['buy'], support: ScheduleSupport, count: number, label: string) {
   if (rows.length > count) throw new RangeError(`This inverter has ${count} ${label} slots, got ${rows.length}`);
   const out = new Map<number, SlotWindow>();
   for (const r of rows) {
     if (r.slot === undefined) continue;
-    if (r.slot < 1 || r.slot > count || out.has(r.slot)) throw new RangeError(`Invalid ${label} slot ${r.slot}`);
+    if (!Number.isInteger(r.slot) || r.slot < 1 || r.slot > count || out.has(r.slot)) {
+      throw new RangeError(`Invalid ${label} slot ${r.slot}`);
+    }
+    if (r.target !== undefined && !slotHasTarget(support, r.slot)) {
+      throw notSupported(`${label} slot ${r.slot} has no target on this inverter; a per-slot target`);
+    }
     out.set(r.slot, r);
   }
-  const fresh = rows.filter((r) => r.slot === undefined).sort((a, b) => a.start.localeCompare(b.start));
-  let next = 1;
-  for (const r of fresh) {
-    while (out.has(next)) next++;
-    out.set(next, r);
-  }
+  const byStart = (a: SlotWindow, b: SlotWindow) => a.start.localeCompare(b.start);
+  const fresh = rows.filter((r) => r.slot === undefined);
+  const place = (list: SlotWindow[], ok: (n: number) => boolean) => {
+    for (const r of [...list].sort(byStart)) {
+      let n = 1;
+      while (n <= count && (out.has(n) || !ok(n))) n++;
+      if (n > count) throw new RangeError(`No free ${label} slot with a target for ${r.start}–${r.end}`);
+      out.set(n, r);
+    }
+  };
+  place(fresh.filter((r) => r.target !== undefined), (n) => slotHasTarget(support, n));
+  place(fresh.filter((r) => r.target === undefined), () => true);
   return out;
 }
 
@@ -272,6 +338,8 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
     ...(desired.pause?.start !== undefined && desired.pause.end !== undefined
       ? [{ type: 'pause' as const, start: desired.pause.start, end: desired.pause.end }] : []),
   ]);
+  [...desired.buy, ...desired.sell].forEach((r) => checkTarget(r.target));
+  checkTarget(desired.chargeTarget);
   if (!support.perSlotTargets && [...desired.buy, ...desired.sell].some((r) => r.target !== undefined)) {
     throw notSupported('A per-slot target');
   }
@@ -279,10 +347,14 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
   if (desired.pause && support.pause === 'none') throw notSupported('Battery pause');
   if (desired.pause?.start !== undefined && support.pause !== 'window') throw notSupported('A battery pause window');
   if (desired.ecoMode !== undefined && inv.layout !== 'single_phase') throw notSupported('Eco mode');
-  const buy = assignSlots(desired.buy, support.buySlots, 'Buy');
-  const sell = assignSlots(desired.sell, support.sellSlots, 'Sell');
+  const buy = assignSlots(desired.buy, support, support.buySlots, 'Buy');
+  const sell = assignSlots(desired.sell, support, support.sellSlots, 'Sell');
 
   const { schedules, settings } = inv.getData();
+  // Unread slots are missing from the snapshot; diffing against them could leave a window behind
+  if (schedules.charge.length < support.buySlots || schedules.discharge.length < support.sellSlots) {
+    throw new Error('Inverter data is still loading; try again in a minute');
+  }
 
   if (desired.ecoMode !== undefined && settings.ecoMode !== desired.ecoMode) await inv.setSetting('ecoMode', desired.ecoMode);
   if (desired.chargeTarget !== undefined && settings.acChargeUpperLimit !== desired.chargeTarget) {
@@ -291,7 +363,7 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
 
   const writeKind = async (
     current: TimeSlotConfig[], want: Map<number, SlotWindow>, count: number,
-    write: ScheduleInverter['setChargeSlot'],
+    write: ScheduleInverter['setChargeSlot'], newTarget?: number,
   ) => {
     for (let n = 1; n <= count; n++) {
       const cur = current.find((s) => s.slot === n);
@@ -299,13 +371,15 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
       if (cur && sameSlot(cur, w, support.perSlotTargets)) continue;
       if (!cur && !w) continue;
       if (w) {
-        await write(n, w.target !== undefined ? { start: w.start, end: w.end, targetStateOfCharge: w.target } : { start: w.start, end: w.end });
+        let { target } = w;
+        if (target === undefined && newTarget !== undefined && slotHasTarget(support, n) && (!cur || isEmpty(cur))) target = newTarget;
+        await write(n, target !== undefined ? { start: w.start, end: w.end, targetStateOfCharge: target } : { start: w.start, end: w.end });
       } else {
         await write(n, { start: EMPTY, end: EMPTY });
       }
     }
   };
-  await writeKind(schedules.charge, buy, support.buySlots, inv.setChargeSlot.bind(inv));
+  await writeKind(schedules.charge, buy, support.buySlots, inv.setChargeSlot.bind(inv), NEW_BUY_TARGET);
   await writeKind(schedules.discharge, sell, support.sellSlots, inv.setDischargeSlot.bind(inv));
 
   if (support.pause !== 'none') {
