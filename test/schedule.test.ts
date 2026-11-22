@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import type { Capabilities } from 'givenergy-modbus' with { 'resolution-mode': 'import' };
 import {
-  scheduleSupport, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
+  scheduleSupport, forceChargeSlot, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
   readSchedule, applySchedule, validateRows, type ScheduleInverter,
 } from '../lib/schedule.ts';
 
@@ -363,4 +363,20 @@ test('readSchedule reports an enabled global AC charge limit on per-slot models'
   const capped = fakeInverter({ settings: { acChargeUpperLimitEnabled: true, acChargeUpperLimit: 80 } });
   assert.equal(readSchedule(capped).globalChargeLimit, 80);
   assert.equal(readSchedule(fakeInverter({ settings: { acChargeUpperLimit: 80 } })).globalChargeLimit, undefined);
+});
+
+test('force charge uses the first Buy slot that can hold a target', () => {
+  assert.equal(forceChargeSlot(scheduleSupport(GEN3, 'single_phase')), 1);
+  assert.equal(forceChargeSlot(scheduleSupport(GEN2, 'single_phase')), 1);
+  assert.equal(forceChargeSlot(scheduleSupport(GEN3, 'three_phase')), 3);
+  assert.equal(forceChargeSlot(scheduleSupport(BASE, 'three_phase')), 1);
+});
+
+test('a three-phase force charge on slot 3 keeps its target', async () => {
+  const inv = fakeInverter({ caps: GEN3, layout: 'three_phase' });
+  const slot = forceChargeSlot(scheduleSupport(inv.capabilities, inv.layout));
+  await setBuySlot(inv, slot, { start: '00:00', end: '23:59', target: 80 });
+  const s = inv.getData().schedules.charge.find((c) => c.slot === 3);
+  assert.deepEqual([s?.start, s?.end, s?.targetStateOfCharge], ['00:00', '23:59', 80]);
+  await assert.rejects(setBuySlot(inv, 1, { start: '00:00', end: '23:59', target: 80 }), /no target/);
 });

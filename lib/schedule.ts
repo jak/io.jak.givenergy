@@ -76,6 +76,16 @@ export function slotHasTarget(support: ScheduleSupport, slot: number): boolean {
   return support.perSlotTargets && !support.noTargetSlots.includes(slot);
 }
 
+/**
+ * The Buy slot force charge takes over: the first one that can hold its target. Slot 1, except on
+ * three-phase models with per-slot targets, where slots 1/2 have no target register.
+ */
+export function forceChargeSlot(support: ScheduleSupport): number {
+  if (!support.perSlotTargets) return 1;
+  for (let n = 1; n <= support.buySlots; n++) if (slotHasTarget(support, n)) return n;
+  return 1;
+}
+
 export interface SlotWindow {
   start: string;
   end: string;

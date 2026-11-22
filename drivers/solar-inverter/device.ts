@@ -6,7 +6,9 @@ import { ThresholdTracker } from '../../lib/threshold';
 import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
 import { syncStore, pairedBy1x } from '../../lib/store';
-import { scheduleInverter, setBuySlot, setSellSlot } from '../../lib/schedule';
+import {
+  scheduleInverter, scheduleSupport, forceChargeSlot, setBuySlot, setSellSlot,
+} from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
 import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
@@ -164,18 +166,21 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   }
 
   /*
-   * Force charge/discharge take over Buy/Sell slot 1 for the whole day. What they replace is kept
-   * in the device store, so "stop" restores it even after an app restart or update. A second
-   * force, or a retry after a timeout, keeps the first saved state.
+   * Force charge/discharge take over a Buy/Sell slot for the whole day (Buy: the first slot with a
+   * target register, see forceChargeSlot; Sell: slot 1). What they replace is kept in the device
+   * store, so "stop" restores it even after an app restart or update. A second force, or a retry
+   * after a timeout, keeps the first saved state.
    */
 
   async forceCharge(targetSoc: number, chargeRate: number) {
     const inverter = this.connected();
-    if (!this.getStoreValue(FORCE_CHARGE_KEY)) {
+    let saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
+    if (!saved) {
       const { settings, schedules } = inverter.getData();
-      const chargeSlot = schedules.charge.find((x) => x.slot === 1);
+      const slot = forceChargeSlot(scheduleSupport(inverter.capabilities, inverter.layout));
+      const chargeSlot = schedules.charge.find((x) => x.slot === slot);
       if (!chargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
-      const saved: ForceChargeRestore = {
+      saved = {
         acCharge: settings.acCharge,
         chargeSlot,
         chargePowerPercent: settings.inverterChargePowerPercent,
@@ -184,8 +189,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
       await this.setStoreValue(FORCE_CHARGE_KEY, saved);
     }
 
-    this.log(`Force charge: target=${targetSoc}% rate=${chargeRate}%`);
-    await setBuySlot(scheduleInverter(inverter), 1, { start: '00:00', end: '23:59', target: targetSoc });
+    // The slot saved for restoring is the one in use, also for a force started before an update
+    const { slot } = saved.chargeSlot;
+    this.log(`Force charge: slot=${slot} target=${targetSoc}% rate=${chargeRate}%`);
+    await setBuySlot(scheduleInverter(inverter), slot, { start: '00:00', end: '23:59', target: targetSoc });
     if (inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', chargeRate);
     }
