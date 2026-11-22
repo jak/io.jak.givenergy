@@ -180,3 +180,9 @@ Battery and grid-meter drivers have no settings and are unchanged.
 - Version: left to the usual post-merge bump (the "Update Homey App Version" workflow); the PR carries the changelog.
 - Right after connecting, the library can leave a slot's target out until its register block is read; a row without a
   target keeps the inverter's value, so the Schedules page and `applySchedule` handle it.
+- Correction (code review): three-phase hybrids are ten-slot models in givenergy-modbus 3.0.0 (10 Buy + 10 Sell), and
+  only slots 1/2 lack a target register. `scheduleSupport().noTargetSlots` carries that.
+- Force charge/discharge are offered on every inverter (gating them on power % would have removed them from Gen1/2/4,
+  HV, PV and Polar); the rate is written only where `supports()` allows it. Their restore state lives in the device store.
+- Lint: `main` is not lint-clean (the Athom JS config can't resolve `.ts` imports); this branch adds no new rule
+  violations beyond that import-resolution noise. Fixing the ESLint setup is left for its own PR.
