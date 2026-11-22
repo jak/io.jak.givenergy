@@ -12,7 +12,7 @@
     "@types/node": "^22.20.5",
     "eslint": "^8.57.1",
     "eslint-config-athom": "^4.0.2",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "givenergy-modbus": "^3.0.0"
