@@ -276,10 +276,7 @@
         $('legend-pause').classList.toggle('hidden', s.support.pause === 'none');
 
         $('eco-group').classList.toggle('hidden', s.ecoMode === undefined);
-        $('eco').checked = s.ecoMode === true;
-
         $('target-group').classList.toggle('hidden', s.support.perSlotTargets);
-        $('charge-target').value = s.chargeTarget === undefined ? '' : s.chargeTarget;
 
         var reserve = $('reserve-note');
         reserve.classList.toggle('hidden', s.support.perSlotTargets || s.batteryReserve === undefined);
@@ -293,23 +290,28 @@
         kept.classList.toggle('hidden', keptPause === null);
         if (keptPause) kept.textContent = t('pauseKept', { mode: t('pauseMode.' + keptPause.mode) });
 
-        var modeGroup = $('pause-mode-group');
-        modeGroup.classList.toggle('hidden', s.support.pause !== 'mode');
-        if (s.support.pause === 'mode') {
-          var select = $('pause-mode');
-          if (!select.options.length) {
-            ['off'].concat(PAUSE_MODES).forEach(function (m) {
-              var opt = document.createElement('option');
-              opt.value = m;
-              opt.textContent = t('pauseMode.' + m);
-              select.appendChild(opt);
-            });
-          }
-          select.value = s.pause ? s.pause.mode : 'off';
-        }
+        $('pause-mode-group').classList.toggle('hidden', s.support.pause !== 'mode');
 
         renderRows();
         renderBar();
+      }
+
+      // Copy a schedule into the editor: the rows and the controls outside them. Only when a
+      // schedule is loaded or saved, so re-rendering keeps the user's unsaved edits.
+      function loadSchedule(s) {
+        loadRows(s);
+        $('eco').checked = s.ecoMode === true;
+        $('charge-target').value = s.chargeTarget === undefined ? '' : s.chargeTarget;
+        var select = $('pause-mode');
+        if (!select.options.length) {
+          ['off'].concat(PAUSE_MODES).forEach(function (m) {
+            var opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = t('pauseMode.' + m);
+            select.appendChild(opt);
+          });
+        }
+        select.value = s.pause ? s.pause.mode : 'off';
       }
 
       function addRow(type) {
@@ -338,7 +340,7 @@
           return;
         }
         showMessage('');
-        loadRows(current.schedule);
+        loadSchedule(current.schedule);
         render();
         $('content').classList.remove('hidden');
       }
@@ -403,16 +405,22 @@
         }
         saving = true;
         $('save').classList.add('is-loading');
-        Homey.api('PUT', '/inverters/' + encodeURIComponent(current.serial) + '/schedule', body(), function (err, schedule) {
+        $('picker').disabled = true;
+        // The inverter being saved: the response belongs to it, whatever is selected by then
+        var saved = current;
+        Homey.api('PUT', '/inverters/' + encodeURIComponent(saved.serial) + '/schedule', body(), function (err, schedule) {
           saving = false;
           $('save').classList.remove('is-loading');
+          $('picker').disabled = false;
           if (err) {
             Homey.alert(String(err.message || err));
             return;
           }
-          current.schedule = schedule;
-          loadRows(schedule);
-          render();
+          saved.schedule = schedule;
+          if (current === saved) {
+            loadSchedule(schedule);
+            render();
+          }
           Homey.alert(t('saved'));
         });
       }
