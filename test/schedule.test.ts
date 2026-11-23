@@ -530,6 +530,18 @@ test('on three-phase, clearing the last Buy slot leaves force charge (HR 1123) a
   assert.deepEqual(inv.writes, ['buy1 00:00-00:00', 'acCharge=false']);
 });
 
+test('an overlap with a disabled schedule is checked, since saving turns it on', async () => {
+  const inv = fakeInverter({
+    charge: [{ slot: 1, start: '17:00', end: '19:00' }],
+    discharge: [{ slot: 1, start: '18:00', end: '18:30' }],
+    settings: { acCharge: true, dcDischarge: false },
+  });
+  const desired = { buy: [{ slot: 1, start: '17:00', end: '19:00' }], sell: [{ slot: 1, start: '18:00', end: '18:30' }], pause: null };
+  await assert.rejects(applySchedule(inv, desired), /overlap/);
+  await inv.setSetting('dcDischarge', true);
+  await applySchedule(inv, desired); // already active: allowed, so other changes can be saved
+});
+
 test('a retried save is checked against the schedule from before the first attempt', async () => {
   // Sell 1 and 2 overlap (set by flows); the save replaces Sell 2 with a new row at the same times
   const discharge = [{ slot: 1, start: '17:00', end: '19:00' }, { slot: 2, start: '18:00', end: '18:30' }];

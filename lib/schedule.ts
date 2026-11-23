@@ -401,13 +401,28 @@ export function scheduleRows(s: { buy: SlotWindow[]; sell: SlotWindow[]; pause: 
 }
 
 /**
+ * The inverter's windows that are in effect, for validateRows: Buy/Sell windows only while AC
+ * charge / DC discharge is on, so a save that turns a disabled schedule on can't let its overlaps
+ * through.
+ */
+export function activeRows(inv: ScheduleInverter): ScheduleRow[] {
+  const { settings } = inv.getData();
+  const s = readSchedule(inv);
+  return scheduleRows({
+    buy: settings.acCharge === false ? [] : s.buy,
+    sell: settings.dcDischarge === false ? [] : s.sell,
+    pause: s.pause,
+  });
+}
+
+/**
  * Make the inverter's schedule match `desired`, writing only what changed: eco mode and the global
  * target, then Buy slots, Sell slots, the pause, and the AC charge / DC discharge flags last.
  * Everything is validated before the first write. `before` is the inverter's windows before the
  * save; a retry passes the first attempt's, so a partial write doesn't change what's allowed.
  */
 export async function applySchedule(
-  inv: ScheduleInverter, desired: DesiredSchedule, before: ScheduleRow[] = scheduleRows(readSchedule(inv)),
+  inv: ScheduleInverter, desired: DesiredSchedule, before: ScheduleRow[] = activeRows(inv),
 ) {
   const support = scheduleSupport(inv.capabilities, inv.layout);
 

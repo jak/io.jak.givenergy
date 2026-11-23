@@ -11,9 +11,9 @@
     "af": "[[action]] laaiskedule (verouderd)"
   },
   "hint": {
-    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot / Clear Buy slot\".",
-    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen / wissen\".",
-    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee koop-tydgleuf\"."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot / Clear Buy slot\". On three-phase inverters this card also switches force charge: if it is on, run this card with Disable once before replacing it.",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen / wissen\". Op driefase-omvormers schakelt deze kaart ook geforceerd laden: staat dat aan, voer deze kaart dan eenmaal uit met Uitschakelen voordat je hem vervangt.",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel / vee koop-tydgleuf\". Op driefase-omsetters skakel hierdie kaart ook forseer laai: as dit aan is, voer hierdie kaart een keer uit met Deaktiveer voordat jy dit vervang."
   },
   "args": [
     {

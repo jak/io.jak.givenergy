@@ -10,7 +10,7 @@ import type {
 } from './lib/types';
 import {
   scheduleInverter, scheduleSupport, slotHasTarget, setGlobalChargeTarget, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
-  readSchedule, applySchedule, scheduleRows, type ScheduleInverter, type ScheduleView,
+  readSchedule, applySchedule, activeRows, type ScheduleInverter, type ScheduleView,
 } from './lib/schedule';
 import { parseDesiredSchedule } from './lib/schedule-request';
 import { modelName } from './lib/device-settings';
@@ -290,7 +290,7 @@ module.exports = class GivEnergyApp extends Homey.App implements GivEnergyAppApi
     const desired = parseDesiredSchedule(body);
     const target = scheduleInverter(inverter);
     // Taken once: a retry is checked against the schedule as it was before the first attempt
-    const before = scheduleRows(readSchedule(target));
+    const before = activeRows(target);
     try {
       await withRetry(() => applySchedule(target, desired, before), { homey: this.homey, log: this.log.bind(this) });
     } catch (err) {
