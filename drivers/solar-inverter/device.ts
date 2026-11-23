@@ -199,16 +199,15 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     let saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
     if (saved && support.perSlotTargets && !slotHasTarget(support, saved.chargeSlot.slot)) {
       // 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before writing
-      // anything. Keep the record only if that slot was forced after all (a force started while
-      // per-slot targets were off): it then holds the force window and the record doesn't.
+      // anything: drop that record. If the slot holds the force window, a force may have run there
+      // (started while per-slot targets were off). It can't take a target now, and the record may
+      // hold the only copy of the settings it replaced, so stopping it is left to the user.
       const live = inverter.getData().schedules.charge.find((x) => x.slot === saved!.chargeSlot.slot);
       if (!live) throw new Error(LOADING);
-      if (!isForceWindow(live) || isForceWindow(saved.chargeSlot)) {
-        saved = null;
-      } else {
-        // That force is still on and its slot can't take a target now, so it can't be updated
+      if (isForceWindow(live)) {
         throw new Error(`A force charge is still running on Buy slot ${live.slot}. Stop force charge first, then start it again.`);
       }
+      saved = null;
     }
     if (!saved) {
       const { settings, schedules } = inverter.getData();
@@ -272,7 +271,17 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   async forceDischarge(dischargeRate: number, batteryReserve: number) {
     const inverter = this.connected();
     const support = scheduleSupport(inverter.capabilities, inverter.layout);
-    if (!this.getStoreValue(FORCE_DISCHARGE_KEY)) {
+    const existing = this.getStoreValue(FORCE_DISCHARGE_KEY) as ForceDischargeRestore | null;
+    if (existing && slotHasTarget(support, 1) && existing.dischargeSlot.targetStateOfCharge === undefined) {
+      // Saved without slot 1's target (by 2.0.0, or while per-slot targets were off). Neither wrote
+      // the target, so the live one is the one to restore.
+      const live = inverter.getData().schedules.discharge.find((x) => x.slot === 1)?.targetStateOfCharge;
+      if (live === undefined) throw new Error(LOADING);
+      await this.setStoreValue(FORCE_DISCHARGE_KEY, {
+        ...existing, dischargeSlot: { ...existing.dischargeSlot, targetStateOfCharge: live },
+      });
+    }
+    if (!existing) {
       const { settings, schedules } = inverter.getData();
       const dischargeSlot = schedules.discharge.find((x) => x.slot === 1);
       // The slot's target is overwritten too, so it must have been read to be restored
@@ -289,9 +298,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
-    // Stop at the reserve, not at a stop-at % left in the slot's target register
+    // Stop at the reserve, not at a stop-at % left in the slot's target register (a whole 4–100,
+    // which a flow token might not be)
+    const reserveTarget = Math.min(100, Math.max(4, Math.round(batteryReserve)));
     await setSellSlot(scheduleInverter(inverter), 1, {
-      ...FORCE_WINDOW, target: slotHasTarget(support, 1) ? batteryReserve : undefined,
+      ...FORCE_WINDOW, target: slotHasTarget(support, 1) ? reserveTarget : undefined,
     });
     if (inverter.supports('inverterDischargePowerPercent')) {
       await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);

@@ -80,7 +80,7 @@ module.exports = class GivEnergyApp extends Homey.App implements GivEnergyAppApi
     const deviceAction = (id: string, run: (device: ForceControlDevice, args: CardArgs) => Promise<unknown>) => {
       this.homey.flow.getActionCard(id).registerRunListener(async (args: CardArgs) => {
         try {
-          await withRetry(() => run(args.device as ForceControlDevice, args), { homey: this.homey, log: this.log });
+          await withRetry(() => run(args.device as ForceControlDevice, args), { homey: this.homey, log: this.log.bind(this) });
         } catch (err) {
           throw new Error(userMessage(err));
         }
@@ -123,7 +123,7 @@ module.exports = class GivEnergyApp extends Homey.App implements GivEnergyAppApi
         const inverter = this.getInverter(args.device.getData().id);
         if (!inverter) throw new Error('Inverter not connected');
         try {
-          await withRetry(() => run(inverter, args), { homey: this.homey, log: this.log });
+          await withRetry(() => run(inverter, args), { homey: this.homey, log: this.log.bind(this) });
         } catch (err) {
           throw new Error(userMessage(err));
         }
@@ -290,7 +290,7 @@ module.exports = class GivEnergyApp extends Homey.App implements GivEnergyAppApi
     const desired = parseDesiredSchedule(body);
     const target = scheduleInverter(inverter);
     try {
-      await withRetry(() => applySchedule(target, desired), { homey: this.homey, log: this.log });
+      await withRetry(() => applySchedule(target, desired), { homey: this.homey, log: this.log.bind(this) });
     } catch (err) {
       throw new Error(userMessage(err));
     }

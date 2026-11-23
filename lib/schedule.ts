@@ -123,11 +123,6 @@ const NEW_BUY_TARGET = 100;
 const NEW_SELL_TARGET = 4;
 
 /**
- * The global AC charge target (two-slot firmware): HR 116 only applies while HR 20 "Enable AC
- * Charge Upper % Limit" is on, so a target under 100% turns it on and 100% turns it off.
- * HR 20 is left alone on models that don't report it, and on three-phase (see chargeLimitEnabled).
- */
-/**
  * HR 20 "Enable AC Charge Upper % Limit", on single-phase only: it gates HR 116 there, but it's not
  * known whether it gates three-phase's HR 1111, so three-phase is treated as not reporting it.
  */
@@ -135,6 +130,11 @@ export function chargeLimitEnabled(inv: Pick<ScheduleInverter, 'layout' | 'getDa
   return inv.layout === 'single_phase' ? inv.getData().settings.acChargeUpperLimitEnabled : undefined;
 }
 
+/**
+ * The global AC charge target (two-slot firmware): HR 116 only applies while HR 20 "Enable AC
+ * Charge Upper % Limit" is on, so a target under 100% turns it on and 100% turns it off.
+ * HR 20 is left alone on models that don't report it, and on three-phase (see chargeLimitEnabled).
+ */
 export async function setGlobalChargeTarget(inv: ScheduleInverter, target: number) {
   checkTarget(target);
   const { settings } = inv.getData();
