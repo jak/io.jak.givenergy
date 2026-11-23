@@ -184,9 +184,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     let saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
     if (saved && support.perSlotTargets && !slotHasTarget(support, saved.chargeSlot.slot)) {
       // 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before writing
-      // anything. Only drop such a record while the slot is still unforced.
+      // anything. Keep the record only if that slot was forced after all (a force started while
+      // per-slot targets were off): it then holds the force window and the record doesn't.
       const live = inverter.getData().schedules.charge.find((x) => x.slot === saved!.chargeSlot.slot);
-      if (live && !isForceWindow(live)) saved = null;
+      if (!live) throw new Error(LOADING);
+      if (!isForceWindow(live) || isForceWindow(saved.chargeSlot)) saved = null;
     }
     if (!saved) {
       const { settings, schedules } = inverter.getData();

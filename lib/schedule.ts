@@ -177,6 +177,16 @@ function readSlot(inv: ScheduleInverter, kind: 'charge' | 'discharge', slot: num
   return current;
 }
 
+/**
+ * Give an empty slot a window and the default target for a new slot. The target goes first, on its
+ * own: if the window write then fails, a retry still finds the slot empty and writes the default
+ * again, where a slot with a window would keep whatever target it has.
+ */
+async function writeNewSlot(write: ScheduleInverter['setChargeSlot'], slot: number, w: { start: string; end: string }, target: number) {
+  await write(slot, { start: EMPTY, end: EMPTY, targetStateOfCharge: target });
+  await write(slot, { start: w.start, end: w.end });
+}
+
 /** Check a single-slot target before writing anything. */
 function slotTarget(inv: ScheduleInverter, kind: 'Buy' | 'Sell', slot: number, target: number | undefined) {
   checkTarget(target);
@@ -194,11 +204,14 @@ function slotTarget(inv: ScheduleInverter, kind: 'Buy' | 'Sell', slot: number, t
 export async function setBuySlot(inv: ScheduleInverter, slot: number, { start, end, target }: SlotWindow) {
   checkWindow({ start, end });
   const support = slotTarget(inv, 'Buy', slot, target);
-  let slotTargetValue: number | undefined;
-  if (slotHasTarget(support, slot)) {
-    slotTargetValue = target ?? (isEmpty(readSlot(inv, 'charge', slot)) ? NEW_BUY_TARGET : undefined);
+  const write = inv.setChargeSlot.bind(inv);
+  if (target !== undefined && slotHasTarget(support, slot)) {
+    await write(slot, { start, end, targetStateOfCharge: target });
+  } else if (target === undefined && slotHasTarget(support, slot) && isEmpty(readSlot(inv, 'charge', slot))) {
+    await writeNewSlot(write, slot, { start, end }, NEW_BUY_TARGET);
+  } else {
+    await write(slot, { start, end });
   }
-  await inv.setChargeSlot(slot, slotTargetValue !== undefined ? { start, end, targetStateOfCharge: slotTargetValue } : { start, end });
   if (!support.perSlotTargets && target !== undefined) await setGlobalChargeTarget(inv, target);
   await setFlag(inv, 'acCharge', true);
 }
@@ -213,11 +226,14 @@ export async function setSellSlot(inv: ScheduleInverter, slot: number, { start, 
   checkWindow({ start, end });
   const support = slotTarget(inv, 'Sell', slot, target);
   if (target !== undefined && !support.perSlotTargets) throw notSupported('A per-slot discharge target');
-  let slotTargetValue = target;
-  if (slotTargetValue === undefined && slotHasTarget(support, slot) && isEmpty(readSlot(inv, 'discharge', slot))) {
-    slotTargetValue = NEW_SELL_TARGET;
+  const write = inv.setDischargeSlot.bind(inv);
+  if (target !== undefined) {
+    await write(slot, { start, end, targetStateOfCharge: target });
+  } else if (slotHasTarget(support, slot) && isEmpty(readSlot(inv, 'discharge', slot))) {
+    await writeNewSlot(write, slot, { start, end }, NEW_SELL_TARGET);
+  } else {
+    await write(slot, { start, end });
   }
-  await inv.setDischargeSlot(slot, slotTargetValue !== undefined ? { start, end, targetStateOfCharge: slotTargetValue } : { start, end });
   await setFlag(inv, 'dcDischarge', true);
 }
 
@@ -424,8 +440,11 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
 
   if (desired.ecoMode !== undefined && settings.ecoMode !== desired.ecoMode) await inv.setSetting('ecoMode', desired.ecoMode);
   // Only a changed target is written: with HR 20 off the page shows 100%, and saving that back
-  // would overwrite the limit HR 116 keeps for when HR 20 is turned on again
-  if (desired.chargeTarget !== undefined && desired.chargeTarget !== globalTarget(inv)) {
+  // would overwrite the limit HR 116 keeps for when HR 20 is turned on again. The switch is checked
+  // too, so a retry after HR 116 was written but HR 20 wasn't finishes the job.
+  const limitSwitch = chargeLimitEnabled(inv);
+  if (desired.chargeTarget !== undefined && (desired.chargeTarget !== globalTarget(inv)
+    || (limitSwitch !== undefined && limitSwitch !== desired.chargeTarget < 100))) {
     await setGlobalChargeTarget(inv, desired.chargeTarget);
   }
 
@@ -438,10 +457,12 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
       const w = want.get(n);
       if (cur && sameSlot(cur, w, support.perSlotTargets)) continue;
       if (!cur && !w) continue;
-      if (w) {
-        let { target } = w;
-        if (target === undefined && newTarget !== undefined && slotHasTarget(support, n) && (!cur || isEmpty(cur))) target = newTarget;
-        await write(n, target !== undefined ? { start: w.start, end: w.end, targetStateOfCharge: target } : { start: w.start, end: w.end });
+      if (w?.target !== undefined) {
+        await write(n, { start: w.start, end: w.end, targetStateOfCharge: w.target });
+      } else if (w && newTarget !== undefined && slotHasTarget(support, n) && (!cur || isEmpty(cur))) {
+        await writeNewSlot(write, n, w, newTarget);
+      } else if (w) {
+        await write(n, { start: w.start, end: w.end });
       } else {
         await write(n, { start: EMPTY, end: EMPTY });
       }
