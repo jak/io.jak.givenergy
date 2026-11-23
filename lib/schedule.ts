@@ -120,7 +120,7 @@ function checkTarget(target: number | undefined) {
 /** A Buy slot that was empty gets a 100% target, not whatever an old slot left in its register. */
 const NEW_BUY_TARGET = 100;
 /** A Sell slot that was empty gets the lowest stop-at %, so the battery reserve is what stops it. */
-const NEW_SELL_TARGET = 4;
+export const NEW_SELL_TARGET = 4;
 
 /**
  * HR 20 "Enable AC Charge Upper % Limit", on single-phase only: it gates HR 116 there, but it's not
@@ -368,7 +368,7 @@ export interface DesiredSchedule {
  */
 function assignSlots(rows: DesiredSchedule['buy'], support: ScheduleSupport, count: number, label: string) {
   if (rows.length > count) throw new RangeError(`This inverter has ${count} ${label} slots, got ${rows.length}`);
-  const out = new Map<number, SlotWindow>();
+  const out = new Map<number, SlotWindow & { slot?: number }>();
   for (const r of rows) {
     if (r.slot === undefined) continue;
     if (!Number.isInteger(r.slot) || r.slot < 1 || r.slot > count || out.has(r.slot)) {
@@ -445,12 +445,16 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
   }
 
   const writeKind = async (
-    current: TimeSlotConfig[], want: Map<number, SlotWindow>, count: number,
+    current: TimeSlotConfig[], want: Map<number, SlotWindow & { slot?: number }>, count: number,
     write: ScheduleInverter['setChargeSlot'], newTarget?: number,
   ) => {
     for (let n = 1; n <= count; n++) {
       const cur = current.find((s) => s.slot === n);
-      const w = want.get(n);
+      let w = want.get(n);
+      // A new row (no slot number) gets the default target, also in the slot of a removed row
+      if (w && w.slot === undefined && w.target === undefined && newTarget !== undefined && slotHasTarget(support, n)) {
+        w = { ...w, target: newTarget };
+      }
       if (cur && sameSlot(cur, w, support.perSlotTargets)) continue;
       if (!cur && !w) continue;
       if (w?.target !== undefined) {

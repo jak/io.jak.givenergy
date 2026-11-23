@@ -327,15 +327,20 @@
       }
 
       function addRow(type) {
-        // The first free half hour from the end of the latest row, so the new slot doesn't overlap
+        // The first free half hour from the end of the latest row, so the new slot doesn't overlap.
+        // It may start on the half hour or where a row ends (gaps aren't always on the grid).
         var last = rows.reduce(function (m, r) { return Math.max(m, r.end ? minutes(r.end) : 0); }, 0);
         var pad = function (n) { return (n < 10 ? '0' : '') + n; };
         var hhmm = function (m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
+        var candidates = [];
+        for (var g = 0; g < 1440; g += 30) candidates.push(g);
+        rows.forEach(function (r) { if (r.end) candidates.push(minutes(r.end)); });
+        candidates.sort(function (a, b) { return (a - last + 1440) % 1440 - (b - last + 1440) % 1440; });
         var start = null;
-        for (var i = 0; i < 48 && start === null; i++) {
-          var s = (Math.ceil(last / 30) * 30 + i * 30) % 1440;
+        for (var i = 0; i < candidates.length && start === null; i++) {
+          var s = candidates[i];
           var free = true;
-          for (var m = s; m < s + 30; m++) if (taken(m)) free = false;
+          for (var m = s; m < Math.min(s + 30, 1439); m++) if (taken(m)) free = false;
           if (free) start = s;
         }
         if (start === null) start = Math.min(last, 1380);

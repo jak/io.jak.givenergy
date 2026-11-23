@@ -7,7 +7,7 @@ import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
 import { syncStore, pairedBy1x, completeForceChargeRestore } from '../../lib/store';
 import {
-  scheduleInverter, scheduleSupport, slotHasTarget, forceChargeSlot, setBuySlot, setSellSlot, chargeLimitEnabled,
+  scheduleInverter, scheduleSupport, slotHasTarget, forceChargeSlot, setBuySlot, setSellSlot, chargeLimitEnabled, NEW_SELL_TARGET,
 } from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
@@ -297,11 +297,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
-    // Stop at the reserve, not at a stop-at % left in the slot's target register (a whole 4–100,
-    // which a flow token might not be)
-    const reserveTarget = Math.min(100, Math.max(4, Math.round(batteryReserve)));
+    // The lowest stop-at %, so the battery reserve stops it (also after a later reserve change),
+    // not a stop-at % left in the slot's target register
     await setSellSlot(scheduleInverter(inverter), 1, {
-      ...FORCE_WINDOW, target: slotHasTarget(support, 1) ? reserveTarget : undefined,
+      ...FORCE_WINDOW, target: slotHasTarget(support, 1) ? NEW_SELL_TARGET : undefined,
     });
     if (inverter.supports('inverterDischargePowerPercent')) {
       await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
