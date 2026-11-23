@@ -242,8 +242,10 @@
             var label = document.createElement('span');
             label.className = 'muted';
             label.textContent = t(r.type === 'buy' ? 'chargeTo' : 'stopAt');
-            // A target the inverter hasn't reported yet stays empty, and saving keeps the inverter's value
-            var target = input('number', r.target, { min: 4, max: 100, step: 1, placeholder: '–', 'aria-label': label.textContent });
+            // Left empty, saving keeps the slot's target; a new Sell row (no slot yet) gets 4%, so the
+            // battery reserve stops it, and shows that as the placeholder
+            var blank = r.type === 'sell' && r.slot === undefined ? '4' : '–';
+            var target = input('number', r.target, { min: 4, max: 100, step: 1, placeholder: blank, 'aria-label': label.textContent });
             target.addEventListener('change', function () { r.target = target.value === '' ? undefined : Number(target.value); });
             var pct = document.createElement('span');
             pct.textContent = '%';
