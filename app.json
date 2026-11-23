@@ -893,20 +893,21 @@
         "id": "enable_discharge_schedule"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Force charge from grid",
-          "nl": "Geforceerd laden van het net",
-          "af": "Forseer laai van die net"
+          "en": "Force charge from grid (deprecated)",
+          "nl": "Geforceerd laden van het net (verouderd)",
+          "af": "Forseer laai van die net (verouderd)"
         },
         "titleFormatted": {
-          "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate",
-          "nl": "Geforceerd laden tot [[target_soc]]% met [[charge_rate]]% snelheid",
-          "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo"
+          "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate (deprecated)",
+          "nl": "Geforceerd laden tot [[target_soc]]% met [[charge_rate]]% snelheid (verouderd)",
+          "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo (verouderd)"
         },
         "hint": {
-          "en": "Sets a Buy slot (slot 1, or slot 3 on three-phase models with per-slot targets) to the whole day, charging the battery from the grid. The charge rate applies on inverters with a charge power setting. Use 'Stop force charge' to restore the previous slot and settings, even after a restart.",
-          "nl": "Stelt een Koop-tijdslot (slot 1, of slot 3 bij driefase-modellen met doelen per tijdslot) in op de hele dag, zodat de batterij van het net laadt. De laadsnelheid geldt op omvormers met een laadvermogen-instelling. Gebruik 'Geforceerd laden stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
-          "af": "Stel 'n koop-tydgleuf (gleuf 1, of gleuf 3 by driefase-modelle met teikens per gleuf) op die hele dag, sodat die battery van die net laai. Die laaitempo geld op omsetters met 'n laaidrywing-instelling. Gebruik 'Stop forseer laai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot\" and \"Set charge power\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot instellen\" en \"Laadvermogen instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf\" en \"Stel laaidrywing\"."
         },
         "args": [
           {
@@ -944,20 +945,21 @@
         "id": "force_charge"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Force discharge to grid",
-          "nl": "Geforceerd ontladen naar het net",
-          "af": "Forseer ontlaai na die net"
+          "en": "Force discharge to grid (deprecated)",
+          "nl": "Geforceerd ontladen naar het net (verouderd)",
+          "af": "Forseer ontlaai na die net (verouderd)"
         },
         "titleFormatted": {
-          "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]%",
-          "nl": "Geforceerd ontladen met [[discharge_rate]]% snelheid, reserve [[battery_reserve]]%",
-          "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]%"
+          "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]% (deprecated)",
+          "nl": "Geforceerd ontladen met [[discharge_rate]]% snelheid, reserve [[battery_reserve]]% (verouderd)",
+          "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]% (verouderd)"
         },
         "hint": {
-          "en": "Sets Sell slot 1 to the whole day, exporting battery power to the grid. The discharge rate applies on inverters with a discharge power setting. Use 'Stop force discharge' to restore the previous slot and settings, even after a restart.",
-          "nl": "Stelt Verkoop-tijdslot 1 in op de hele dag, zodat batterijvermogen naar het net wordt geëxporteerd. De ontlaadsnelheid geldt op omvormers met een ontlaadvermogen-instelling. Gebruik 'Geforceerd ontladen stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
-          "af": "Stel verkoop-tydgleuf 1 op die hele dag, sodat batterykrag na die net uitgevoer word. Die ontlaaitempo geld op omsetters met 'n ontlaaidrywing-instelling. Gebruik 'Stop forseer ontlaai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\", \"Set discharge power\" and \"Set battery reserve\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\", \"Ontlaadvermogen instellen\" en \"Batterijreserve instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\", \"Stel ontlaaidrywing\" en \"Stel batteryreserwe\"."
         },
         "args": [
           {
@@ -2111,15 +2113,16 @@
         "id": "set_sell_slot_target"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Stop force charge",
-          "nl": "Geforceerd laden stoppen",
-          "af": "Stop forseer laai"
+          "en": "Stop force charge (deprecated)",
+          "nl": "Geforceerd laden stoppen (verouderd)",
+          "af": "Stop forseer laai (verouderd)"
         },
         "hint": {
-          "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used.",
-          "nl": "Herstelt de laadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd laden van het net'.",
-          "af": "Herstel die omsetter se laai-instellings na hul toestand voor 'Forseer laai van die net' gebruik is."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Clear Buy slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Vee koop-tydgleuf uit\"."
         },
         "args": [
           {
@@ -2131,15 +2134,16 @@
         "id": "stop_force_charge"
       },
       {
+        "deprecated": true,
         "title": {
-          "en": "Stop force discharge",
-          "nl": "Geforceerd ontladen stoppen",
-          "af": "Stop forseer ontlaai"
+          "en": "Stop force discharge (deprecated)",
+          "nl": "Geforceerd ontladen stoppen (verouderd)",
+          "af": "Stop forseer ontlaai (verouderd)"
         },
         "hint": {
-          "en": "Restores inverter discharge settings to their state before 'Force discharge to grid' was used.",
-          "nl": "Herstelt de ontlaadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd ontladen naar het net'.",
-          "af": "Herstel die omsetter se ontlaai-instellings na hul toestand voor 'Forseer ontlaai na die net' gebruik is."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Clear Sell slot\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot wissen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Vee verkoop-tydgleuf uit\"."
         },
         "args": [
           {

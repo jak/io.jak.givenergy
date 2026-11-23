@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Force discharge to grid",
-    "nl": "Geforceerd ontladen naar het net",
-    "af": "Forseer ontlaai na die net"
+    "en": "Force discharge to grid (deprecated)",
+    "nl": "Geforceerd ontladen naar het net (verouderd)",
+    "af": "Forseer ontlaai na die net (verouderd)"
   },
   "titleFormatted": {
-    "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]%",
-    "nl": "Geforceerd ontladen met [[discharge_rate]]% snelheid, reserve [[battery_reserve]]%",
-    "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]%"
+    "en": "Force discharge at [[discharge_rate]]% rate, reserve [[battery_reserve]]% (deprecated)",
+    "nl": "Geforceerd ontladen met [[discharge_rate]]% snelheid, reserve [[battery_reserve]]% (verouderd)",
+    "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]% (verouderd)"
   },
   "hint": {
-    "en": "Sets Sell slot 1 to the whole day, exporting battery power to the grid. The discharge rate applies on inverters with a discharge power setting. Use 'Stop force discharge' to restore the previous slot and settings, even after a restart.",
-    "nl": "Stelt Verkoop-tijdslot 1 in op de hele dag, zodat batterijvermogen naar het net wordt geëxporteerd. De ontlaadsnelheid geldt op omvormers met een ontlaadvermogen-instelling. Gebruik 'Geforceerd ontladen stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
-    "af": "Stel verkoop-tydgleuf 1 op die hele dag, sodat batterykrag na die net uitgevoer word. Die ontlaaitempo geld op omsetters met 'n ontlaaidrywing-instelling. Gebruik 'Stop forseer ontlaai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\", \"Set discharge power\" and \"Set battery reserve\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\", \"Ontlaadvermogen instellen\" en \"Batterijreserve instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\", \"Stel ontlaaidrywing\" en \"Stel batteryreserwe\"."
   },
   "args": [
     {

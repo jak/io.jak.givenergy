@@ -5,11 +5,8 @@ import { withRetry } from '../../lib/retry';
 import { ThresholdTracker } from '../../lib/threshold';
 import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
-import { syncStore, pairedBy1x, completeForceChargeRestore } from '../../lib/store';
-import {
-  scheduleInverter, scheduleSupport, slotHasTarget, forceChargeSlot, setBuySlot, setSellSlot, chargeLimitEnabled, NEW_SELL_TARGET,
-} from '../../lib/schedule';
-import type { ScheduleSupport } from '../../lib/schedule';
+import { syncStore, pairedBy1x } from '../../lib/store';
+import { scheduleInverter, setBuySlot, setSellSlot } from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
 import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
@@ -18,35 +15,12 @@ type SlotConfig = InverterSnapshot['schedules']['charge'][number];
 
 const FORCE_CHARGE_KEY = 'forceChargeRestore';
 const FORCE_DISCHARGE_KEY = 'forceDischargeRestore';
-const FORCE_WINDOW = { start: '00:00', end: '23:59' };
-const LOADING = 'Inverter data is still loading; try again in a minute';
-
-/**
- * A saved slot as the inverter can take it back now. A target it won't accept (e.g. 0, a register
- * never written) becomes `fallback`, the target with no effect: 100% for Buy (a low slot 1 target
- * would cap all charging on ten-slot firmware), 4% for Sell (the battery reserve stops it first).
- * So does a missing one. A slot that has no target register any more goes back without one.
- */
-function restorable(slot: SlotConfig, kind: 'Buy' | 'Sell', support: ScheduleSupport, fallback: number): SlotConfig {
-  const count = kind === 'Buy' ? support.buySlots : support.sellSlots;
-  if (slot.slot > count) {
-    throw new Error(`Can't restore ${kind} slot ${slot.slot} while the inverter reports ${count} slots. Try again after it reconnects.`);
-  }
-  const { targetStateOfCharge: t, ...times } = slot;
-  if (!slotHasTarget(support, slot.slot)) return times;
-  // Also when none was saved (a 2.0.0 record saved before the target was read): the force's target
-  // must not stay behind
-  return { ...times, targetStateOfCharge: t !== undefined && Number.isInteger(t) && t >= 4 && t <= 100 ? t : fallback };
-}
 
 interface ForceChargeRestore {
-  /** Set by 2.0.1 and later; a record without it is from 2.0.0. */
-  version?: number;
   acCharge?: boolean;
   chargeSlot: SlotConfig;
   chargePowerPercent?: number;
   acChargeUpperLimit?: number;
-  acChargeUpperLimitEnabled?: boolean;
 }
 
 interface ForceDischargeRestore {
@@ -190,67 +164,28 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   }
 
   /*
-   * Force charge/discharge take over a Buy/Sell slot for the whole day (Buy: the first slot with a
-   * target register, see forceChargeSlot; Sell: slot 1). What they replace is kept in the device
-   * store, so "stop" restores it even after an app restart or update. A second force, or a retry
-   * after a timeout, keeps the first saved state.
+   * Force charge/discharge take over Buy/Sell slot 1 for the whole day. What they replace is kept
+   * in the device store, so "stop" restores it even after an app restart or update. A second
+   * force, or a retry after a timeout, keeps the first saved state.
    */
 
   async forceCharge(targetSoc: number, chargeRate: number) {
     const inverter = this.connected();
-    const support = scheduleSupport(inverter.capabilities, inverter.layout);
-    const limitEnabled = () => chargeLimitEnabled(scheduleInverter(inverter));
-    // HR 20 may be changed below, so its value must be known first to be restored (single-phase
-    // always reports it once read; three-phase doesn't use it, see chargeLimitEnabled)
-    if (inverter.layout === 'single_phase' && limitEnabled() === undefined) throw new Error(LOADING);
-    let saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
-    if (saved && support.perSlotTargets && !slotHasTarget(support, saved.chargeSlot.slot)) {
-      // Usually 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before
-      // writing anything: that record is dropped. But a force may have run on that slot (started
-      // while per-slot targets were off): always so for a record from this version, and possibly
-      // for a 2.0.0 one whose slot still holds the force window. That force can't take a target
-      // now, and its record holds the settings it replaced, so the user has to stop it first.
-      const live = inverter.getData().schedules.charge.find((x) => x.slot === saved!.chargeSlot.slot);
-      if (!live) throw new Error(LOADING);
-      const forced = live.start === FORCE_WINDOW.start && live.end === FORCE_WINDOW.end;
-      if (saved.version !== undefined || forced) {
-        throw new Error(`A force charge is still running on Buy slot ${saved.chargeSlot.slot}. Stop force charge first, then start it again.`);
-      }
-      saved = null;
-    }
-    if (!saved) {
+    if (!this.getStoreValue(FORCE_CHARGE_KEY)) {
       const { settings, schedules } = inverter.getData();
-      const slot = forceChargeSlot(support);
-      const chargeSlot = schedules.charge.find((x) => x.slot === slot);
-      // The slot's target is overwritten too, so it must have been read to be restored
-      if (!chargeSlot || (slotHasTarget(support, slot) && chargeSlot.targetStateOfCharge === undefined)) {
-        throw new Error(LOADING);
-      }
-      saved = {
-        version: 2,
+      const chargeSlot = schedules.charge.find((x) => x.slot === 1);
+      if (!chargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
+      const saved: ForceChargeRestore = {
         acCharge: settings.acCharge,
         chargeSlot,
         chargePowerPercent: settings.inverterChargePowerPercent,
         acChargeUpperLimit: settings.acChargeUpperLimit,
-        acChargeUpperLimitEnabled: limitEnabled(),
       };
       await this.setStoreValue(FORCE_CHARGE_KEY, saved);
-    } else {
-      const completed = completeForceChargeRestore(saved, limitEnabled());
-      if (completed) {
-        saved = completed;
-        await this.setStoreValue(FORCE_CHARGE_KEY, saved);
-      }
     }
 
-    // The slot saved for restoring is the one in use, also for a force started before an update
-    const { slot } = saved.chargeSlot;
-    this.log(`Force charge: slot=${slot} target=${targetSoc}% rate=${chargeRate}%`);
-    await setBuySlot(scheduleInverter(inverter), slot, { ...FORCE_WINDOW, target: targetSoc });
-    // With per-slot targets an enabled global limit still caps charging (the lower of the two applies)
-    if (support.perSlotTargets && limitEnabled() === true) {
-      await inverter.setSetting('acChargeUpperLimitEnabled', false);
-    }
+    this.log(`Force charge: target=${targetSoc}% rate=${chargeRate}%`);
+    await setBuySlot(scheduleInverter(inverter), 1, { start: '00:00', end: '23:59', target: targetSoc });
     if (inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', chargeRate);
     }
@@ -263,15 +198,9 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.log('Restoring charge settings');
     if (saved.acCharge !== undefined) await inverter.setSetting('acCharge', saved.acCharge);
-    const support = scheduleSupport(inverter.capabilities, inverter.layout);
-    await inverter.setChargeSlot(restorable(saved.chargeSlot, 'Buy', support, 100));
+    await inverter.setChargeSlot(saved.chargeSlot);
     if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
       await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
-    }
-    // Force charge turns HR 20 off (per-slot targets) or on (a global target under 100%). Written
-    // even if the cache matches: a write whose reply timed out may have changed it anyway.
-    if (saved.acChargeUpperLimitEnabled !== undefined && inverter.layout === 'single_phase') {
-      await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', saved.chargePowerPercent);
@@ -281,24 +210,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
   async forceDischarge(dischargeRate: number, batteryReserve: number) {
     const inverter = this.connected();
-    const support = scheduleSupport(inverter.capabilities, inverter.layout);
-    const existing = this.getStoreValue(FORCE_DISCHARGE_KEY) as ForceDischargeRestore | null;
-    if (existing && slotHasTarget(support, 1) && existing.dischargeSlot.targetStateOfCharge === undefined) {
-      // Saved without slot 1's target (by 2.0.0, or while per-slot targets were off). Neither wrote
-      // the target, so the live one is the one to restore.
-      const live = inverter.getData().schedules.discharge.find((x) => x.slot === 1)?.targetStateOfCharge;
-      if (live === undefined) throw new Error(LOADING);
-      await this.setStoreValue(FORCE_DISCHARGE_KEY, {
-        ...existing, dischargeSlot: { ...existing.dischargeSlot, targetStateOfCharge: live },
-      });
-    }
-    if (!existing) {
+    if (!this.getStoreValue(FORCE_DISCHARGE_KEY)) {
       const { settings, schedules } = inverter.getData();
       const dischargeSlot = schedules.discharge.find((x) => x.slot === 1);
-      // The slot's target is overwritten too, so it must have been read to be restored
-      if (!dischargeSlot || (slotHasTarget(support, 1) && dischargeSlot.targetStateOfCharge === undefined)) {
-        throw new Error(LOADING);
-      }
+      if (!dischargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
       const saved: ForceDischargeRestore = {
         dcDischarge: settings.dcDischarge,
         dischargeSlot,
@@ -309,16 +224,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
-    // Reserve and rate first: if a write fails, the window isn't on yet with the old reserve
-    await inverter.setSetting('batteryReserve', batteryReserve);
+    await setSellSlot(scheduleInverter(inverter), 1, { start: '00:00', end: '23:59' });
     if (inverter.supports('inverterDischargePowerPercent')) {
       await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
     }
-    // The lowest stop-at %, so the battery reserve stops it (also after a later reserve change),
-    // not a stop-at % left in the slot's target register
-    await setSellSlot(scheduleInverter(inverter), 1, {
-      ...FORCE_WINDOW, target: slotHasTarget(support, 1) ? NEW_SELL_TARGET : undefined,
-    });
+    await inverter.setSetting('batteryReserve', batteryReserve);
   }
 
   async stopForceDischarge() {
@@ -328,8 +238,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.log('Restoring discharge settings');
     if (saved.dcDischarge !== undefined) await inverter.setSetting('dcDischarge', saved.dcDischarge);
-    const support = scheduleSupport(inverter.capabilities, inverter.layout);
-    await inverter.setDischargeSlot(restorable(saved.dischargeSlot, 'Sell', support, NEW_SELL_TARGET));
+    await inverter.setDischargeSlot(saved.dischargeSlot);
     if (saved.dischargePowerPercent !== undefined && inverter.supports('inverterDischargePowerPercent')) {
       await inverter.setSetting('inverterDischargePowerPercent', saved.dischargePowerPercent);
     }

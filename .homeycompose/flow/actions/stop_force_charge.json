@@ -1,13 +1,14 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Stop force charge",
-    "nl": "Geforceerd laden stoppen",
-    "af": "Stop forseer laai"
+    "en": "Stop force charge (deprecated)",
+    "nl": "Geforceerd laden stoppen (verouderd)",
+    "af": "Stop forseer laai (verouderd)"
   },
   "hint": {
-    "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used.",
-    "nl": "Herstelt de laadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd laden van het net'.",
-    "af": "Herstel die omsetter se laai-instellings na hul toestand voor 'Forseer laai van die net' gebruik is."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Clear Buy slot\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot wissen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Vee koop-tydgleuf uit\"."
   },
   "args": [
     {

@@ -1,13 +1,14 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Stop force discharge",
-    "nl": "Geforceerd ontladen stoppen",
-    "af": "Stop forseer ontlaai"
+    "en": "Stop force discharge (deprecated)",
+    "nl": "Geforceerd ontladen stoppen (verouderd)",
+    "af": "Stop forseer ontlaai (verouderd)"
   },
   "hint": {
-    "en": "Restores inverter discharge settings to their state before 'Force discharge to grid' was used.",
-    "nl": "Herstelt de ontlaadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd ontladen naar het net'.",
-    "af": "Herstel die omsetter se ontlaai-instellings na hul toestand voor 'Forseer ontlaai na die net' gebruik is."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Clear Sell slot\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot wissen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Vee verkoop-tydgleuf uit\"."
   },
   "args": [
     {
