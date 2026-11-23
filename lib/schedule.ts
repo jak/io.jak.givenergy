@@ -454,7 +454,7 @@ export async function applySchedule(
       const w = isNew ? { ...given, target: newTarget } : given;
       if (cur && sameSlot(cur, w, support.perSlotTargets)) continue;
       if (!cur && !w) continue;
-      if (isNew) {
+      if (isNew && (!cur || isEmpty(cur))) {
         await writeNewSlot(write, n, w!, newTarget!);
       } else if (w?.target !== undefined) {
         await write(n, { start: w.start, end: w.end, targetStateOfCharge: w.target });

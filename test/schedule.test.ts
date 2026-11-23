@@ -517,7 +517,8 @@ test('a new row in the slot of a removed one gets the default target, not the ol
     settings: { dcDischarge: true },
   });
   await applySchedule(inv, { buy: [], sell: [{ start: '17:00', end: '18:00' }], pause: null });
-  assert.deepEqual(inv.writes, ['sell1 00:00-00:00 @4', 'sell1 17:00-18:00']);
+  // One write: clearing an occupied slot first could leave 00:00 to the old end if a write fails
+  assert.deepEqual(inv.writes, ['sell1 17:00-18:00 @4']);
 });
 
 test('on three-phase, clearing the last Buy slot leaves force charge (HR 1123) alone', async () => {
