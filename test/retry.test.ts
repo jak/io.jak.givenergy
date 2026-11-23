@@ -41,3 +41,16 @@ test('gives up after three retries, and never retries other errors', async () =>
   }, { homey: other }), /Not supported/);
   assert.deepEqual(other.delays, []);
 });
+
+test('a timeout rejected as a plain object is retried too', async () => {
+  const homey = fakeHomey();
+  let calls = 0;
+  const result = await withRetry(async () => {
+    calls++;
+    // eslint-disable-next-line no-throw-literal
+    if (calls < 2) throw { message: 'Request timeout' };
+    return 'ok';
+  }, { homey });
+  assert.equal(result, 'ok');
+  assert.deepEqual(homey.delays, [5_000]);
+});

@@ -7,7 +7,7 @@ import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
 import { syncStore, pairedBy1x, completeForceChargeRestore } from '../../lib/store';
 import {
-  scheduleInverter, scheduleSupport, slotHasTarget, forceChargeSlot, setBuySlot, setSellSlot,
+  scheduleInverter, scheduleSupport, slotHasTarget, forceChargeSlot, setBuySlot, setSellSlot, chargeLimitEnabled,
 } from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
@@ -17,6 +17,10 @@ type SlotConfig = InverterSnapshot['schedules']['charge'][number];
 
 const FORCE_CHARGE_KEY = 'forceChargeRestore';
 const FORCE_DISCHARGE_KEY = 'forceDischargeRestore';
+const FORCE_WINDOW = { start: '00:00', end: '23:59' };
+const LOADING = 'Inverter data is still loading; try again in a minute';
+
+const isForceWindow = (s: { start: string; end: string }) => s.start === FORCE_WINDOW.start && s.end === FORCE_WINDOW.end;
 
 interface ForceChargeRestore {
   acCharge?: boolean;
@@ -176,24 +180,32 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   async forceCharge(targetSoc: number, chargeRate: number) {
     const inverter = this.connected();
     const support = scheduleSupport(inverter.capabilities, inverter.layout);
+    const limitEnabled = () => chargeLimitEnabled(scheduleInverter(inverter));
     let saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
-    // 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before writing anything
-    if (saved && support.perSlotTargets && !slotHasTarget(support, saved.chargeSlot.slot)) saved = null;
+    if (saved && support.perSlotTargets && !slotHasTarget(support, saved.chargeSlot.slot)) {
+      // 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before writing
+      // anything. Only drop such a record while the slot is still unforced.
+      const live = inverter.getData().schedules.charge.find((x) => x.slot === saved!.chargeSlot.slot);
+      if (live && !isForceWindow(live)) saved = null;
+    }
     if (!saved) {
       const { settings, schedules } = inverter.getData();
       const slot = forceChargeSlot(support);
       const chargeSlot = schedules.charge.find((x) => x.slot === slot);
-      if (!chargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
+      // The slot's target is overwritten too, so it must have been read to be restored
+      if (!chargeSlot || (slotHasTarget(support, slot) && chargeSlot.targetStateOfCharge === undefined)) {
+        throw new Error(LOADING);
+      }
       saved = {
         acCharge: settings.acCharge,
         chargeSlot,
         chargePowerPercent: settings.inverterChargePowerPercent,
         acChargeUpperLimit: settings.acChargeUpperLimit,
-        acChargeUpperLimitEnabled: settings.acChargeUpperLimitEnabled,
+        acChargeUpperLimitEnabled: limitEnabled(),
       };
       await this.setStoreValue(FORCE_CHARGE_KEY, saved);
     } else {
-      const completed = completeForceChargeRestore(saved, inverter.getData().settings.acChargeUpperLimitEnabled);
+      const completed = completeForceChargeRestore(saved, limitEnabled());
       if (completed) {
         saved = completed;
         await this.setStoreValue(FORCE_CHARGE_KEY, saved);
@@ -203,9 +215,9 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     // The slot saved for restoring is the one in use, also for a force started before an update
     const { slot } = saved.chargeSlot;
     this.log(`Force charge: slot=${slot} target=${targetSoc}% rate=${chargeRate}%`);
-    await setBuySlot(scheduleInverter(inverter), slot, { start: '00:00', end: '23:59', target: targetSoc });
+    await setBuySlot(scheduleInverter(inverter), slot, { ...FORCE_WINDOW, target: targetSoc });
     // With per-slot targets an enabled global limit still caps charging (the lower of the two applies)
-    if (inverter.capabilities.perSlotTargets && inverter.getData().settings.acChargeUpperLimitEnabled === true) {
+    if (support.perSlotTargets && limitEnabled() === true) {
       await inverter.setSetting('acChargeUpperLimitEnabled', false);
     }
     if (inverter.supports('inverterChargePowerPercent')) {
@@ -226,7 +238,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
     // Force charge turns HR 20 off (per-slot targets) or on (a global target under 100%)
     if (saved.acChargeUpperLimitEnabled !== undefined
-      && inverter.getData().settings.acChargeUpperLimitEnabled !== saved.acChargeUpperLimitEnabled) {
+      && chargeLimitEnabled(scheduleInverter(inverter)) !== saved.acChargeUpperLimitEnabled) {
       await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
@@ -237,10 +249,14 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
   async forceDischarge(dischargeRate: number, batteryReserve: number) {
     const inverter = this.connected();
+    const support = scheduleSupport(inverter.capabilities, inverter.layout);
     if (!this.getStoreValue(FORCE_DISCHARGE_KEY)) {
       const { settings, schedules } = inverter.getData();
       const dischargeSlot = schedules.discharge.find((x) => x.slot === 1);
-      if (!dischargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
+      // The slot's target is overwritten too, so it must have been read to be restored
+      if (!dischargeSlot || (slotHasTarget(support, 1) && dischargeSlot.targetStateOfCharge === undefined)) {
+        throw new Error(LOADING);
+      }
       const saved: ForceDischargeRestore = {
         dcDischarge: settings.dcDischarge,
         dischargeSlot,
@@ -252,9 +268,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
     // Stop at the reserve, not at a stop-at % left in the slot's target register
-    const support = scheduleSupport(inverter.capabilities, inverter.layout);
     await setSellSlot(scheduleInverter(inverter), 1, {
-      start: '00:00', end: '23:59', target: slotHasTarget(support, 1) ? batteryReserve : undefined,
+      ...FORCE_WINDOW, target: slotHasTarget(support, 1) ? batteryReserve : undefined,
     });
     if (inverter.supports('inverterDischargePowerPercent')) {
       await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);

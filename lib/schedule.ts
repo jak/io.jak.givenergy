@@ -125,14 +125,23 @@ const NEW_SELL_TARGET = 4;
 /**
  * The global AC charge target (two-slot firmware): HR 116 only applies while HR 20 "Enable AC
  * Charge Upper % Limit" is on, so a target under 100% turns it on and 100% turns it off.
- * HR 20 is left alone on models that don't report it.
+ * HR 20 is left alone on models that don't report it, and on three-phase (see chargeLimitEnabled).
  */
+/**
+ * HR 20 "Enable AC Charge Upper % Limit", on single-phase only: it gates HR 116 there, but it's not
+ * known whether it gates three-phase's HR 1111, so three-phase is treated as not reporting it.
+ */
+export function chargeLimitEnabled(inv: Pick<ScheduleInverter, 'layout' | 'getData'>): boolean | undefined {
+  return inv.layout === 'single_phase' ? inv.getData().settings.acChargeUpperLimitEnabled : undefined;
+}
+
 export async function setGlobalChargeTarget(inv: ScheduleInverter, target: number) {
   checkTarget(target);
   const { settings } = inv.getData();
   if (settings.acChargeUpperLimit !== target) await inv.setSetting('acChargeUpperLimit', target);
   const enable = target < 100;
-  if (settings.acChargeUpperLimitEnabled !== undefined && settings.acChargeUpperLimitEnabled !== enable) {
+  const enabled = chargeLimitEnabled(inv);
+  if (enabled !== undefined && enabled !== enable) {
     await inv.setSetting('acChargeUpperLimitEnabled', enable);
   }
 }
@@ -161,6 +170,13 @@ async function clearFlagIfLast(inv: ScheduleInverter, kind: 'charge' | 'discharg
   if (slots.length === count && slots.every(isEmpty)) await setFlag(inv, kind === 'charge' ? 'acCharge' : 'dcDischarge', false);
 }
 
+/** A slot as last read; one not read yet (just after connecting) might hold a window, so wait for it. */
+function readSlot(inv: ScheduleInverter, kind: 'charge' | 'discharge', slot: number): TimeSlotConfig {
+  const current = inv.getData().schedules[kind].find((s) => s.slot === slot);
+  if (!current) throw new Error('Inverter data is still loading; try again in a minute');
+  return current;
+}
+
 /** Check a single-slot target before writing anything. */
 function slotTarget(inv: ScheduleInverter, kind: 'Buy' | 'Sell', slot: number, target: number | undefined) {
   checkTarget(target);
@@ -180,8 +196,7 @@ export async function setBuySlot(inv: ScheduleInverter, slot: number, { start, e
   const support = slotTarget(inv, 'Buy', slot, target);
   let slotTargetValue: number | undefined;
   if (slotHasTarget(support, slot)) {
-    const current = inv.getData().schedules.charge.find((s) => s.slot === slot);
-    slotTargetValue = target ?? (!current || isEmpty(current) ? NEW_BUY_TARGET : undefined);
+    slotTargetValue = target ?? (isEmpty(readSlot(inv, 'charge', slot)) ? NEW_BUY_TARGET : undefined);
   }
   await inv.setChargeSlot(slot, slotTargetValue !== undefined ? { start, end, targetStateOfCharge: slotTargetValue } : { start, end });
   if (!support.perSlotTargets && target !== undefined) await setGlobalChargeTarget(inv, target);
@@ -199,9 +214,8 @@ export async function setSellSlot(inv: ScheduleInverter, slot: number, { start, 
   const support = slotTarget(inv, 'Sell', slot, target);
   if (target !== undefined && !support.perSlotTargets) throw notSupported('A per-slot discharge target');
   let slotTargetValue = target;
-  if (slotTargetValue === undefined && slotHasTarget(support, slot)) {
-    const current = inv.getData().schedules.discharge.find((s) => s.slot === slot);
-    if (!current || isEmpty(current)) slotTargetValue = NEW_SELL_TARGET;
+  if (slotTargetValue === undefined && slotHasTarget(support, slot) && isEmpty(readSlot(inv, 'discharge', slot))) {
+    slotTargetValue = NEW_SELL_TARGET;
   }
   await inv.setDischargeSlot(slot, slotTargetValue !== undefined ? { start, end, targetStateOfCharge: slotTargetValue } : { start, end });
   await setFlag(inv, 'dcDischarge', true);
@@ -256,8 +270,8 @@ function toRow(s: TimeSlotConfig, support: ScheduleSupport): NumberedSlot {
 }
 
 /** The effective global charge target: with HR 20 off the inverter charges to 100%, whatever HR 116 holds. */
-function globalTarget(settings: { acChargeUpperLimit?: number; acChargeUpperLimitEnabled?: boolean }) {
-  return settings.acChargeUpperLimitEnabled === false ? 100 : settings.acChargeUpperLimit;
+function globalTarget(inv: ScheduleInverter) {
+  return chargeLimitEnabled(inv) === false ? 100 : inv.getData().settings.acChargeUpperLimit;
 }
 
 export function readSchedule(inv: ScheduleInverter): ScheduleView {
@@ -279,8 +293,8 @@ export function readSchedule(inv: ScheduleInverter): ScheduleView {
     sell: rows(schedules.discharge),
     pause,
     ecoMode: settings.ecoMode,
-    chargeTarget: support.perSlotTargets ? undefined : globalTarget(settings),
-    globalChargeLimit: support.perSlotTargets && settings.acChargeUpperLimitEnabled === true
+    chargeTarget: support.perSlotTargets ? undefined : globalTarget(inv),
+    globalChargeLimit: support.perSlotTargets && chargeLimitEnabled(inv) === true
       ? settings.acChargeUpperLimit : undefined,
     batteryReserve: settings.batteryReserve,
   };
@@ -411,7 +425,7 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
   if (desired.ecoMode !== undefined && settings.ecoMode !== desired.ecoMode) await inv.setSetting('ecoMode', desired.ecoMode);
   // Only a changed target is written: with HR 20 off the page shows 100%, and saving that back
   // would overwrite the limit HR 116 keeps for when HR 20 is turned on again
-  if (desired.chargeTarget !== undefined && desired.chargeTarget !== globalTarget(settings)) {
+  if (desired.chargeTarget !== undefined && desired.chargeTarget !== globalTarget(inv)) {
     await setGlobalChargeTarget(inv, desired.chargeTarget);
   }
 

@@ -52,3 +52,10 @@ test('a force charge record that has HR 20 state, or a model without HR 20, is l
   assert.equal(completeForceChargeRestore({ acChargeUpperLimitEnabled: false }, true), null);
   assert.equal(completeForceChargeRestore({}, undefined), null);
 });
+
+test('a force charge record saved before HR 20 was read gets it once it is', () => {
+  assert.deepEqual(
+    completeForceChargeRestore({ acChargeUpperLimitEnabled: undefined }, true),
+    { acChargeUpperLimitEnabled: true },
+  );
+});

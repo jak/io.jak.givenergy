@@ -463,3 +463,19 @@ test('with HR 20 off, saving the 100% the page shows keeps the stored limit', as
   await save(60);
   assert.deepEqual(inv.writes, ['acChargeUpperLimitEnabled=true']);
 });
+
+test('a single-slot card waits for an unread slot instead of guessing it is empty', async () => {
+  const inv = fakeInverter({ unread: [2] });
+  await assert.rejects(setSellSlot(inv, 2, { start: '17:00', end: '18:00' }), /still loading/);
+  await assert.rejects(setBuySlot(inv, 2, { start: '01:00', end: '02:00' }), /still loading/);
+  assert.deepEqual(inv.writes, []);
+});
+
+test('HR 20 is left alone on three-phase', async () => {
+  const inv = fakeInverter({
+    caps: { ...BASE, tenSlots: true }, layout: 'three_phase', settings: { acChargeUpperLimitEnabled: false },
+  });
+  await setGlobalChargeTarget(inv, 60);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60']);
+  assert.equal(readSchedule(inv).chargeTarget, 60);
+});

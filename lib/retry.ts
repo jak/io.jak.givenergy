@@ -12,7 +12,8 @@ export async function withRetry<T>(fn: () => Promise<T>, { homey, log }: RetryCo
     try {
       return await fn();
     } catch (err) {
-      const isTimeout = err instanceof Error && err.message.includes('timeout');
+      const message = (err as { message?: unknown } | null)?.message;
+      const isTimeout = typeof message === 'string' && message.includes('timeout');
       if (!isTimeout || attempt >= RETRY_DELAYS.length) throw err;
       log?.(`Inverter timeout, retrying in ${RETRY_DELAYS[attempt] / 1000}s (attempt ${attempt + 2}/${RETRY_DELAYS.length + 1})...`);
       await new Promise<void>((resolve) => {

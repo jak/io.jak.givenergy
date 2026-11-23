@@ -25,14 +25,15 @@ export function pairedBy1x(store: Record<string, unknown>): boolean {
 }
 
 /**
- * A force charge started by 2.0.0 saved no `acChargeUpperLimitEnabled` (HR 20) in its restore
- * record. 2.0.0 never changed HR 20, so the inverter's current value is the one to restore.
- * Returns the completed record, or null when there's nothing to add.
+ * Fill in `acChargeUpperLimitEnabled` (HR 20) on a force charge restore record that has none: one
+ * saved by 2.0.0, or saved before HR 20 was read. HR 20 is only changed once the record holds it,
+ * so the inverter's current value is the one to restore. Returns the completed record, or null
+ * when there's nothing to add.
  */
 export function completeForceChargeRestore<T extends { acChargeUpperLimitEnabled?: boolean }>(
   saved: T,
   acChargeUpperLimitEnabled: boolean | undefined,
 ): T | null {
-  if ('acChargeUpperLimitEnabled' in saved || acChargeUpperLimitEnabled === undefined) return null;
+  if (saved.acChargeUpperLimitEnabled !== undefined || acChargeUpperLimitEnabled === undefined) return null;
   return { ...saved, acChargeUpperLimitEnabled };
 }
