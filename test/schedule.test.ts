@@ -462,9 +462,8 @@ test('with HR 20 off, saving the 100% the page shows keeps the stored limit', as
   });
   await save(100);
   assert.deepEqual(inv.writes, []);
-  // Choosing the stored 60% again only needs HR 20 turned on
   await save(60);
-  assert.deepEqual(inv.writes, ['acChargeUpperLimitEnabled=true']);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60', 'acChargeUpperLimitEnabled=true']);
 });
 
 test('a single-slot card waits for an unread slot instead of guessing it is empty', async () => {
@@ -509,5 +508,11 @@ test('a retry after HR 116 was written but HR 20 was not turns HR 20 off', async
   await applySchedule(inv, {
     buy: [], sell: [], pause: null, chargeTarget: 100,
   });
-  assert.deepEqual(inv.writes, ['acChargeUpperLimitEnabled=false']);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=100', 'acChargeUpperLimitEnabled=false']);
+});
+
+test('an explicit charge target is written even when the last read matches', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: true } });
+  await setGlobalChargeTarget(inv, 60);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60', 'acChargeUpperLimitEnabled=true']);
 });

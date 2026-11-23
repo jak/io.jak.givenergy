@@ -21,15 +21,14 @@ const FORCE_WINDOW = { start: '00:00', end: '23:59' };
 const LOADING = 'Inverter data is still loading; try again in a minute';
 
 /**
- * A saved slot as it can be written back. An unused slot can report a target the inverter won't
- * accept (e.g. 0); that target is left out, since it only applies once the slot gets a window and
- * a new window gets the default target then.
+ * A saved slot as it can be written back. A slot can report a target the inverter won't accept
+ * (e.g. 0, never written); it goes back as the nearest one it does. For a Sell slot 4% acts like
+ * 0%, as the battery reserve (4% or more) stops it first.
  */
 function restorable(slot: SlotConfig): SlotConfig {
   const t = slot.targetStateOfCharge;
-  if (t === undefined || (Number.isInteger(t) && t >= 4 && t <= 100)) return slot;
-  const { targetStateOfCharge, ...rest } = slot;
-  return rest;
+  if (t === undefined) return slot;
+  return { ...slot, targetStateOfCharge: Math.min(100, Math.max(4, Math.round(t))) };
 }
 
 const isForceWindow = (s: { start: string; end: string }) => s.start === FORCE_WINDOW.start && s.end === FORCE_WINDOW.end;

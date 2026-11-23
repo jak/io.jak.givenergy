@@ -137,13 +137,9 @@ export function chargeLimitEnabled(inv: Pick<ScheduleInverter, 'layout' | 'getDa
  */
 export async function setGlobalChargeTarget(inv: ScheduleInverter, target: number) {
   checkTarget(target);
-  const { settings } = inv.getData();
-  if (settings.acChargeUpperLimit !== target) await inv.setSetting('acChargeUpperLimit', target);
-  const enable = target < 100;
-  const enabled = chargeLimitEnabled(inv);
-  if (enabled !== undefined && enabled !== enable) {
-    await inv.setSetting('acChargeUpperLimitEnabled', enable);
-  }
+  // Written even when the last read matches: another controller may have changed it since
+  await inv.setSetting('acChargeUpperLimit', target);
+  if (chargeLimitEnabled(inv) !== undefined) await inv.setSetting('acChargeUpperLimitEnabled', target < 100);
 }
 
 function checkWindow(w: { start: string; end: string }) {
