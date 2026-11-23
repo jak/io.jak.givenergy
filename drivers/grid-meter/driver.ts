@@ -40,7 +40,7 @@ module.exports = class GridMeterDriver extends Homey.Driver {
     }
   }
 
-  async onRepair(session: PairSession, device: Homey.Device) {
+  async onRepair(session: PairSession, device?: Homey.Device) {
     setupRepairSession(session, device, this);
   }
 };

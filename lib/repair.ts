@@ -8,7 +8,9 @@ const IDENTIFY_TIMEOUT_MS = 10_000;
 const IDENTIFY_RETRIES = 1;
 
 /** `device` is the device being repaired, as Homey passes it to `Driver#onRepair`. */
-export function setupRepairSession(session: PairSession, device: Homey.Device, driver: Homey.Driver) {
+export function setupRepairSession(session: PairSession, device: Homey.Device | undefined, driver: Homey.Driver) {
+  // Homey always passes it for a repair (the SDK types it as optional); PairSession can't look it up
+  if (!device) throw new Error('No device to repair');
   session.setHandler('get_current_ip', async () => device.getStore().host ?? '');
 
   session.setHandler('manual_connect', async (data: { host: string }) => {

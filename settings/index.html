@@ -328,24 +328,24 @@
 
       function addRow(type) {
         // The first free half hour from the end of the latest row, so the new slot doesn't overlap.
-        // It may start on the half hour or where a row ends (gaps aren't always on the grid).
+        // It may start on the half hour or where a row ends (gaps aren't always on the grid), and
+        // may cross midnight like any other window.
         var last = rows.reduce(function (m, r) { return Math.max(m, r.end ? minutes(r.end) : 0); }, 0);
         var pad = function (n) { return (n < 10 ? '0' : '') + n; };
         var hhmm = function (m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
         var candidates = [];
         for (var g = 0; g < 1440; g += 30) candidates.push(g);
-        // A start after 23:30 would leave less than half an hour (23:59 is the last time)
-        rows.forEach(function (r) { if (r.end && minutes(r.end) <= 1410) candidates.push(minutes(r.end)); });
+        rows.forEach(function (r) { if (r.end) candidates.push(minutes(r.end)); });
         candidates.sort(function (a, b) { return (a - last + 1440) % 1440 - (b - last + 1440) % 1440; });
         var start = null;
         for (var i = 0; i < candidates.length && start === null; i++) {
           var s = candidates[i];
           var free = true;
-          for (var m = s; m < Math.min(s + 30, 1439); m++) if (taken(m)) free = false;
+          for (var k = 0; k < 30; k++) if (taken((s + k) % 1440)) free = false;
           if (free) start = s;
         }
-        if (start === null) start = Math.min(last, 1380);
-        var row = { type: type, start: hhmm(start), end: start + 30 >= 1440 ? '23:59' : hhmm(start + 30) };
+        if (start === null) start = last % 1440;
+        var row = { type: type, start: hhmm(start), end: hhmm((start + 30) % 1440) };
         if (type === 'pause') row.mode = 'both';
         if (type === 'buy' && current.schedule.support.perSlotTargets) row.target = 100;
         rows.push(row);
