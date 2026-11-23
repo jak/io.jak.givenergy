@@ -525,6 +525,12 @@ test('on three-phase, turning AC charge off also turns force charge (HR 1123) of
   assert.ok(!single.writes.includes('forceCharge=false'));
 });
 
+test('on three-phase, a save with AC charge already off leaves force charge (HR 1123) alone', async () => {
+  const inv = fakeInverter({ caps: { ...BASE, tenSlots: true }, layout: 'three_phase', settings: { acCharge: false, forceCharge: true } });
+  await applySchedule(inv, { buy: [], sell: [{ start: '17:00', end: '18:00' }], pause: null });
+  assert.ok(!inv.writes.includes('forceCharge=false'));
+});
+
 test('a retried save is checked against the schedule from before the first attempt', async () => {
   // Sell 1 and 2 overlap (set by flows); the save replaces Sell 2 with a new row at the same times
   const discharge = [{ slot: 1, start: '17:00', end: '19:00' }, { slot: 2, start: '18:00', end: '18:30' }];

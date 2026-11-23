@@ -6,7 +6,9 @@ import { ThresholdTracker } from '../../lib/threshold';
 import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
 import { syncStore, pairedBy1x } from '../../lib/store';
-import { scheduleInverter, setBuySlot, setSellSlot } from '../../lib/schedule';
+import {
+  scheduleInverter, setBuySlot, setSellSlot, chargeLimitEnabled,
+} from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
 import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
@@ -21,6 +23,7 @@ interface ForceChargeRestore {
   chargeSlot: SlotConfig;
   chargePowerPercent?: number;
   acChargeUpperLimit?: number;
+  acChargeUpperLimitEnabled?: boolean;
 }
 
 interface ForceDischargeRestore {
@@ -180,6 +183,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         chargeSlot,
         chargePowerPercent: settings.inverterChargePowerPercent,
         acChargeUpperLimit: settings.acChargeUpperLimit,
+        // HR 20, which the global charge target turns on or off
+        acChargeUpperLimitEnabled: chargeLimitEnabled(scheduleInverter(inverter)),
       };
       await this.setStoreValue(FORCE_CHARGE_KEY, saved);
     }
@@ -201,6 +206,9 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     await inverter.setChargeSlot(saved.chargeSlot);
     if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
       await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
+    }
+    if (saved.acChargeUpperLimitEnabled !== undefined && inverter.layout === 'single_phase') {
+      await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', saved.chargePowerPercent);

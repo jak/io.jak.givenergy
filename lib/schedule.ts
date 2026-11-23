@@ -142,10 +142,12 @@ function checkWindow(w: { start: string; end: string }) {
 // --- single slots (flow cards, force charge/discharge) ---
 
 async function setFlag(inv: ScheduleInverter, key: 'acCharge' | 'dcDischarge', on: boolean) {
-  if (inv.getData().settings[key] !== on) await inv.setSetting(key, on);
+  const was = inv.getData().settings[key];
+  if (was !== on) await inv.setSetting(key, on);
   // Three-phase force charge (HR 1123), which only the deprecated charge schedule card turns on,
-  // goes off with AC charge, so no Buy slot is left charging from the grid
-  if (key === 'acCharge' && !on && inv.layout === 'three_phase' && inv.getData().settings.forceCharge === true) {
+  // goes off when AC charge does, so no Buy slot is left charging from the grid. Left alone while
+  // AC charge stays off: it may have been turned on elsewhere.
+  if (key === 'acCharge' && !on && was === true && inv.layout === 'three_phase' && inv.getData().settings.forceCharge === true) {
     await inv.setSetting('forceCharge', false);
   }
 }
