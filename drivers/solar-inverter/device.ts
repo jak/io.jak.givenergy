@@ -20,6 +20,18 @@ const FORCE_DISCHARGE_KEY = 'forceDischargeRestore';
 const FORCE_WINDOW = { start: '00:00', end: '23:59' };
 const LOADING = 'Inverter data is still loading; try again in a minute';
 
+/**
+ * A saved slot as it can be written back. An unused slot can report a target the inverter won't
+ * accept (e.g. 0); that target is left out, since it only applies once the slot gets a window and
+ * a new window gets the default target then.
+ */
+function restorable(slot: SlotConfig): SlotConfig {
+  const t = slot.targetStateOfCharge;
+  if (t === undefined || (Number.isInteger(t) && t >= 4 && t <= 100)) return slot;
+  const { targetStateOfCharge, ...rest } = slot;
+  return rest;
+}
+
 const isForceWindow = (s: { start: string; end: string }) => s.start === FORCE_WINDOW.start && s.end === FORCE_WINDOW.end;
 
 interface ForceChargeRestore {
@@ -242,13 +254,13 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.log('Restoring charge settings');
     if (saved.acCharge !== undefined) await inverter.setSetting('acCharge', saved.acCharge);
-    await inverter.setChargeSlot(saved.chargeSlot);
+    await inverter.setChargeSlot(restorable(saved.chargeSlot));
     if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
       await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
     }
-    // Force charge turns HR 20 off (per-slot targets) or on (a global target under 100%)
-    if (saved.acChargeUpperLimitEnabled !== undefined
-      && chargeLimitEnabled(scheduleInverter(inverter)) !== saved.acChargeUpperLimitEnabled) {
+    // Force charge turns HR 20 off (per-slot targets) or on (a global target under 100%). Written
+    // even if the cache matches: a write whose reply timed out may have changed it anyway.
+    if (saved.acChargeUpperLimitEnabled !== undefined && inverter.layout === 'single_phase') {
       await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
@@ -294,7 +306,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     this.log('Restoring discharge settings');
     if (saved.dcDischarge !== undefined) await inverter.setSetting('dcDischarge', saved.dcDischarge);
-    await inverter.setDischargeSlot(saved.dischargeSlot);
+    await inverter.setDischargeSlot(restorable(saved.dischargeSlot));
     if (saved.dischargePowerPercent !== undefined && inverter.supports('inverterDischargePowerPercent')) {
       await inverter.setSetting('inverterDischargePowerPercent', saved.dischargePowerPercent);
     }
