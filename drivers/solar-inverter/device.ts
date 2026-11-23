@@ -25,7 +25,7 @@ const LOADING = 'Inverter data is still loading; try again in a minute';
  * A saved slot as the inverter can take it back now. A target it won't accept (e.g. 0, a register
  * never written) becomes `fallback`, the target with no effect: 100% for Buy (a low slot 1 target
  * would cap all charging on ten-slot firmware), 4% for Sell (the battery reserve stops it first).
- * A slot that has no target register any more goes back without one.
+ * So does a missing one. A slot that has no target register any more goes back without one.
  */
 function restorable(slot: SlotConfig, kind: 'Buy' | 'Sell', support: ScheduleSupport, fallback: number): SlotConfig {
   const count = kind === 'Buy' ? support.buySlots : support.sellSlots;
@@ -33,8 +33,10 @@ function restorable(slot: SlotConfig, kind: 'Buy' | 'Sell', support: ScheduleSup
     throw new Error(`Can't restore ${kind} slot ${slot.slot} while the inverter reports ${count} slots. Try again after it reconnects.`);
   }
   const { targetStateOfCharge: t, ...times } = slot;
-  if (t === undefined || !slotHasTarget(support, slot.slot)) return times;
-  return { ...times, targetStateOfCharge: Number.isInteger(t) && t >= 4 && t <= 100 ? t : fallback };
+  if (!slotHasTarget(support, slot.slot)) return times;
+  // Also when none was saved (a 2.0.0 record saved before the target was read): the force's target
+  // must not stay behind
+  return { ...times, targetStateOfCharge: t !== undefined && Number.isInteger(t) && t >= 4 && t <= 100 ? t : fallback };
 }
 
 interface ForceChargeRestore {
