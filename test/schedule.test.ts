@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type { Capabilities } from 'givenergy-modbus' with { 'resolution-mode': 'import' };
 import {
   scheduleSupport, forceChargeSlot, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
-  readSchedule, applySchedule, validateRows, setGlobalChargeTarget, type ScheduleInverter,
+  readSchedule, applySchedule, validateRows, setGlobalChargeTarget, type ScheduleInverter, type ScheduleRow,
 } from '../lib/schedule.ts';
 
 const BASE: Capabilities = {
@@ -443,4 +443,23 @@ test('an overlap already on the inverter does not block saving, a new one does',
     pause: null,
   }), /overlap/);
   assert.deepEqual(again.writes, []);
+});
+
+test('a new copy of a window already on the inverter is still checked for overlap', () => {
+  const existing: ScheduleRow[] = [{ type: 'buy', start: '01:00', end: '03:00' }];
+  assert.throws(() => validateRows([
+    { type: 'buy', start: '01:00', end: '03:00' }, { type: 'buy', start: '01:00', end: '03:00' },
+  ], existing), /overlap/);
+});
+
+test('with HR 20 off, saving the 100% the page shows keeps the stored limit', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: false } });
+  const save = (chargeTarget: number) => applySchedule(inv, {
+    buy: [], sell: [], pause: null, chargeTarget,
+  });
+  await save(100);
+  assert.deepEqual(inv.writes, []);
+  // Choosing the stored 60% again only needs HR 20 turned on
+  await save(60);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimitEnabled=true']);
 });

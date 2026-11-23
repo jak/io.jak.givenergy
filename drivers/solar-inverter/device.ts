@@ -175,10 +175,13 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
   async forceCharge(targetSoc: number, chargeRate: number) {
     const inverter = this.connected();
+    const support = scheduleSupport(inverter.capabilities, inverter.layout);
     let saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
+    // 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before writing anything
+    if (saved && support.perSlotTargets && !slotHasTarget(support, saved.chargeSlot.slot)) saved = null;
     if (!saved) {
       const { settings, schedules } = inverter.getData();
-      const slot = forceChargeSlot(scheduleSupport(inverter.capabilities, inverter.layout));
+      const slot = forceChargeSlot(support);
       const chargeSlot = schedules.charge.find((x) => x.slot === slot);
       if (!chargeSlot) throw new Error('Inverter data is still loading; try again in a minute');
       saved = {

@@ -308,10 +308,17 @@ export interface ScheduleRow {
 export function validateRows(rows: ScheduleRow[], existing: ScheduleRow[] = []) {
   rows.forEach(checkWindow);
   const key = (r: ScheduleRow) => `${r.type} ${r.start}-${r.end}`;
-  const old = new Set(existing.map(key));
+  // Match rows to existing windows one to one, so a new copy of an existing window is still checked
+  const unmatched = new Map<string, number>();
+  for (const r of existing) unmatched.set(key(r), (unmatched.get(key(r)) ?? 0) + 1);
+  const isExisting = rows.map((r) => {
+    const n = unmatched.get(key(r)) ?? 0;
+    if (n > 0) unmatched.set(key(r), n - 1);
+    return n > 0;
+  });
   for (let i = 0; i < rows.length; i++) {
     for (let j = i + 1; j < rows.length; j++) {
-      if (old.has(key(rows[i])) && old.has(key(rows[j]))) continue;
+      if (isExisting[i] && isExisting[j]) continue;
       const overlap = ranges(rows[i]).some(([a, b]) => ranges(rows[j]).some(([c, d]) => a < d && c < b));
       if (overlap) {
         throw new RangeError(`${rows[i].start}–${rows[i].end} and ${rows[j].start}–${rows[j].end} overlap`);
@@ -402,7 +409,11 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
   }
 
   if (desired.ecoMode !== undefined && settings.ecoMode !== desired.ecoMode) await inv.setSetting('ecoMode', desired.ecoMode);
-  if (desired.chargeTarget !== undefined) await setGlobalChargeTarget(inv, desired.chargeTarget);
+  // Only a changed target is written: with HR 20 off the page shows 100%, and saving that back
+  // would overwrite the limit HR 116 keeps for when HR 20 is turned on again
+  if (desired.chargeTarget !== undefined && desired.chargeTarget !== globalTarget(settings)) {
+    await setGlobalChargeTarget(inv, desired.chargeTarget);
+  }
 
   const writeKind = async (
     current: TimeSlotConfig[], want: Map<number, SlotWindow>, count: number,
