@@ -905,9 +905,9 @@
           "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo (verouderd)"
         },
         "hint": {
-          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot with target\" (or, on inverters with one target for all slots, \"Set charge target\" and \"Set Buy slot\") and \"Set charge power\".",
-          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot met doel instellen\" (of, bij omvormers met één doel voor alle tijdsloten, \"Laaddoel instellen\" en \"Koop-tijdslot instellen\") en \"Laadvermogen instellen\".",
-          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf met teiken\" (of, by omsetters met een teiken vir alle gleuwe, \"Stel laaiteiken\" en \"Stel koop-tydgleuf\") en \"Stel laaidrywing\"."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot with target\" (or, on inverters with one target for all slots, \"Set charge target\" and \"Set Buy slot\") and, where available, \"Set charge power\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot met doel instellen\" (of, bij omvormers met één doel voor alle tijdsloten, \"Laaddoel instellen\" en \"Koop-tijdslot instellen\") en, waar beschikbaar, \"Laadvermogen instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf met teiken\" (of, by omsetters met een teiken vir alle gleuwe, \"Stel laaiteiken\" en \"Stel koop-tydgleuf\") en, waar beskikbaar, \"Stel laaidrywing\"."
         },
         "args": [
           {
@@ -957,9 +957,9 @@
           "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]% (verouderd)"
         },
         "hint": {
-          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\", \"Set discharge power\" and \"Set battery reserve\".",
-          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\", \"Ontlaadvermogen instellen\" en \"Batterijreserve instellen\".",
-          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\", \"Stel ontlaaidrywing\" en \"Stel batteryreserwe\"."
+          "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\", \"Set battery reserve\" and, where available, \"Set discharge power\".",
+          "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\", \"Batterijreserve instellen\" en, waar beschikbaar, \"Ontlaadvermogen instellen\".",
+          "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\", \"Stel batteryreserwe\" en, waar beskikbaar, \"Stel ontlaaidrywing\"."
         },
         "args": [
           {

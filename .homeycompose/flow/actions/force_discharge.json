@@ -11,9 +11,9 @@
     "af": "Forseer ontlaai teen [[discharge_rate]]% tempo, reserwe [[battery_reserve]]% (verouderd)"
   },
   "hint": {
-    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\", \"Set discharge power\" and \"Set battery reserve\".",
-    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\", \"Ontlaadvermogen instellen\" en \"Batterijreserve instellen\".",
-    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\", \"Stel ontlaaidrywing\" en \"Stel batteryreserwe\"."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Sell slot\", \"Set battery reserve\" and, where available, \"Set discharge power\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Verkoop-tijdslot instellen\", \"Batterijreserve instellen\" en, waar beschikbaar, \"Ontlaadvermogen instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel verkoop-tydgleuf\", \"Stel batteryreserwe\" en, waar beskikbaar, \"Stel ontlaaidrywing\"."
   },
   "args": [
     {
