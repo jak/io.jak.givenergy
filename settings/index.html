@@ -421,6 +421,10 @@
         return out;
       }
 
+      function setBusy(on) {
+        document.querySelectorAll('input, select, button').forEach(function (el) { el.disabled = on; });
+      }
+
       function save() {
         if (saving || !current) return;
         var missing = rows.some(function (r) { return !r.start || !r.end; });
@@ -430,14 +434,16 @@
         }
         saving = true;
         $('save').classList.add('is-loading');
-        $('picker').disabled = true;
+        // Nothing can be edited during the save: the response replaces the editor's contents
+        setBusy(true);
         // The inverter being saved: the response belongs to it, whatever is selected by then
         var saved = current;
         Homey.api('PUT', '/inverters/' + encodeURIComponent(saved.serial) + '/schedule', body(), function (err, schedule) {
           saving = false;
           $('save').classList.remove('is-loading');
-          $('picker').disabled = false;
+          setBusy(false);
           if (err) {
+            render();
             Homey.alert(String(err.message || err));
             return;
           }

@@ -156,7 +156,7 @@ test('a new Sell slot stops at 4% (the reserve applies), not a leftover target; 
 
   const sched = fakeInverter({ discharge: discharge.slice(0, 1) });
   await applySchedule(sched, { buy: [], sell: [{ start: '17:30', end: '18:00' }], pause: null });
-  assert.deepEqual(sched.writes, ['sell1 17:30-18:00 @4', 'dcDischarge=true']);
+  assert.deepEqual(sched.writes, ['sell1 00:00-00:00 @4', 'sell1 17:30-18:00', 'dcDischarge=true']);
 });
 
 test('without per-slot targets, a Buy target goes to the global AC charge upper limit', async () => {
@@ -355,7 +355,7 @@ test('a new Buy slot without a target charges to 100%, not an old leftover targe
   await setBuySlot(inv, 2, { start: '13:00', end: '14:00' });
   await applySchedule(inv, { buy: [{ slot: 2, start: '13:00', end: '14:00' }, { start: '15:00', end: '16:00' }], sell: [], pause: null });
   assert.deepEqual(inv.writes, [
-    'buy2 00:00-00:00 @100', 'buy2 13:00-14:00', 'acCharge=true', 'buy1 15:00-16:00 @100',
+    'buy2 00:00-00:00 @100', 'buy2 13:00-14:00', 'acCharge=true', 'buy1 00:00-00:00 @100', 'buy1 15:00-16:00',
   ]);
 });
 
@@ -437,7 +437,7 @@ test('an overlap already on the inverter does not block saving, a new one does',
     sell: [{ start: '17:00', end: '18:00' }],
     pause: null,
   });
-  assert.ok(inv.writes.includes('sell1 17:00-18:00 @4'));
+  assert.ok(inv.writes.includes('sell1 17:00-18:00'));
 
   const again = fakeInverter({ charge, settings: { acCharge: true } });
   await assert.rejects(applySchedule(again, {
@@ -525,5 +525,18 @@ test('a new row in the slot of a removed one gets the default target, not the ol
     settings: { dcDischarge: true },
   });
   await applySchedule(inv, { buy: [], sell: [{ start: '17:00', end: '18:00' }], pause: null });
-  assert.deepEqual(inv.writes, ['sell1 17:00-18:00 @4']);
+  assert.deepEqual(inv.writes, ['sell1 00:00-00:00 @4', 'sell1 17:00-18:00']);
+});
+
+test('on three-phase, turning AC charge off also turns force charge (HR 1123) off', async () => {
+  const caps = { ...BASE, tenSlots: true };
+  const inv = fakeInverter({
+    caps, layout: 'three_phase', charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true },
+  });
+  await clearBuySlot(inv, 1);
+  assert.deepEqual(inv.writes, ['buy1 00:00-00:00', 'acCharge=false', 'forceCharge=false']);
+
+  const single = fakeInverter({ charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true } });
+  await clearBuySlot(single, 1);
+  assert.ok(!single.writes.includes('forceCharge=false'));
 });

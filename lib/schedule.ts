@@ -31,12 +31,12 @@ export interface ScheduleInverter {
     schedules: { charge: TimeSlotConfig[]; discharge: TimeSlotConfig[]; batteryPause?: BatteryPause };
     settings: {
       acCharge?: boolean; dcDischarge?: boolean; acChargeUpperLimit?: number; acChargeUpperLimitEnabled?: boolean;
-      batteryReserve?: number; ecoMode?: boolean;
+      batteryReserve?: number; ecoMode?: boolean; forceCharge?: boolean;
     };
   };
   setChargeSlot(slot: number, config: { start: string; end: string; targetStateOfCharge?: number }): Promise<void>;
   setDischargeSlot(slot: number, config: { start: string; end: string; targetStateOfCharge?: number }): Promise<void>;
-  setSetting(key: 'acCharge' | 'dcDischarge' | 'ecoMode' | 'acChargeUpperLimitEnabled', value: boolean): Promise<void>;
+  setSetting(key: 'acCharge' | 'dcDischarge' | 'ecoMode' | 'acChargeUpperLimitEnabled' | 'forceCharge', value: boolean): Promise<void>;
   setSetting(key: 'acChargeUpperLimit', value: number): Promise<void>;
   setBatteryPause?(pause: { mode: PauseMode; start?: string; end?: string }): Promise<void>;
 }
@@ -153,6 +153,11 @@ function checkWindow(w: { start: string; end: string }) {
 
 async function setFlag(inv: ScheduleInverter, key: 'acCharge' | 'dcDischarge', on: boolean) {
   if (inv.getData().settings[key] !== on) await inv.setSetting(key, on);
+  // Three-phase force charge (HR 1123), which only the deprecated charge schedule card turns on,
+  // goes off with AC charge, so no Buy slot is left charging from the grid
+  if (key === 'acCharge' && !on && inv.layout === 'three_phase' && inv.getData().settings.forceCharge === true) {
+    await inv.setSetting('forceCharge', false);
+  }
 }
 
 /**
@@ -450,17 +455,18 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
   ) => {
     for (let n = 1; n <= count; n++) {
       const cur = current.find((s) => s.slot === n);
-      let w = want.get(n);
-      // A new row (no slot number) gets the default target, also in the slot of a removed row
-      if (w && w.slot === undefined && w.target === undefined && newTarget !== undefined && slotHasTarget(support, n)) {
-        w = { ...w, target: newTarget };
-      }
+      const given = want.get(n);
+      // The default target goes to a window in an empty slot, and to a new row (no slot number)
+      // also when it takes the slot of a removed row
+      const isNew = given !== undefined && given.target === undefined && newTarget !== undefined
+        && slotHasTarget(support, n) && (given.slot === undefined || !cur || isEmpty(cur));
+      const w = isNew ? { ...given, target: newTarget } : given;
       if (cur && sameSlot(cur, w, support.perSlotTargets)) continue;
       if (!cur && !w) continue;
-      if (w?.target !== undefined) {
+      if (isNew) {
+        await writeNewSlot(write, n, w!, newTarget!);
+      } else if (w?.target !== undefined) {
         await write(n, { start: w.start, end: w.end, targetStateOfCharge: w.target });
-      } else if (w && newTarget !== undefined && slotHasTarget(support, n) && (!cur || isEmpty(cur))) {
-        await writeNewSlot(write, n, w, newTarget);
       } else if (w) {
         await write(n, { start: w.start, end: w.end });
       } else {
