@@ -9,7 +9,7 @@ import type {
   Inverter, SinglePhaseInverter, GivEnergyAppApi, CardArgs, ForceControlDevice,
 } from './lib/types';
 import {
-  scheduleInverter, scheduleSupport, slotHasTarget, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
+  scheduleInverter, scheduleSupport, slotHasTarget, setGlobalChargeTarget, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
   readSchedule, applySchedule, type ScheduleInverter, type ScheduleView,
 } from './lib/schedule';
 import { parseDesiredSchedule } from './lib/schedule-request';
@@ -164,7 +164,7 @@ module.exports = class GivEnergyApp extends Homey.App implements GivEnergyAppApi
     action('set_buy_slot', (inv, a) => setBuySlot(sched(inv), slotOf(a), { start: a.start, end: a.end }));
     action('set_buy_slot_target', (inv, a) => setBuySlot(sched(inv), slotOf(a), { start: a.start, end: a.end, target: a.target }));
     action('clear_buy_slot', (inv, a) => clearBuySlot(sched(inv), slotOf(a)));
-    action('set_charge_target', (inv, a) => inv.setSetting('acChargeUpperLimit', a.target));
+    action('set_charge_target', (inv, a) => setGlobalChargeTarget(sched(inv), a.target));
     action('set_sell_slot', (inv, a) => setSellSlot(sched(inv), slotOf(a), { start: a.start, end: a.end }));
     action('set_sell_slot_target', (inv, a) => setSellSlot(sched(inv), slotOf(a), { start: a.start, end: a.end, target: a.target }));
     action('clear_sell_slot', (inv, a) => clearSellSlot(sched(inv), slotOf(a)));

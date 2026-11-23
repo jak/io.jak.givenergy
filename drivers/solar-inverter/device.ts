@@ -7,7 +7,7 @@ import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
 import { syncStore, pairedBy1x } from '../../lib/store';
 import {
-  scheduleInverter, scheduleSupport, forceChargeSlot, setBuySlot, setSellSlot,
+  scheduleInverter, scheduleSupport, slotHasTarget, forceChargeSlot, setBuySlot, setSellSlot,
 } from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
@@ -215,8 +215,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
       await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
     }
-    if (saved.acChargeUpperLimitEnabled === true && inverter.getData().settings.acChargeUpperLimitEnabled === false) {
-      await inverter.setSetting('acChargeUpperLimitEnabled', true);
+    // Force charge turns HR 20 off (per-slot targets) or on (a global target under 100%)
+    if (saved.acChargeUpperLimitEnabled !== undefined
+      && inverter.getData().settings.acChargeUpperLimitEnabled !== saved.acChargeUpperLimitEnabled) {
+      await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', saved.chargePowerPercent);
@@ -240,7 +242,11 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
-    await setSellSlot(scheduleInverter(inverter), 1, { start: '00:00', end: '23:59' });
+    // Stop at the reserve, not at a stop-at % left in the slot's target register
+    const support = scheduleSupport(inverter.capabilities, inverter.layout);
+    await setSellSlot(scheduleInverter(inverter), 1, {
+      start: '00:00', end: '23:59', target: slotHasTarget(support, 1) ? batteryReserve : undefined,
+    });
     if (inverter.supports('inverterDischargePowerPercent')) {
       await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
     }

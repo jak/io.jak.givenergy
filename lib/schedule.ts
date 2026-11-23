@@ -36,7 +36,7 @@ export interface ScheduleInverter {
   };
   setChargeSlot(slot: number, config: { start: string; end: string; targetStateOfCharge?: number }): Promise<void>;
   setDischargeSlot(slot: number, config: { start: string; end: string; targetStateOfCharge?: number }): Promise<void>;
-  setSetting(key: 'acCharge' | 'dcDischarge' | 'ecoMode', value: boolean): Promise<void>;
+  setSetting(key: 'acCharge' | 'dcDischarge' | 'ecoMode' | 'acChargeUpperLimitEnabled', value: boolean): Promise<void>;
   setSetting(key: 'acChargeUpperLimit', value: number): Promise<void>;
   setBatteryPause?(pause: { mode: PauseMode; start?: string; end?: string }): Promise<void>;
 }
@@ -119,6 +119,23 @@ function checkTarget(target: number | undefined) {
 
 /** A Buy slot that was empty gets a 100% target, not whatever an old slot left in its register. */
 const NEW_BUY_TARGET = 100;
+/** A Sell slot that was empty gets the lowest stop-at %, so the battery reserve is what stops it. */
+const NEW_SELL_TARGET = 4;
+
+/**
+ * The global AC charge target (two-slot firmware): HR 116 only applies while HR 20 "Enable AC
+ * Charge Upper % Limit" is on, so a target under 100% turns it on and 100% turns it off.
+ * HR 20 is left alone on models that don't report it.
+ */
+export async function setGlobalChargeTarget(inv: ScheduleInverter, target: number) {
+  checkTarget(target);
+  const { settings } = inv.getData();
+  if (settings.acChargeUpperLimit !== target) await inv.setSetting('acChargeUpperLimit', target);
+  const enable = target < 100;
+  if (settings.acChargeUpperLimitEnabled !== undefined && settings.acChargeUpperLimitEnabled !== enable) {
+    await inv.setSetting('acChargeUpperLimitEnabled', enable);
+  }
+}
 
 function checkWindow(w: { start: string; end: string }) {
   for (const t of [w.start, w.end]) {
@@ -167,7 +184,7 @@ export async function setBuySlot(inv: ScheduleInverter, slot: number, { start, e
     slotTargetValue = target ?? (!current || isEmpty(current) ? NEW_BUY_TARGET : undefined);
   }
   await inv.setChargeSlot(slot, slotTargetValue !== undefined ? { start, end, targetStateOfCharge: slotTargetValue } : { start, end });
-  if (!support.perSlotTargets && target !== undefined) await inv.setSetting('acChargeUpperLimit', target);
+  if (!support.perSlotTargets && target !== undefined) await setGlobalChargeTarget(inv, target);
   await setFlag(inv, 'acCharge', true);
 }
 
@@ -181,7 +198,12 @@ export async function setSellSlot(inv: ScheduleInverter, slot: number, { start, 
   checkWindow({ start, end });
   const support = slotTarget(inv, 'Sell', slot, target);
   if (target !== undefined && !support.perSlotTargets) throw notSupported('A per-slot discharge target');
-  await inv.setDischargeSlot(slot, target !== undefined ? { start, end, targetStateOfCharge: target } : { start, end });
+  let slotTargetValue = target;
+  if (slotTargetValue === undefined && slotHasTarget(support, slot)) {
+    const current = inv.getData().schedules.discharge.find((s) => s.slot === slot);
+    if (!current || isEmpty(current)) slotTargetValue = NEW_SELL_TARGET;
+  }
+  await inv.setDischargeSlot(slot, slotTargetValue !== undefined ? { start, end, targetStateOfCharge: slotTargetValue } : { start, end });
   await setFlag(inv, 'dcDischarge', true);
 }
 
@@ -233,6 +255,11 @@ function toRow(s: TimeSlotConfig, support: ScheduleSupport): NumberedSlot {
   return row;
 }
 
+/** The effective global charge target: with HR 20 off the inverter charges to 100%, whatever HR 116 holds. */
+function globalTarget(settings: { acChargeUpperLimit?: number; acChargeUpperLimitEnabled?: boolean }) {
+  return settings.acChargeUpperLimitEnabled === false ? 100 : settings.acChargeUpperLimit;
+}
+
 export function readSchedule(inv: ScheduleInverter): ScheduleView {
   const support = scheduleSupport(inv.capabilities, inv.layout);
   const { schedules, settings } = inv.getData();
@@ -252,7 +279,7 @@ export function readSchedule(inv: ScheduleInverter): ScheduleView {
     sell: rows(schedules.discharge),
     pause,
     ecoMode: settings.ecoMode,
-    chargeTarget: support.perSlotTargets ? undefined : settings.acChargeUpperLimit,
+    chargeTarget: support.perSlotTargets ? undefined : globalTarget(settings),
     globalChargeLimit: support.perSlotTargets && settings.acChargeUpperLimitEnabled === true
       ? settings.acChargeUpperLimit : undefined,
     batteryReserve: settings.batteryReserve,
@@ -273,11 +300,18 @@ export interface ScheduleRow {
   end: string;
 }
 
-/** Check times and that no two windows overlap (touching is fine: 17:00–17:30 then 17:30–18:00). */
-export function validateRows(rows: ScheduleRow[]) {
+/**
+ * Check times and that no two windows overlap (touching is fine: 17:00–17:30 then 17:30–18:00).
+ * Two rows that are both already on the inverter (`existing`, e.g. an overlap set by a flow card)
+ * may overlap, so they don't block saving other changes.
+ */
+export function validateRows(rows: ScheduleRow[], existing: ScheduleRow[] = []) {
   rows.forEach(checkWindow);
+  const key = (r: ScheduleRow) => `${r.type} ${r.start}-${r.end}`;
+  const old = new Set(existing.map(key));
   for (let i = 0; i < rows.length; i++) {
     for (let j = i + 1; j < rows.length; j++) {
+      if (old.has(key(rows[i])) && old.has(key(rows[j]))) continue;
       const overlap = ranges(rows[i]).some(([a, b]) => ranges(rows[j]).some(([c, d]) => a < d && c < b));
       if (overlap) {
         throw new RangeError(`${rows[i].start}–${rows[i].end} and ${rows[j].start}–${rows[j].end} overlap`);
@@ -342,12 +376,13 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
   const support = scheduleSupport(inv.capabilities, inv.layout);
 
   // Validate everything first, so a bad entry writes nothing.
-  validateRows([
-    ...desired.buy.map((r) => ({ ...r, type: 'buy' as const })),
-    ...desired.sell.map((r) => ({ ...r, type: 'sell' as const })),
-    ...(desired.pause?.start !== undefined && desired.pause.end !== undefined
-      ? [{ type: 'pause' as const, start: desired.pause.start, end: desired.pause.end }] : []),
-  ]);
+  const rowsOf = (s: { buy: SlotWindow[]; sell: SlotWindow[]; pause: PauseWindow | null }): ScheduleRow[] => [
+    ...s.buy.map((r) => ({ type: 'buy' as const, start: r.start, end: r.end })),
+    ...s.sell.map((r) => ({ type: 'sell' as const, start: r.start, end: r.end })),
+    ...(s.pause?.start !== undefined && s.pause.end !== undefined
+      ? [{ type: 'pause' as const, start: s.pause.start, end: s.pause.end }] : []),
+  ];
+  validateRows(rowsOf(desired), rowsOf(readSchedule(inv)));
   [...desired.buy, ...desired.sell].forEach((r) => checkTarget(r.target));
   checkTarget(desired.chargeTarget);
   if (!support.perSlotTargets && [...desired.buy, ...desired.sell].some((r) => r.target !== undefined)) {
@@ -367,9 +402,7 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
   }
 
   if (desired.ecoMode !== undefined && settings.ecoMode !== desired.ecoMode) await inv.setSetting('ecoMode', desired.ecoMode);
-  if (desired.chargeTarget !== undefined && settings.acChargeUpperLimit !== desired.chargeTarget) {
-    await inv.setSetting('acChargeUpperLimit', desired.chargeTarget);
-  }
+  if (desired.chargeTarget !== undefined) await setGlobalChargeTarget(inv, desired.chargeTarget);
 
   const writeKind = async (
     current: TimeSlotConfig[], want: Map<number, SlotWindow>, count: number,
@@ -390,7 +423,7 @@ export async function applySchedule(inv: ScheduleInverter, desired: DesiredSched
     }
   };
   await writeKind(schedules.charge, buy, support.buySlots, inv.setChargeSlot.bind(inv), NEW_BUY_TARGET);
-  await writeKind(schedules.discharge, sell, support.sellSlots, inv.setDischargeSlot.bind(inv));
+  await writeKind(schedules.discharge, sell, support.sellSlots, inv.setDischargeSlot.bind(inv), NEW_SELL_TARGET);
 
   if (support.pause !== 'none') {
     const cur = readSchedule(inv).pause;
