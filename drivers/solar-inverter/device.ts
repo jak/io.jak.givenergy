@@ -5,7 +5,7 @@ import { withRetry } from '../../lib/retry';
 import { ThresholdTracker } from '../../lib/threshold';
 import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
-import { syncStore, pairedBy1x } from '../../lib/store';
+import { syncStore, pairedBy1x, completeForceChargeRestore } from '../../lib/store';
 import {
   scheduleInverter, scheduleSupport, slotHasTarget, forceChargeSlot, setBuySlot, setSellSlot,
 } from '../../lib/schedule';
@@ -189,6 +189,12 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         acChargeUpperLimitEnabled: settings.acChargeUpperLimitEnabled,
       };
       await this.setStoreValue(FORCE_CHARGE_KEY, saved);
+    } else {
+      const completed = completeForceChargeRestore(saved, inverter.getData().settings.acChargeUpperLimitEnabled);
+      if (completed) {
+        saved = completed;
+        await this.setStoreValue(FORCE_CHARGE_KEY, saved);
+      }
     }
 
     // The slot saved for restoring is the one in use, also for a force started before an update

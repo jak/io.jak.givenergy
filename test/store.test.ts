@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { syncStore, pairedBy1x } from '../lib/store.ts';
+import { syncStore, pairedBy1x, completeForceChargeRestore } from '../lib/store.ts';
 
 function fakeDevice(store: Record<string, unknown>) {
   const writes: string[] = [];
@@ -41,4 +41,14 @@ test('pairedBy1x spots a 1.x store until it is migrated', async () => {
   await syncStore(device, { model: 'hybrid_gen2', layout: 'single_phase' });
   assert.equal(pairedBy1x(device.store), false);
   assert.equal(pairedBy1x({ host: '10.0.0.2', model: 'hybrid_gen3', layout: 'single_phase' }), false);
+});
+
+test('a force charge record from 2.0.0 gets the current HR 20 state', () => {
+  const saved: { chargeSlot: object; acChargeUpperLimitEnabled?: boolean } = { chargeSlot: { slot: 1, start: '23:30', end: '05:30' } };
+  assert.deepEqual(completeForceChargeRestore(saved, true), { ...saved, acChargeUpperLimitEnabled: true });
+});
+
+test('a force charge record that has HR 20 state, or a model without HR 20, is left alone', () => {
+  assert.equal(completeForceChargeRestore({ acChargeUpperLimitEnabled: false }, true), null);
+  assert.equal(completeForceChargeRestore({}, undefined), null);
 });

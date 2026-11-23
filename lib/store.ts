@@ -23,3 +23,16 @@ export async function syncStore(device: StoreDevice, inverter: { model: string; 
 export function pairedBy1x(store: Record<string, unknown>): boolean {
   return 'generation' in store;
 }
+
+/**
+ * A force charge started by 2.0.0 saved no `acChargeUpperLimitEnabled` (HR 20) in its restore
+ * record. 2.0.0 never changed HR 20, so the inverter's current value is the one to restore.
+ * Returns the completed record, or null when there's nothing to add.
+ */
+export function completeForceChargeRestore<T extends { acChargeUpperLimitEnabled?: boolean }>(
+  saved: T,
+  acChargeUpperLimitEnabled: boolean | undefined,
+): T | null {
+  if ('acChargeUpperLimitEnabled' in saved || acChargeUpperLimitEnabled === undefined) return null;
+  return { ...saved, acChargeUpperLimitEnabled };
+}
