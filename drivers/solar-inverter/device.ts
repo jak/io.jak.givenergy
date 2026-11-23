@@ -204,11 +204,12 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.log('Restoring charge settings');
     if (saved.acCharge !== undefined) await inverter.setSetting('acCharge', saved.acCharge);
     await inverter.setChargeSlot(saved.chargeSlot);
-    if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
-      await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
-    }
-    if (saved.acChargeUpperLimitEnabled !== undefined && inverter.layout === 'single_phase') {
-      await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
+    if (!inverter.capabilities.perSlotTargets) {
+      // The global target force charge set: HR 116, and on single-phase the HR 20 switch
+      if (saved.acChargeUpperLimit !== undefined) await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
+      if (saved.acChargeUpperLimitEnabled !== undefined && inverter.layout === 'single_phase') {
+        await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
+      }
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', saved.chargePowerPercent);

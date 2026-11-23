@@ -518,7 +518,7 @@ test('on three-phase, turning AC charge off also turns force charge (HR 1123) of
     caps, layout: 'three_phase', charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true },
   });
   await clearBuySlot(inv, 1);
-  assert.deepEqual(inv.writes, ['buy1 00:00-00:00', 'acCharge=false', 'forceCharge=false']);
+  assert.deepEqual(inv.writes, ['buy1 00:00-00:00', 'forceCharge=false', 'acCharge=false']);
 
   const single = fakeInverter({ charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true } });
   await clearBuySlot(single, 1);
