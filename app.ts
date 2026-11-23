@@ -10,7 +10,7 @@ import type {
 } from './lib/types';
 import {
   scheduleInverter, scheduleSupport, slotHasTarget, setGlobalChargeTarget, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
-  readSchedule, applySchedule, type ScheduleInverter, type ScheduleView,
+  readSchedule, applySchedule, scheduleRows, type ScheduleInverter, type ScheduleView,
 } from './lib/schedule';
 import { parseDesiredSchedule } from './lib/schedule-request';
 import { modelName } from './lib/device-settings';
@@ -289,8 +289,10 @@ module.exports = class GivEnergyApp extends Homey.App implements GivEnergyAppApi
     if (!inverter) throw new Error('Inverter not connected');
     const desired = parseDesiredSchedule(body);
     const target = scheduleInverter(inverter);
+    // Taken once: a retry is checked against the schedule as it was before the first attempt
+    const before = scheduleRows(readSchedule(target));
     try {
-      await withRetry(() => applySchedule(target, desired), { homey: this.homey, log: this.log.bind(this) });
+      await withRetry(() => applySchedule(target, desired, before), { homey: this.homey, log: this.log.bind(this) });
     } catch (err) {
       throw new Error(userMessage(err));
     }

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type { Capabilities } from 'givenergy-modbus' with { 'resolution-mode': 'import' };
 import {
   scheduleSupport, forceChargeSlot, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
-  readSchedule, applySchedule, validateRows, setGlobalChargeTarget, type ScheduleInverter, type ScheduleRow,
+  readSchedule, applySchedule, scheduleRows, validateRows, setGlobalChargeTarget, type ScheduleInverter, type ScheduleRow,
 } from '../lib/schedule.ts';
 
 const BASE: Capabilities = {
@@ -539,4 +539,17 @@ test('on three-phase, turning AC charge off also turns force charge (HR 1123) of
   const single = fakeInverter({ charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true } });
   await clearBuySlot(single, 1);
   assert.ok(!single.writes.includes('forceCharge=false'));
+});
+
+test('a retried save is checked against the schedule from before the first attempt', async () => {
+  // Sell 1 and 2 overlap (set by flows); the save replaces Sell 2 with a new row at the same times
+  const discharge = [{ slot: 1, start: '17:00', end: '19:00' }, { slot: 2, start: '18:00', end: '18:30' }];
+  const inv = fakeInverter({ discharge, settings: { dcDischarge: true } });
+  const before = scheduleRows(readSchedule(inv));
+  const desired = { buy: [], sell: [{ slot: 1, start: '17:00', end: '19:00' }, { start: '18:00', end: '18:30' }], pause: null };
+  // The first attempt clears Sell 2, then times out: the inverter now has no overlap
+  await inv.setDischargeSlot(2, { start: '00:00', end: '00:00' });
+  await assert.rejects(applySchedule(inv, desired), /overlap/);
+  await applySchedule(inv, desired, before);
+  assert.equal(inv.getData().schedules.discharge[1].start, '18:00');
 });

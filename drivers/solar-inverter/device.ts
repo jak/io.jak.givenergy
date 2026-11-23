@@ -203,10 +203,15 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     if (inverter.layout === 'single_phase' && limitEnabled() === undefined) throw new Error(LOADING);
     let saved = this.getStoreValue(FORCE_CHARGE_KEY) as ForceChargeRestore | null;
     if (saved && support.perSlotTargets && !slotHasTarget(support, saved.chargeSlot.slot)) {
-      // 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before writing
-      // anything: drop that record. A later one means a force did run on that slot (started while
-      // per-slot targets were off); it can't take a target now, so the user has to stop it first.
-      if (saved.version !== undefined) {
+      // Usually 2.0.0 saved slot 1 on three-phase, then refused it (no target register) before
+      // writing anything: that record is dropped. But a force may have run on that slot (started
+      // while per-slot targets were off): always so for a record from this version, and possibly
+      // for a 2.0.0 one whose slot still holds the force window. That force can't take a target
+      // now, and its record holds the settings it replaced, so the user has to stop it first.
+      const live = inverter.getData().schedules.charge.find((x) => x.slot === saved!.chargeSlot.slot);
+      if (!live) throw new Error(LOADING);
+      const forced = live.start === FORCE_WINDOW.start && live.end === FORCE_WINDOW.end;
+      if (saved.version !== undefined || forced) {
         throw new Error(`A force charge is still running on Buy slot ${saved.chargeSlot.slot}. Stop force charge first, then start it again.`);
       }
       saved = null;

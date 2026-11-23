@@ -405,22 +405,29 @@ const sameSlot = (cur: TimeSlotConfig, want: SlotWindow | undefined, perSlot: bo
   return !perSlot || want.target === undefined || cur.targetStateOfCharge === want.target;
 };
 
-/**
- * Make the inverter's schedule match `desired`, writing only what changed: eco mode and the global
- * target, then Buy slots, Sell slots, the pause, and the AC charge / DC discharge flags last.
- * Everything is validated before the first write.
- */
-export async function applySchedule(inv: ScheduleInverter, desired: DesiredSchedule) {
-  const support = scheduleSupport(inv.capabilities, inv.layout);
-
-  // Validate everything first, so a bad entry writes nothing.
-  const rowsOf = (s: { buy: SlotWindow[]; sell: SlotWindow[]; pause: PauseWindow | null }): ScheduleRow[] => [
+/** A schedule's windows as rows, for validateRows. */
+export function scheduleRows(s: { buy: SlotWindow[]; sell: SlotWindow[]; pause: PauseWindow | null }): ScheduleRow[] {
+  return [
     ...s.buy.map((r) => ({ type: 'buy' as const, start: r.start, end: r.end })),
     ...s.sell.map((r) => ({ type: 'sell' as const, start: r.start, end: r.end })),
     ...(s.pause?.start !== undefined && s.pause.end !== undefined
       ? [{ type: 'pause' as const, start: s.pause.start, end: s.pause.end }] : []),
   ];
-  validateRows(rowsOf(desired), rowsOf(readSchedule(inv)));
+}
+
+/**
+ * Make the inverter's schedule match `desired`, writing only what changed: eco mode and the global
+ * target, then Buy slots, Sell slots, the pause, and the AC charge / DC discharge flags last.
+ * Everything is validated before the first write. `before` is the inverter's windows before the
+ * save; a retry passes the first attempt's, so a partial write doesn't change what's allowed.
+ */
+export async function applySchedule(
+  inv: ScheduleInverter, desired: DesiredSchedule, before: ScheduleRow[] = scheduleRows(readSchedule(inv)),
+) {
+  const support = scheduleSupport(inv.capabilities, inv.layout);
+
+  // Validate everything first, so a bad entry writes nothing.
+  validateRows(scheduleRows(desired), before);
   [...desired.buy, ...desired.sell].forEach((r) => checkTarget(r.target));
   checkTarget(desired.chargeTarget);
   if (!support.perSlotTargets && [...desired.buy, ...desired.sell].some((r) => r.target !== undefined)) {
