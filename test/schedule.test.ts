@@ -512,23 +512,13 @@ test('a new row in the slot of a removed one gets the default target, not the ol
   assert.deepEqual(inv.writes, ['sell1 00:00-00:00 @4', 'sell1 17:00-18:00']);
 });
 
-test('on three-phase, turning AC charge off also turns force charge (HR 1123) off', async () => {
-  const caps = { ...BASE, tenSlots: true };
+test('on three-phase, clearing the last Buy slot leaves force charge (HR 1123) alone', async () => {
+  // Only the deprecated charge schedule card switches it, as in 1.x
   const inv = fakeInverter({
-    caps, layout: 'three_phase', charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true },
+    caps: { ...BASE, tenSlots: true }, layout: 'three_phase', charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true },
   });
   await clearBuySlot(inv, 1);
-  assert.deepEqual(inv.writes, ['buy1 00:00-00:00', 'forceCharge=false', 'acCharge=false']);
-
-  const single = fakeInverter({ charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true } });
-  await clearBuySlot(single, 1);
-  assert.ok(!single.writes.includes('forceCharge=false'));
-});
-
-test('on three-phase, a save with AC charge already off leaves force charge (HR 1123) alone', async () => {
-  const inv = fakeInverter({ caps: { ...BASE, tenSlots: true }, layout: 'three_phase', settings: { acCharge: false, forceCharge: true } });
-  await applySchedule(inv, { buy: [], sell: [{ start: '17:00', end: '18:00' }], pause: null });
-  assert.ok(!inv.writes.includes('forceCharge=false'));
+  assert.deepEqual(inv.writes, ['buy1 00:00-00:00', 'acCharge=false']);
 });
 
 test('a retried save is checked against the schedule from before the first attempt', async () => {

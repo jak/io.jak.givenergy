@@ -31,12 +31,12 @@ export interface ScheduleInverter {
     schedules: { charge: TimeSlotConfig[]; discharge: TimeSlotConfig[]; batteryPause?: BatteryPause };
     settings: {
       acCharge?: boolean; dcDischarge?: boolean; acChargeUpperLimit?: number; acChargeUpperLimitEnabled?: boolean;
-      batteryReserve?: number; ecoMode?: boolean; forceCharge?: boolean;
+      batteryReserve?: number; ecoMode?: boolean;
     };
   };
   setChargeSlot(slot: number, config: { start: string; end: string; targetStateOfCharge?: number }): Promise<void>;
   setDischargeSlot(slot: number, config: { start: string; end: string; targetStateOfCharge?: number }): Promise<void>;
-  setSetting(key: 'acCharge' | 'dcDischarge' | 'ecoMode' | 'acChargeUpperLimitEnabled' | 'forceCharge', value: boolean): Promise<void>;
+  setSetting(key: 'acCharge' | 'dcDischarge' | 'ecoMode' | 'acChargeUpperLimitEnabled', value: boolean): Promise<void>;
   setSetting(key: 'acChargeUpperLimit', value: number): Promise<void>;
   setBatteryPause?(pause: { mode: PauseMode; start?: string; end?: string }): Promise<void>;
 }
@@ -142,15 +142,7 @@ function checkWindow(w: { start: string; end: string }) {
 // --- single slots (flow cards, force charge/discharge) ---
 
 async function setFlag(inv: ScheduleInverter, key: 'acCharge' | 'dcDischarge', on: boolean) {
-  const { settings } = inv.getData();
-  // Three-phase force charge (HR 1123), which only the deprecated charge schedule card turns on,
-  // goes off when AC charge does, so no Buy slot is left charging from the grid. Left alone while
-  // AC charge stays off: it may have been turned on elsewhere. Written first, so a retry after a
-  // timeout still sees AC charge on and clears it.
-  if (key === 'acCharge' && !on && settings.acCharge === true && inv.layout === 'three_phase' && settings.forceCharge === true) {
-    await inv.setSetting('forceCharge', false);
-  }
-  if (settings[key] !== on) await inv.setSetting(key, on);
+  if (inv.getData().settings[key] !== on) await inv.setSetting(key, on);
 }
 
 /**
