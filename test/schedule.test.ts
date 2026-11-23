@@ -487,12 +487,20 @@ test('a retry after a partial new-slot write still gives the slot its default ta
   });
 });
 
-test('a retry after HR 116 was written but HR 20 was not turns HR 20 off', async () => {
+test('a retry after HR 116 was written but HR 20 was not turns HR 20 on', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: false } });
+  await applySchedule(inv, {
+    buy: [], sell: [], pause: null, chargeTarget: 60,
+  });
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60', 'acChargeUpperLimitEnabled=true']);
+});
+
+test('saving a 100% target leaves HR 20 on at 100% alone (it charges the same as off)', async () => {
   const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 100, acChargeUpperLimitEnabled: true } });
   await applySchedule(inv, {
     buy: [], sell: [], pause: null, chargeTarget: 100,
   });
-  assert.deepEqual(inv.writes, ['acChargeUpperLimit=100', 'acChargeUpperLimitEnabled=false']);
+  assert.deepEqual(inv.writes, []);
 });
 
 test('an explicit charge target is written even when the last read matches', async () => {

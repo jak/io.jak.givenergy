@@ -169,7 +169,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   /*
    * Force charge/discharge take over Buy/Sell slot 1 for the whole day. What they replace is kept
    * in the device store, so "stop" restores it even after an app restart or update. A second
-   * force, or a retry after a timeout, keeps the first saved state.
+   * force, or a retry after a timeout, keeps the first saved state. Every record has the fields
+   * below: 1.6.0 kept its state in memory, so no record predates this version.
    */
 
   async forceCharge(targetSoc: number, chargeRate: number) {

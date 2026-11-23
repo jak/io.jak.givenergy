@@ -433,11 +433,10 @@ export async function applySchedule(
 
   if (desired.ecoMode !== undefined && settings.ecoMode !== desired.ecoMode) await inv.setSetting('ecoMode', desired.ecoMode);
   // Only a changed target is written: with HR 20 off the page shows 100%, and saving that back
-  // would overwrite the limit HR 116 keeps for when HR 20 is turned on again. The switch is checked
-  // too, so a retry after HR 116 was written but HR 20 wasn't finishes the job.
-  const limitSwitch = chargeLimitEnabled(inv);
-  if (desired.chargeTarget !== undefined && (desired.chargeTarget !== globalTarget(inv)
-    || (limitSwitch !== undefined && limitSwitch !== desired.chargeTarget < 100))) {
+  // would overwrite the limit HR 116 keeps for when HR 20 is turned on again. That also covers a
+  // retry after HR 116 was written but HR 20 wasn't: under 100% it still reads as 100% (so is
+  // written again), and HR 20 left on at 100% charges the same as off.
+  if (desired.chargeTarget !== undefined && desired.chargeTarget !== globalTarget(inv)) {
     await setGlobalChargeTarget(inv, desired.chargeTarget);
   }
 
