@@ -297,15 +297,16 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     }
 
     this.log(`Force discharge: rate=${dischargeRate}% reserve=${batteryReserve}%`);
+    // Reserve and rate first: if a write fails, the window isn't on yet with the old reserve
+    await inverter.setSetting('batteryReserve', batteryReserve);
+    if (inverter.supports('inverterDischargePowerPercent')) {
+      await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
+    }
     // The lowest stop-at %, so the battery reserve stops it (also after a later reserve change),
     // not a stop-at % left in the slot's target register
     await setSellSlot(scheduleInverter(inverter), 1, {
       ...FORCE_WINDOW, target: slotHasTarget(support, 1) ? NEW_SELL_TARGET : undefined,
     });
-    if (inverter.supports('inverterDischargePowerPercent')) {
-      await inverter.setSetting('inverterDischargePowerPercent', dischargeRate);
-    }
-    await inverter.setSetting('batteryReserve', batteryReserve);
   }
 
   async stopForceDischarge() {

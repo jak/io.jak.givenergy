@@ -334,7 +334,8 @@
         var hhmm = function (m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); };
         var candidates = [];
         for (var g = 0; g < 1440; g += 30) candidates.push(g);
-        rows.forEach(function (r) { if (r.end) candidates.push(minutes(r.end)); });
+        // A start after 23:30 would leave less than half an hour (23:59 is the last time)
+        rows.forEach(function (r) { if (r.end && minutes(r.end) <= 1410) candidates.push(minutes(r.end)); });
         candidates.sort(function (a, b) { return (a - last + 1440) % 1440 - (b - last + 1440) % 1440; });
         var start = null;
         for (var i = 0; i < candidates.length && start === null; i++) {
