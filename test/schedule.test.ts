@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import type { Capabilities } from 'givenergy-modbus' with { 'resolution-mode': 'import' };
 import {
   scheduleSupport, setBuySlot, clearBuySlot, setSellSlot, clearSellSlot, setPause, clearPause,
-  readSchedule, applySchedule, validateRows, type ScheduleInverter,
+  readSchedule, applySchedule, scheduleRows, validateRows, setGlobalChargeTarget, type ScheduleInverter, type ScheduleRow,
 } from '../lib/schedule.ts';
 
 const BASE: Capabilities = {
@@ -136,7 +136,27 @@ test('clearing the last Sell slot turns DC discharge off', async () => {
 test('setting a Sell slot turns DC discharge on and leaves eco mode alone', async () => {
   const inv = fakeInverter();
   await setSellSlot(inv, 1, { start: '17:30', end: '18:00' });
-  assert.deepEqual(inv.writes, ['sell1 17:30-18:00', 'dcDischarge=true']);
+  // The default target goes in before the window (see writeNewSlot)
+  assert.deepEqual(inv.writes, ['sell1 00:00-00:00 @4', 'sell1 17:30-18:00', 'dcDischarge=true']);
+});
+
+test('a new Sell slot stops at 4% (the reserve applies), not a leftover target; a used one keeps its own', async () => {
+  const sellSlot = (slot: number, start: string, end: string, targetStateOfCharge: number) => ({
+    slot, start, end, targetStateOfCharge,
+  });
+  const discharge = [sellSlot(1, '00:00', '00:00', 50), sellSlot(2, '16:00', '17:00', 30)];
+  const inv = fakeInverter({ discharge });
+  await setSellSlot(inv, 1, { start: '17:30', end: '18:00' });
+  await setSellSlot(inv, 2, { start: '16:00', end: '16:30' });
+  assert.deepEqual(inv.writes, ['sell1 00:00-00:00 @4', 'sell1 17:30-18:00', 'dcDischarge=true', 'sell2 16:00-16:30']);
+
+  const gen2 = fakeInverter({ caps: GEN2 });
+  await setSellSlot(gen2, 1, { start: '17:30', end: '18:00' });
+  assert.deepEqual(gen2.writes, ['sell1 17:30-18:00', 'dcDischarge=true']);
+
+  const sched = fakeInverter({ discharge: discharge.slice(0, 1) });
+  await applySchedule(sched, { buy: [], sell: [{ start: '17:30', end: '18:00' }], pause: null });
+  assert.deepEqual(sched.writes, ['sell1 00:00-00:00 @4', 'sell1 17:30-18:00', 'dcDischarge=true']);
 });
 
 test('without per-slot targets, a Buy target goes to the global AC charge upper limit', async () => {
@@ -334,7 +354,9 @@ test('a new Buy slot without a target charges to 100%, not an old leftover targe
   });
   await setBuySlot(inv, 2, { start: '13:00', end: '14:00' });
   await applySchedule(inv, { buy: [{ slot: 2, start: '13:00', end: '14:00' }, { start: '15:00', end: '16:00' }], sell: [], pause: null });
-  assert.deepEqual(inv.writes, ['buy2 13:00-14:00 @100', 'acCharge=true', 'buy1 15:00-16:00 @100']);
+  assert.deepEqual(inv.writes, [
+    'buy2 00:00-00:00 @100', 'buy2 13:00-14:00', 'acCharge=true', 'buy1 00:00-00:00 @100', 'buy1 15:00-16:00',
+  ]);
 });
 
 test('clearing a slot keeps the flag on while other slots are still unread', async () => {
@@ -363,4 +385,172 @@ test('readSchedule reports an enabled global AC charge limit on per-slot models'
   const capped = fakeInverter({ settings: { acChargeUpperLimitEnabled: true, acChargeUpperLimit: 80 } });
   assert.equal(readSchedule(capped).globalChargeLimit, 80);
   assert.equal(readSchedule(fakeInverter({ settings: { acChargeUpperLimit: 80 } })).globalChargeLimit, undefined);
+});
+
+test('a global charge target under 100% turns HR 20 on, 100% turns it off', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimitEnabled: false } });
+  await setGlobalChargeTarget(inv, 60);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60', 'acChargeUpperLimitEnabled=true']);
+  await setGlobalChargeTarget(inv, 100);
+  assert.deepEqual(inv.writes.slice(2), ['acChargeUpperLimit=100', 'acChargeUpperLimitEnabled=false']);
+
+  const viaSlot = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimitEnabled: false } });
+  await setBuySlot(viaSlot, 1, { start: '00:30', end: '04:30', target: 80 });
+  assert.deepEqual(viaSlot.writes, ['buy1 00:30-04:30', 'acChargeUpperLimit=80', 'acChargeUpperLimitEnabled=true', 'acCharge=true']);
+
+  // Not reported by the model: HR 20 is left alone
+  const noSwitch = fakeInverter({ caps: GEN2 });
+  await setGlobalChargeTarget(noSwitch, 60);
+  assert.deepEqual(noSwitch.writes, ['acChargeUpperLimit=60']);
+  await assert.rejects(setGlobalChargeTarget(noSwitch, 2), /between 4 and 100/);
+});
+
+test('with HR 20 off the page shows a 100% charge target', () => {
+  const off = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: false } });
+  assert.equal(readSchedule(off).chargeTarget, 100);
+  const on = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: true } });
+  assert.equal(readSchedule(on).chargeTarget, 60);
+});
+
+test('an overlap already on the inverter does not block saving, a new one does', async () => {
+  // e.g. set by flow cards: Buy 1 23:30-05:30 and Buy 2 01:00-03:00
+  const charge = [{ slot: 1, start: '23:30', end: '05:30' }, { slot: 2, start: '01:00', end: '03:00' }];
+  const inv = fakeInverter({ charge, settings: { acCharge: true } });
+  await applySchedule(inv, {
+    buy: [{ slot: 1, start: '23:30', end: '05:30' }, { slot: 2, start: '01:00', end: '03:00' }],
+    sell: [{ start: '17:00', end: '18:00' }],
+    pause: null,
+  });
+  assert.ok(inv.writes.includes('sell1 17:00-18:00'));
+
+  const again = fakeInverter({ charge, settings: { acCharge: true } });
+  await assert.rejects(applySchedule(again, {
+    buy: [{ slot: 1, start: '23:30', end: '05:30' }, { slot: 2, start: '01:00', end: '03:00' }],
+    sell: [{ start: '02:00', end: '02:30' }],
+    pause: null,
+  }), /overlap/);
+  assert.deepEqual(again.writes, []);
+});
+
+test('a new copy of a window already on the inverter is still checked for overlap', () => {
+  const existing: ScheduleRow[] = [{ type: 'buy', start: '01:00', end: '03:00' }];
+  assert.throws(() => validateRows([
+    { type: 'buy', start: '01:00', end: '03:00' }, { type: 'buy', start: '01:00', end: '03:00' },
+  ], existing), /overlap/);
+});
+
+test('with HR 20 off, saving the 100% the page shows keeps the stored limit', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: false } });
+  const save = (chargeTarget: number) => applySchedule(inv, {
+    buy: [], sell: [], pause: null, chargeTarget,
+  });
+  await save(100);
+  assert.deepEqual(inv.writes, []);
+  await save(60);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60', 'acChargeUpperLimitEnabled=true']);
+});
+
+test('a single-slot card waits for an unread slot instead of guessing it is empty', async () => {
+  const inv = fakeInverter({ unread: [2] });
+  await assert.rejects(setSellSlot(inv, 2, { start: '17:00', end: '18:00' }), /still loading/);
+  await assert.rejects(setBuySlot(inv, 2, { start: '01:00', end: '02:00' }), /still loading/);
+  assert.deepEqual(inv.writes, []);
+});
+
+test('HR 20 is left alone on three-phase', async () => {
+  const inv = fakeInverter({
+    caps: { ...BASE, tenSlots: true }, layout: 'three_phase', settings: { acChargeUpperLimitEnabled: false },
+  });
+  await setGlobalChargeTarget(inv, 60);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60']);
+  assert.equal(readSchedule(inv).chargeTarget, 60);
+});
+
+test('a retry after a partial new-slot write still gives the slot its default target', async () => {
+  const inv = fakeInverter({
+    discharge: [{
+      slot: 1, start: '00:00', end: '00:00', targetStateOfCharge: 50,
+    }],
+  });
+  let calls = 0;
+  const write = inv.setDischargeSlot.bind(inv);
+  // The window write times out once, after the target went in
+  inv.setDischargeSlot = async (slot, cfg) => {
+    calls++;
+    if (calls === 2) throw new Error('timeout');
+    return write(slot, cfg);
+  };
+  await assert.rejects(setSellSlot(inv, 1, { start: '17:30', end: '18:00' }), /timeout/);
+  await setSellSlot(inv, 1, { start: '17:30', end: '18:00' });
+  assert.deepEqual(inv.getData().schedules.discharge[0], {
+    slot: 1, start: '17:30', end: '18:00', targetStateOfCharge: 4,
+  });
+});
+
+test('a retry after HR 116 was written but HR 20 was not turns HR 20 on', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: false } });
+  await applySchedule(inv, {
+    buy: [], sell: [], pause: null, chargeTarget: 60,
+  });
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60', 'acChargeUpperLimitEnabled=true']);
+});
+
+test('saving a 100% target leaves HR 20 on at 100% alone (it charges the same as off)', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 100, acChargeUpperLimitEnabled: true } });
+  await applySchedule(inv, {
+    buy: [], sell: [], pause: null, chargeTarget: 100,
+  });
+  assert.deepEqual(inv.writes, []);
+});
+
+test('an explicit charge target is written even when the last read matches', async () => {
+  const inv = fakeInverter({ caps: GEN2, settings: { acChargeUpperLimit: 60, acChargeUpperLimitEnabled: true } });
+  await setGlobalChargeTarget(inv, 60);
+  assert.deepEqual(inv.writes, ['acChargeUpperLimit=60', 'acChargeUpperLimitEnabled=true']);
+});
+
+test('a new row in the slot of a removed one gets the default target, not the old one', async () => {
+  const inv = fakeInverter({
+    discharge: [{
+      slot: 1, start: '17:00', end: '18:00', targetStateOfCharge: 50,
+    }],
+    settings: { dcDischarge: true },
+  });
+  await applySchedule(inv, { buy: [], sell: [{ start: '17:00', end: '18:00' }], pause: null });
+  // One write: clearing an occupied slot first could leave 00:00 to the old end if a write fails
+  assert.deepEqual(inv.writes, ['sell1 17:00-18:00 @4']);
+});
+
+test('on three-phase, clearing the last Buy slot leaves force charge (HR 1123) alone', async () => {
+  // Only the deprecated charge schedule card switches it, as in 1.x
+  const inv = fakeInverter({
+    caps: { ...BASE, tenSlots: true }, layout: 'three_phase', charge: [{ slot: 1, start: '01:00', end: '02:00' }], settings: { acCharge: true, forceCharge: true },
+  });
+  await clearBuySlot(inv, 1);
+  assert.deepEqual(inv.writes, ['buy1 00:00-00:00', 'acCharge=false']);
+});
+
+test('an overlap with a disabled schedule is checked, since saving turns it on', async () => {
+  const inv = fakeInverter({
+    charge: [{ slot: 1, start: '17:00', end: '19:00' }],
+    discharge: [{ slot: 1, start: '18:00', end: '18:30' }],
+    settings: { acCharge: true, dcDischarge: false },
+  });
+  const desired = { buy: [{ slot: 1, start: '17:00', end: '19:00' }], sell: [{ slot: 1, start: '18:00', end: '18:30' }], pause: null };
+  await assert.rejects(applySchedule(inv, desired), /overlap/);
+  await inv.setSetting('dcDischarge', true);
+  await applySchedule(inv, desired); // already active: allowed, so other changes can be saved
+});
+
+test('a retried save is checked against the schedule from before the first attempt', async () => {
+  // Sell 1 and 2 overlap (set by flows); the save replaces Sell 2 with a new row at the same times
+  const discharge = [{ slot: 1, start: '17:00', end: '19:00' }, { slot: 2, start: '18:00', end: '18:30' }];
+  const inv = fakeInverter({ discharge, settings: { dcDischarge: true } });
+  const before = scheduleRows(readSchedule(inv));
+  const desired = { buy: [], sell: [{ slot: 1, start: '17:00', end: '19:00' }, { start: '18:00', end: '18:30' }], pause: null };
+  // The first attempt clears Sell 2, then times out: the inverter now has no overlap
+  await inv.setDischargeSlot(2, { start: '00:00', end: '00:00' });
+  await assert.rejects(applySchedule(inv, desired), /overlap/);
+  await applySchedule(inv, desired, before);
+  assert.equal(inv.getData().schedules.discharge[1].start, '18:00');
 });

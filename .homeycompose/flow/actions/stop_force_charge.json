@@ -1,13 +1,14 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Stop force charge",
-    "nl": "Geforceerd laden stoppen",
-    "af": "Stop forseer laai"
+    "en": "Stop force charge (deprecated)",
+    "nl": "Geforceerd laden stoppen (verouderd)",
+    "af": "Stop forseer laai (verouderd)"
   },
   "hint": {
-    "en": "Restores inverter charge settings to their state before 'Force charge from grid' was used.",
-    "nl": "Herstelt de laadinstellingen van de omvormer naar de staat vóór het gebruik van 'Geforceerd laden van het net'.",
-    "af": "Herstel die omsetter se laai-instellings na hul toestand voor 'Forseer laai van die net' gebruik is."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Clear Buy slot\". Unlike this card, it doesn't put back the previous slot, charge target or charge power; set those again with \"Set Buy slot with target\" (or \"Set Buy slot\" and \"Set charge target\" on inverters with one target for all slots) and \"Set charge power\" if you need them.",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot wissen\". Anders dan deze kaart zet die het vorige tijdslot, laaddoel en laadvermogen niet terug; stel die zo nodig opnieuw in met \"Koop-tijdslot met doel instellen\" (of \"Koop-tijdslot instellen\" en \"Laaddoel instellen\" bij omvormers met één doel voor alle tijdsloten) en \"Laadvermogen instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Vee koop-tydgleuf uit\". Anders as hierdie kaart sit dit nie die vorige tydgleuf, laaiteiken en laaidrywing terug nie; stel dit weer met \"Stel koop-tydgleuf met teiken\" (of \"Stel koop-tydgleuf\" en \"Stel laaiteiken\" by omsetters met een teiken vir alle gleuwe) en \"Stel laaidrywing\" as jy dit nodig het."
   },
   "args": [
     {

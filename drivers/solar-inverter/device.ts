@@ -6,7 +6,9 @@ import { ThresholdTracker } from '../../lib/threshold';
 import { solarInverterValues } from '../../lib/snapshot';
 import { featureMarkers, markerChanges } from '../../lib/features';
 import { syncStore, pairedBy1x } from '../../lib/store';
-import { scheduleInverter, setBuySlot, setSellSlot } from '../../lib/schedule';
+import {
+  scheduleInverter, setBuySlot, setSellSlot, chargeLimitEnabled,
+} from '../../lib/schedule';
 import { userMessage } from '../../lib/errors';
 import { settingsFromSnapshot, settingWrites } from '../../lib/device-settings';
 import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
@@ -21,6 +23,7 @@ interface ForceChargeRestore {
   chargeSlot: SlotConfig;
   chargePowerPercent?: number;
   acChargeUpperLimit?: number;
+  acChargeUpperLimitEnabled?: boolean;
 }
 
 interface ForceDischargeRestore {
@@ -33,7 +36,7 @@ interface ForceDischargeRestore {
 module.exports = class SolarInverterDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
-  private lostHandler?: (err: any) => void;
+  private lostHandler?: (err: unknown) => void;
   private debugHandler?: (msg: string) => void;
   private thresholds?: ThresholdTracker;
   private lastSettingsSyncMs = 0;
@@ -48,7 +51,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     // Updated from 1.x: tell the user (once per Homey) that some flow cards are deprecated.
     // Checked before syncStore() migrates the 1.x store.
-    if (pairedBy1x(this.getStore())) (this.homey.app as any).announceDeprecatedCards();
+    if (pairedBy1x(this.getStore())) this.homey.app.announceDeprecatedCards().catch(this.error);
 
     const { host } = this.getStore();
     const { id: serialNumber } = this.getData();
@@ -56,10 +59,10 @@ module.exports = class SolarInverterDevice extends Homey.Device {
 
     try {
       this.log('Requesting connection...');
-      this.inverter = await (this.homey.app as any).getConnection(serialNumber, host);
+      this.inverter = await this.homey.app.getConnection(serialNumber, host);
       this.log('Connection established');
-    } catch (err: any) {
-      this.error(`Cannot connect to inverter at ${host}:`, err?.message ?? err);
+    } catch (err) {
+      this.error(`Cannot connect to inverter at ${host}:`, userMessage(err));
       this.setUnavailable(`Cannot connect to inverter at ${host}`).catch(this.error);
       return;
     }
@@ -91,8 +94,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     };
 
     this.debugHandler = (msg: string) => this.log(`[modbus] ${msg}`);
-    this.lostHandler = (err: any) => {
-      this.error('Connection lost:', err?.message ?? err);
+    this.lostHandler = (err: unknown) => {
+      this.error('Connection lost:', userMessage(err));
       this.setUnavailable('Connection to inverter lost').catch(this.error);
     };
 
@@ -166,7 +169,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
   /*
    * Force charge/discharge take over Buy/Sell slot 1 for the whole day. What they replace is kept
    * in the device store, so "stop" restores it even after an app restart or update. A second
-   * force, or a retry after a timeout, keeps the first saved state.
+   * force, or a retry after a timeout, keeps the first saved state. Every record has the fields
+   * below: 1.6.0 kept its state in memory, so no record predates this version.
    */
 
   async forceCharge(targetSoc: number, chargeRate: number) {
@@ -180,6 +184,8 @@ module.exports = class SolarInverterDevice extends Homey.Device {
         chargeSlot,
         chargePowerPercent: settings.inverterChargePowerPercent,
         acChargeUpperLimit: settings.acChargeUpperLimit,
+        // HR 20, which the global charge target turns on or off
+        acChargeUpperLimitEnabled: chargeLimitEnabled(scheduleInverter(inverter)),
       };
       await this.setStoreValue(FORCE_CHARGE_KEY, saved);
     }
@@ -199,8 +205,12 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     this.log('Restoring charge settings');
     if (saved.acCharge !== undefined) await inverter.setSetting('acCharge', saved.acCharge);
     await inverter.setChargeSlot(saved.chargeSlot);
-    if (!inverter.capabilities.perSlotTargets && saved.acChargeUpperLimit !== undefined) {
-      await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
+    if (!inverter.capabilities.perSlotTargets) {
+      // The global target force charge set: HR 116, and on single-phase the HR 20 switch
+      if (saved.acChargeUpperLimit !== undefined) await inverter.setSetting('acChargeUpperLimit', saved.acChargeUpperLimit);
+      if (saved.acChargeUpperLimitEnabled !== undefined && inverter.layout === 'single_phase') {
+        await inverter.setSetting('acChargeUpperLimitEnabled', saved.acChargeUpperLimitEnabled);
+      }
     }
     if (saved.chargePowerPercent !== undefined && inverter.supports('inverterChargePowerPercent')) {
       await inverter.setSetting('inverterChargePowerPercent', saved.chargePowerPercent);
@@ -251,7 +261,7 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     return this.inverter;
   }
 
-  async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, any>; changedKeys: string[] }) {
+  async onSettings({ newSettings, changedKeys }: { newSettings: Record<string, unknown>; changedKeys: string[] }) {
     const { inverter } = this;
     if (!inverter) throw new Error('Not connected to inverter');
 
@@ -264,9 +274,9 @@ module.exports = class SolarInverterDevice extends Homey.Device {
     withRetry(async () => {
       // setSetting is typed per layout; supports() above already checked each key on this inverter
       for (const [key, value] of writes) await inverter.setSetting(key as never, value as never);
-    }, this.log.bind(this))
+    }, { homey: this.homey, log: this.log.bind(this) })
       .then(() => this.log(`Settings applied: ${writes.map(([k, v]) => `${k}=${v}`).join(', ')}`))
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         this.error('Failed to apply settings to inverter:', userMessage(err));
         this.lastSettingsSyncMs = 0;
       });
@@ -279,6 +289,6 @@ module.exports = class SolarInverterDevice extends Homey.Device {
       if (this.lostHandler) this.inverter.removeListener('lost', this.lostHandler);
     }
     const { id: serialNumber } = this.getData();
-    await (this.homey.app as any).releaseConnection(serialNumber);
+    await this.homey.app.releaseConnection(serialNumber);
   }
 };

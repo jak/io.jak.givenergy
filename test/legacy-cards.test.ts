@@ -23,10 +23,18 @@ function recorder(caps: Capabilities = GEN3, layout: 'single_phase' | 'three_pha
   const inv: LegacyInverter = {
     layout,
     capabilities: caps,
-    setChargeSlot: async (...a) => { writes.push(['setChargeSlot', ...a]); },
-    setDischargeSlot: async (...a) => { writes.push(['setDischargeSlot', ...a]); },
-    setSetting: async (...a) => { writes.push(['setSetting', ...a]); },
-    setBatteryPause: layout === 'single_phase' ? async (...a) => { writes.push(['setBatteryPause', ...a]); } : undefined,
+    setChargeSlot: async (...a) => {
+      writes.push(['setChargeSlot', ...a]);
+    },
+    setDischargeSlot: async (...a) => {
+      writes.push(['setDischargeSlot', ...a]);
+    },
+    setSetting: async (...a) => {
+      writes.push(['setSetting', ...a]);
+    },
+    setBatteryPause: layout === 'single_phase' ? async (...a) => {
+      writes.push(['setBatteryPause', ...a]);
+    } : undefined,
   };
   return { inv, writes };
 }
@@ -44,9 +52,13 @@ test('every deprecated card has a handler', () => {
 test('slot cards write the slot only, as in 1.x', async () => {
   const { inv, writes } = recorder();
   await run('set_charge_slot', { start_time: '00:30', end_time: ' 04:30 ' }, inv);
-  await run('set_charge_slot_gen3', { slot: '2', start_time: '01:00', end_time: '02:00', target_soc: 80 }, inv);
+  await run('set_charge_slot_gen3', {
+    slot: '2', start_time: '01:00', end_time: '02:00', target_soc: 80,
+  }, inv);
   await run('set_discharge_slot', { slot: '2', start_time: '17:00', end_time: '18:00' }, inv);
-  await run('set_discharge_slot_gen3', { slot: '1', start_time: '16:00', end_time: '17:00', target_soc: 20 }, inv);
+  await run('set_discharge_slot_gen3', {
+    slot: '1', start_time: '16:00', end_time: '17:00', target_soc: 20,
+  }, inv);
   assert.deepEqual(writes, [
     ['setChargeSlot', 1, { start: '00:30', end: '04:30' }],
     ['setChargeSlot', 2, { start: '01:00', end: '02:00', targetStateOfCharge: 80 }],
@@ -57,15 +69,21 @@ test('slot cards write the slot only, as in 1.x', async () => {
 
 test('targets are dropped where the slot has none, and raised to the v3 minimum', async () => {
   const gen2 = recorder(GEN2);
-  await run('set_charge_slot_gen3', { slot: '1', start_time: '01:00', end_time: '02:00', target_soc: 80 }, gen2.inv);
+  await run('set_charge_slot_gen3', {
+    slot: '1', start_time: '01:00', end_time: '02:00', target_soc: 80,
+  }, gen2.inv);
   assert.deepEqual(gen2.writes, [['setChargeSlot', 1, { start: '01:00', end: '02:00' }]]);
 
   const threePhase = recorder(GEN3, 'three_phase');
-  await run('set_charge_slot_gen3', { slot: '2', start_time: '01:00', end_time: '02:00', target_soc: 80 }, threePhase.inv);
+  await run('set_charge_slot_gen3', {
+    slot: '2', start_time: '01:00', end_time: '02:00', target_soc: 80,
+  }, threePhase.inv);
   assert.deepEqual(threePhase.writes, [['setChargeSlot', 2, { start: '01:00', end: '02:00' }]]);
 
   const gen3 = recorder();
-  await run('set_discharge_slot_gen3', { slot: '3', start_time: '16:00', end_time: '17:00', target_soc: 0 }, gen3.inv);
+  await run('set_discharge_slot_gen3', {
+    slot: '3', start_time: '16:00', end_time: '17:00', target_soc: 0,
+  }, gen3.inv);
   assert.deepEqual(gen3.writes, [['setDischargeSlot', 3, { start: '16:00', end: '17:00', targetStateOfCharge: 4 }]]);
 });
 
@@ -111,4 +129,10 @@ test('export limit explains it can no longer be set', async () => {
   const { inv, writes } = recorder();
   await assert.rejects(run('set_export_limit', { watts: 3600 }, inv), /installer/);
   assert.deepEqual(writes, []);
+});
+
+test('three-phase charge schedule also sets force charge, as 1.x did', async () => {
+  const { inv, writes } = recorder(GEN3, 'three_phase');
+  await run('enable_charge_schedule', { action: 'enable' }, inv);
+  assert.deepEqual(writes, [['setSetting', 'acCharge', true], ['setSetting', 'forceCharge', true]]);
 });

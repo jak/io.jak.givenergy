@@ -1,18 +1,19 @@
 {
+  "deprecated": true,
   "title": {
-    "en": "Force charge from grid",
-    "nl": "Geforceerd laden van het net",
-    "af": "Forseer laai van die net"
+    "en": "Force charge from grid (deprecated)",
+    "nl": "Geforceerd laden van het net (verouderd)",
+    "af": "Forseer laai van die net (verouderd)"
   },
   "titleFormatted": {
-    "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate",
-    "nl": "Geforceerd laden tot [[target_soc]]% met [[charge_rate]]% snelheid",
-    "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo"
+    "en": "Force charge to [[target_soc]]% at [[charge_rate]]% rate (deprecated)",
+    "nl": "Geforceerd laden tot [[target_soc]]% met [[charge_rate]]% snelheid (verouderd)",
+    "af": "Forseer laai tot [[target_soc]]% teen [[charge_rate]]% tempo (verouderd)"
   },
   "hint": {
-    "en": "Sets Buy slot 1 to the whole day, charging the battery from the grid. The charge rate applies on inverters with a charge power setting. Use 'Stop force charge' to restore the previous slot and settings, even after a restart.",
-    "nl": "Stelt Koop-tijdslot 1 in op de hele dag, zodat de batterij van het net laadt. De laadsnelheid geldt op omvormers met een laadvermogen-instelling. Gebruik 'Geforceerd laden stoppen' om het vorige tijdslot en de instellingen te herstellen, ook na een herstart.",
-    "af": "Stel koop-tydgleuf 1 op die hele dag, sodat die battery van die net laai. Die laaitempo geld op omsetters met 'n laaidrywing-instelling. Gebruik 'Stop forseer laai' om die vorige tydgleuf en instellings te herstel, selfs na 'n herbegin."
+    "en": "Deprecated: this card will be removed in version 3 of the app. Replace it with \"Set Buy slot with target\" (or, on inverters with one target for all slots, \"Set charge target\" and \"Set Buy slot\") and, where available, \"Set charge power\".",
+    "nl": "Verouderd: deze kaart wordt verwijderd in versie 3 van de app. Vervang hem door \"Koop-tijdslot met doel instellen\" (of, bij omvormers met één doel voor alle tijdsloten, \"Laaddoel instellen\" en \"Koop-tijdslot instellen\") en, waar beschikbaar, \"Laadvermogen instellen\".",
+    "af": "Verouderd: hierdie kaart word in weergawe 3 van die app verwyder. Vervang dit met \"Stel koop-tydgleuf met teiken\" (of, by omsetters met een teiken vir alle gleuwe, \"Stel laaiteiken\" en \"Stel koop-tydgleuf\") en, waar beskikbaar, \"Stel laaidrywing\"."
   },
   "args": [
     {

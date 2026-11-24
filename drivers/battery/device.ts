@@ -4,11 +4,12 @@ import Homey from 'homey';
 import { batteryValues } from '../../lib/snapshot';
 import type { Inverter as GivEnergyInverter, InverterSnapshot } from '../../lib/types';
 import { syncStore } from '../../lib/store';
+import { userMessage } from '../../lib/errors';
 
 module.exports = class BatteryDevice extends Homey.Device {
   private inverter?: GivEnergyInverter;
   private dataHandler?: (snapshot: InverterSnapshot) => void;
-  private lostHandler?: (err: any) => void;
+  private lostHandler?: (err: unknown) => void;
 
   async onInit() {
     const { host } = this.getStore();
@@ -17,10 +18,10 @@ module.exports = class BatteryDevice extends Homey.Device {
 
     try {
       this.log('Requesting connection...');
-      this.inverter = await (this.homey.app as any).getConnection(serialNumber, host);
+      this.inverter = await this.homey.app.getConnection(serialNumber, host);
       this.log('Connection established');
-    } catch (err: any) {
-      this.error(`Cannot connect to inverter at ${host}:`, err?.message ?? err);
+    } catch (err) {
+      this.error(`Cannot connect to inverter at ${host}:`, userMessage(err));
       this.setUnavailable(`Cannot connect to inverter at ${host}`).catch(this.error);
       return;
     }
@@ -42,8 +43,8 @@ module.exports = class BatteryDevice extends Homey.Device {
       this.updateCapabilities(snapshot);
     };
 
-    this.lostHandler = (err: any) => {
-      this.error('Connection lost:', err?.message ?? err);
+    this.lostHandler = (err: unknown) => {
+      this.error('Connection lost:', userMessage(err));
       this.setUnavailable('Connection to inverter lost').catch(this.error);
     };
 
@@ -81,6 +82,6 @@ module.exports = class BatteryDevice extends Homey.Device {
       if (this.lostHandler) this.inverter.removeListener('lost', this.lostHandler);
     }
     const { id: serialNumber } = this.getData();
-    await (this.homey.app as any).releaseConnection(serialNumber);
+    await this.homey.app.releaseConnection(serialNumber);
   }
 };

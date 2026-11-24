@@ -3,6 +3,7 @@
 import Homey from 'homey';
 import { setupPairSession } from '../../lib/pairing';
 import { setupRepairSession } from '../../lib/repair';
+import type { PairSession } from '../../lib/types';
 
 module.exports = class BatteryDriver extends Homey.Driver {
 
@@ -10,7 +11,7 @@ module.exports = class BatteryDriver extends Homey.Driver {
     this.log('BatteryDriver initialized');
   }
 
-  async onPair(session: any) {
+  async onPair(session: PairSession) {
     // If solar inverters are already paired, use them directly
     const solarDriver = this.homey.drivers.getDriver('solar-inverter');
     const solarDevices = solarDriver.getDevices();
@@ -39,7 +40,7 @@ module.exports = class BatteryDriver extends Homey.Driver {
     }
   }
 
-  async onRepair(session: any) {
-    setupRepairSession(session, this);
+  async onRepair(session: PairSession, device?: Homey.Device) {
+    setupRepairSession(session, device, this);
   }
 };

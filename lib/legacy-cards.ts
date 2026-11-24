@@ -3,7 +3,9 @@
 /**
  * Deprecated 1.x flow cards. They are hidden from new flows (`"deprecated": true`) but keep working
  * in existing ones, doing what they did in 1.x: they write the registers v2 of givenergy-modbus
- * wrote, and never switch grid charging or discharging on or off as a side effect.
+ * wrote, and never switch grid charging or discharging on or off as a side effect. One exception:
+ * "timed export" uses v3's dcDischarge, because v2 wrote HR 59 on three-phase too, where it is a
+ * different register.
  * To be removed in version 3 of the app.
  */
 
@@ -25,7 +27,7 @@ export interface LegacyInverter {
   setBatteryPause?(pause: { mode: 'off' | 'charge' | 'discharge' | 'both' }): Promise<void>;
 }
 
-export type LegacyHandler = (inverter: LegacyInverter, args: Record<string, any>) => Promise<void>;
+export type LegacyHandler = (inverter: LegacyInverter, args: Record<string, unknown>) => Promise<void>;
 
 const PAUSE_MODES: Record<string, 'off' | 'charge' | 'discharge' | 'both'> = {
   disabled: 'off', pause_charge: 'charge', pause_discharge: 'discharge', pause_both: 'both',
@@ -38,7 +40,7 @@ const targetOf = (inverter: LegacyInverter, slot: number, value: unknown): numbe
   return Math.max(4, Math.min(100, Math.round(Number(value))));
 };
 
-const slotWindow = (inverter: LegacyInverter, slot: number, args: Record<string, any>): SlotConfig => {
+const slotWindow = (inverter: LegacyInverter, slot: number, args: Record<string, unknown>): SlotConfig => {
   const config: SlotConfig = { start: String(args.start_time).trim(), end: String(args.end_time).trim() };
   const target = targetOf(inverter, slot, args.target_soc);
   if (target !== undefined) config.targetStateOfCharge = target;
@@ -64,19 +66,23 @@ const rate = (inverter: LegacyInverter, direction: 'Charge' | 'Discharge', watts
   return inverter.setSetting(`battery${direction}Rate`, Math.min(50, Math.round(watts / 100)));
 };
 
-const enabled = (args: Record<string, any>) => args.action === 'enable';
+const enabled = (args: Record<string, unknown>) => args.action === 'enable';
 
 export const LEGACY_CARDS: Record<string, LegacyHandler> = {
   set_charge_slot: (inv, a) => inv.setChargeSlot(1, slotWindow(inv, 1, { ...a, target_soc: undefined })),
   set_charge_slot_gen3: (inv, a) => inv.setChargeSlot(Number(a.slot), slotWindow(inv, Number(a.slot), a)),
   set_discharge_slot: (inv, a) => inv.setDischargeSlot(Number(a.slot), slotWindow(inv, Number(a.slot), { ...a, target_soc: undefined })),
   set_discharge_slot_gen3: (inv, a) => inv.setDischargeSlot(Number(a.slot), slotWindow(inv, Number(a.slot), a)),
-  enable_charge_schedule: (inv, a) => inv.setSetting('acCharge', enabled(a)),
+  enable_charge_schedule: async (inv, a) => {
+    await inv.setSetting('acCharge', enabled(a));
+    // 1.x also set force charge (HR 1123) on three-phase
+    if (inv.layout === 'three_phase') await inv.setSetting('forceCharge', enabled(a));
+  },
   toggle_timed_export: (inv, a) => inv.setSetting('dcDischarge', enabled(a)),
   // In 1.x this card set the battery pause to "pause discharge" (or off), not the discharge slots
   enable_discharge_schedule: (inv, a) => pause(inv, enabled(a) ? 'discharge' : 'off'),
   set_battery_pause_mode: (inv, a) => {
-    const mode = PAUSE_MODES[a.mode];
+    const mode = PAUSE_MODES[String(a.mode)];
     if (!mode) throw new Error(`Unknown pause mode: ${a.mode}`);
     return pause(inv, mode);
   },
